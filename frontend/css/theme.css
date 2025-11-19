@@ -598,7 +598,6 @@ body {
     color: #000000;
 }
 
-/* Responsive Design */
 @media (max-width: 1024px) {
     .listings-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -637,3 +636,117 @@ body {
     }
 }
 
+
+
+
+/*Listing classes*/
+
+.new-listing-page {
+    padding: 60px 40px;
+    background: #ffffff;
+}
+
+.new-listing-title {
+    text-align: center;
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 40px;
+}
+
+.new-listing-card {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 40px 50px;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+}
+
+.step-header {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.step-line {
+    width: 100%;
+    height: 2px;
+    background: #e8d9ff;
+    margin-bottom: 30px;
+}
+
+.new-form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 25px;
+}
+
+.new-form-group label {
+    font-size: 15px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.new-form-group input,
+.new-form-group select,
+.new-form-group textarea {
+    padding: 14px 16px;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    background: white;
+    font-size: 15px;
+}
+
+.radio-row {
+    display: flex;
+    gap: 40px;
+    margin-top: 8px;
+}
+
+.upload-box {
+    width: 74px;
+    height: 74px;
+    border: 2px dashed #cccccc;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 36px;
+    cursor: pointer;
+    color: #555;
+}
+
+.tag-box {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    padding: 8px 18px;
+    border-radius: 20px;
+    background: #f2f2f2;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid #e5e5e5;
+}
+
+.tag:hover {
+    background: #eaeaea;
+}
+
+.new-submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: #000;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 17px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.new-submit-btn:hover {
+    background: #333;
+}

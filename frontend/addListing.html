@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="eng">
+	<head>
+    	<meta charset="UTF-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	<title>NestChange - Add Listing</title>
+    <link rel="stylesheet" href="css/theme.css">
+	</head>
+	
+	<body>
+		<!-- Header -->
+		<header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="home.html">
+                    <img src="assets/logo.png" alt="NestChange Logo" class="logo-icon">
+                </a>
+                <nav class="nav-links">
+                    <a href="home.html" class="nav-link">Home</a>
+                    <a href="#" class="nav-link">Listings</a>
+                    <a href="#" class="nav-link">Chat</a>
+                    <a href="#" class="nav-link">Pricing</a>
+                    <a href="#" class="nav-link">Contact</a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <a href="signin.html" class="btn-signin">Sign in</a>
+                <a href="register.html" class="btn-register">Register</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs">
+        <div class="breadcrumbs-container">
+            <a href="home.html" class="breadcrumb-link">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">New Listing</span>
+        </div>
+    </div>
+
+
+
+    <!-- New Listing Form Section -->
+    <section class="form-section">  
+        <div class="form-container">
+            <h1 class="form-title">
+                <span class="form-title-main">New Listing</span>
+            </h1>
+
+            <div class="form-box">
+                <form class="listing-form">
+
+                    <h3 class="step-header">Step 1</h3>
+                    <div class="step-line"></div>
+
+                    <div class="new-form-group">
+                        <label>Name of Listing</label>
+                        <input type="text" placeholder="Value">
+                    </div>
+
+                    <div class="new-form-group">
+                        <label>Do you own or rent?</label>
+                        <div class="radio-row">
+                            <label><input type="radio" name="ownRent"> Rent</label>
+                            <label><input type="radio" name="ownRent"> Own</label>
+                        </div>
+                    </div>
+
+                    <div class="new-form-group">
+                        <label>Upload home ownership documentation</label>
+                        <div class="upload-box">⬆</div>
+                    </div>
+
+                    <h3 class="step-header">Step 2</h3>
+                    <div class="step-line"></div>
+
+                    <div class="new-form-group">
+                        <label>Room Type</label>
+                        <div class="radio-row">
+                            <label><input type="radio" name="room"> Whole apartment</label>
+                            <label><input type="radio" name="room"> Single room</label>
+                        </div>
+                    </div>
+
+                    <div class="new-form-group">
+                        <label>Address</label>
+                        <select>
+                            <option>Country</option>
+                        </select>
+                        <input type="text" placeholder="Address">
+                        <input type="text" placeholder="City">
+                        <input type="text" placeholder="Postcode">
+                    </div>
+
+                    <div class="new-form-group">
+                        <label>Upload images</label>
+                        <div class="upload-box">⬆</div>
+                    </div>
+
+                    <div class="new-form-group">
+                        <label>Date and Duration</label>
+                        <input type="date">
+                    </div>
+
+                    <h3 class="step-header">Step 3</h3>
+                    <div class="step-line"></div>
+
+                    <div class="new-form-group">
+                        <label>Description</label>
+                        <textarea placeholder="Value"></textarea>
+                    </div>
+
+                    <div class="new-form-group">
+                        <label>Preferences</label>
+                        <div class="tag-box">
+                            <span class="tag">No gender preference</span>
+                            <span class="tag">Only Female Students</span>
+                            <span class="tag">No overnight guests</span>
+                            <span class="tag">No pets allowed</span>
+                            <span class="tag">Smoking not allowed</span>
+                        </div>
+                    </div>
+
+                    <div class="new-form-group">
+                        <label>Services</label>
+                        <div class="tag-box">
+                            <span class="tag">Plant watering</span>
+                            <span class="tag">Deep Cleaning</span>
+                            <span class="tag">Tutoring</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="new-submit-btn">
+                        Validate & Publish
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    </section>
+
+
+
+	</body>
+
+</html>
