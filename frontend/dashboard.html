@@ -2,34 +2,32 @@
 <html>
 <head>
     <title>Basic HTML with CSS</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/theme.css">
 </head>
 <body>
-    <header class="header">
-
-    <div class="logo-box">
-        <img src="home.png" class="logo">
+<header class="header">
+    <div class="header-container">
+        <div class="header-left">
+            <a href="home.html">
+                <img src="assets/logo.png" alt="NestChange Logo" class="logo-icon">
+            </a>
+            <nav class="nav-links">
+                <a href="home.html" class="nav-link">Home</a>
+                <a href="#" class="nav-link">Listings</a>
+                <a href="#" class="nav-link">Chat</a>
+                <a href="#" class="nav-link">Pricing</a>
+                <a href="#" class="nav-link">Contact</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <a href="signin.html" class="btn-signin">Sign in</a>
+            <a href="register.html" class="btn-register">Register</a>
+        </div>
     </div>
-
-    <div class="right-side">
-
-        <ul class="nav">
-            <li>Home</li>
-            <li>Listings</li>
-            <li>Chat</li>
-            <li>Pricing</li>
-            <li>Contact</li>
-        </ul>
-
-        <button class="btn sign">Sign in</button>
-        <button class="btn register">Register</button>
-
-    </div>
-
 </header>
 <header class="holder">
     <div>
-        <img src="room.jpg" class="room">
+        <img src="assets/room.jpg" class="room">
     </div>
     <div class="text-box">
         <h2>House Exchange in Greece in 2 Weeks</h2>
@@ -52,40 +50,63 @@
         <div class="pref-item"><span class="icon">i</span>No noise after 11</div>
     </div>
 </header> 
-    <img src="calender.png" class="calender">  
+    <img src="assets/calender.png" style="
+    width: 450px;
+    height:300px;
+    display: block;
+    margin:auto">
 <header class="container">     
     <div class="div-button">
             <button class="chat">Chat</button>
             <button class="listing">Apply for Listing</button>
     </div>
-<header class="footer">   
-        <div class="images">
-            <img src="home.png" class="logos"><br>
-            <img src="twitter.png" class="twitter">
-            <img src="youTube.png" class="youtube">
-            <img src="instagram.png" class="insta">
-            <img src="linkdin.png" class="linkdin">
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <a href="home.html">
+                    <img src="assets/logo.png" alt="NestChange Logo" class="footer-logo">
+                </a>
+            </div>
+            <div class="footer-nav">
+                <div class="footer-nav-column">
+                    <h4 class="footer-nav-title">Use cases</h4>
+                    <ul class="footer-nav-links">
+                        <li><a href="#">UI design</a></li>
+                        <li><a href="#">UX design</a></li>
+                        <li><a href="#">Wireframing</a></li>
+                        <li><a href="#">Diagramming</a></li>
+                        <li><a href="#">Brainstorming</a></li>
+                        <li><a href="#">Online whiteboard</a></li>
+                        <li><a href="#">Team collaboration</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-column">
+                    <h4 class="footer-nav-title">Explore</h4>
+                    <ul class="footer-nav-links">
+                        <li><a href="#">Design</a></li>
+                        <li><a href="#">Prototyping</a></li>
+                        <li><a href="#">Development features</a></li>
+                        <li><a href="#">Design systems</a></li>
+                        <li><a href="#">Collaboration features</a></li>
+                        <li><a href="#">Design process</a></li>
+                        <li><a href="#">FigJam</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-column">
+                    <h4 class="footer-nav-title">Resources</h4>
+                    <ul class="footer-nav-links">
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Best practices</a></li>
+                        <li><a href="#">Colors</a></li>
+                        <li><a href="#">Color wheel</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Developers</a></li>
+                        <li><a href="#">Resource library</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="use-case" >
-            <h3>Use cases</h3>
-            <p>UI design</p>
-            <p>UX Design</p>
-            <p>Wire farming</p>
-            <p>Online whiteboard</p>
-        </div>
-        <div class="explore">
-            <h3>Explore</h3>
-            <p>Design</p>
-            <p>proto type</p>
-            <p>Design systems</p>
-        </div>
-        <div class="resource">
-             <h3>Resources</h3>
-             <p>Blog</p>
-             <p>Best sources</p>
-             <p>colors</p>
-        </div>
-</header>
+    </footer>
 </header>
 </body>
 </html>
