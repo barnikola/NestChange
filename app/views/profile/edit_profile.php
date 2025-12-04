@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NestChange - Edit Profile</title>
-    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="/css/theme.css">
 </head>
 
 <body class="dark-page">
@@ -13,19 +13,19 @@
     <header class="header">
         <div class="header-container">
             <div class="header-left">
-                <a href="home.html">
-                    <img src="assets/logo.png" alt="NestChange Logo" class="logo-icon">
+                <a href="/">
+                    <img src="/assets/logo.png" alt="NestChange Logo" class="logo-icon">
                 </a>
                 <nav class="nav-links">
-                    <a href="home.html" class="nav-link">Home</a>
-                    <a href="#" class="nav-link">Listings</a>
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/listings" class="nav-link">Listings</a>
                     <a href="#" class="nav-link">Chat</a>
                     <a href="#" class="nav-link">Pricing</a>
                     <a href="#" class="nav-link">Contact</a>
                 </nav>
             </div>
             <div class="header-right">
-                <a href="profile.html" class="btn-signin">My Profile</a>
+                <a href="/profile" class="btn-signin">My Profile</a>
             </div>
         </div>
     </header>
@@ -33,11 +33,11 @@
     <!-- Breadcrumbs -->
     <div class="breadcrumbs">
         <div class="breadcrumbs-container">
-            <a href="home.html" class="breadcrumb-link">Home</a>
+            <a href="/" class="breadcrumb-link">Home</a>
             <span class="breadcrumb-separator">/</span>
-            <span class="breadcrumb-current"><a href="profile.html" class="breadcrumb-link">My Profile</a></span>
+            <span class="breadcrumb-current"><a href="/profile" class="breadcrumb-link">My Profile</a></span>
             <span class="breadcrumb-separator">/</span>
-            <span class="breadcrumb-current"><a href="edit_profile.html" class="breadcrumb-link">Edit Profile</a></span>
+            <span class="breadcrumb-current"><a href="/profile/edit" class="breadcrumb-link">Edit Profile</a></span>
         </div>
     </div>
 
@@ -53,7 +53,7 @@
             <label class="edit-label">Profile Photo</label>
             <div class="edit-photo-row">
                 <div class="edit-photo-preview">
-                    <img src="assets/logo.png" id="previewImg">
+                    <img src="/assets/logo.png" id="previewImg">
                 </div>
                 <input type="file" class="edit-input" accept="image/*" id="photoUpload">
             </div>
@@ -86,8 +86,8 @@
 <footer class="footer">
     <div class="footer-container">
         <div class="footer-left">
-            <a href="home.html">
-                <img src="assets/logo.png" alt="NestChange Logo" class="footer-logo">
+            <a href="/">
+                <img src="/assets/logo.png" alt="NestChange Logo" class="footer-logo">
             </a>
         </div>
     </div>

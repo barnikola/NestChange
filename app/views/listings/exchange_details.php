@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+    <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>NestChange - My Exchanges</title>
-      <link rel="stylesheet" href="css/theme.css">
+      <link rel="stylesheet" href="/css/theme.css">
     </head>
 
-    <body class="dark-page">
+    <body>
 
     <!-- Header -->
         <header class="header">
             <div class="header-container">
                 <div class="header-left">
-                    <a href="home.html">
-                        <img src="assets/logo.png" alt="NestChange Logo" class="logo-icon">
+                    <a href="/">
+                        <img src="/assets/logo.png" alt="NestChange Logo" class="logo-icon">
                     </a>
                     <nav class="nav-links">
-                        <a href="home.html" class="nav-link">Home</a>
+                        <a href="/" class="nav-link">Home</a>
                         <a href="#" class="nav-link">Listings</a>
                         <a href="#" class="nav-link">Chat</a>
                         <a href="#" class="nav-link">Pricing</a>
@@ -25,7 +25,8 @@
                     </nav>
                 </div>
                 <div class="header-right">
-                    <a href="profile.html" class="btn-signin">My Profile</a>
+                    <a href="/auth/signin" class="btn-signin">Sign in</a>
+                    <a href="/auth/register" class="btn-register">Register</a>
                 </div>
             </div>
         </header>
@@ -33,93 +34,90 @@
         <!-- Breadcrumbs -->
         <div class="breadcrumbs">
             <div class="breadcrumbs-container">
-                <a href="home.html" class="breadcrumb-link">Home</a>
+                <a href="/" class="breadcrumb-link">Home</a>
                 <span class="breadcrumb-separator">/</span>
-                <span class="breadcrumb-current"><a href="public_profile.html" class="breadcrumb-link">User Profile</a></span>
+                <span class="breadcrumb-current">Register</span>
             </div>
         </div>
 
-        <div class="public-banner"></div>
-
-        <!-- PROFILE SECTION -->
-        <section class="public-profile-container">
-
-            <div class="public-avatar">
-                <img src="assets/logo.png">
-            </div>
-
-            <h1 class="public-name">Muhammed Arif EREN</h1>
-            <p class="public-username">@mariferen52</p>
-
-            <div class="public-stats">
-                <div>
-                    <h3>5</h3>
-                    <p>Exchanges</p>
-                </div>
-                <div>
-                    <h3>4.8</h3>
-                    <p>Rating</p>
-                </div>
-            </div>
-            <p class="public-bio">
-                A traveler who loves discovering new cultures, exploring new cities,  
-                and meeting amazing people through home exchange.
-            </p>
-            <h2 class="public-section-title">Listings by Muhammed Arif</h2>
-
-            <div class="public-listings">
-                <div class="public-listing-card">
-                    <img src="assets/listing.jpg">
-                    <h4>Ankara - Cozy Apartment</h4>
-                    <p>2 bedrooms · City center · Balcony</p>
-                </div>
-
-                <div class="public-listing-card">
-                    <img src="assets/listing.jpg">
-                    <h4>Ordu - Sea View Home</h4>
-                    <p>3 bedrooms · Sea view · Pool</p>
-                </div>
-            </div>
 
 
-            <h2 class="public-section-title">Reviews</h2>
+    <!-- Listing Details -->
+    <section class="details-section">  
 
-            <div class="profile-comments-box">
-                <div class="profile-comment">
-                    <div class="comment-header">
-                        <img class="comment-avatar" src="assets/logo.png">
-                        <div>
-                            <h4>Emily Rose</h4>
-                            <p>2 weeks ago</p>
-                        </div>
-                    </div>
-                    <p class="comment-text">
-                        “Amazing host! Everything was perfect, and communication was fast.”
-                    </p>
-                </div>
+      <div class="details-header">
+        <span class="details-badge">Agreement Summary</span>
+      </div>
 
-                <div class="profile-comment">
-                    <div class="comment-header">
-                        <img class="comment-avatar"src="assets/logo.png">
-                        <div>
-                            <h4>David Keller</h4>
-                            <p>1 month ago</p>
-                        </div>
-                    </div>
-                    <p class="comment-text">
-                        “Super smooth experience. Highly recommended.”
-                    </p>
-                </div>
-            </div>
+      <div class="details-box">
+        <div class="details-head">
+          <span>Accommodation</span>
+          <span>Location</span>
+          <span>Dates</span>
+          <span>Services</span>
+          <span>House Rules</span>
+          <span>Participants</span>
+          <span>Status</span>
+        </div>
 
-        </section>
+        <div class="details-row">
+          <span>Beach House</span>
+          <span>LA, USA</span>
+          <span>July 10 - 23</span>
+          <span>Basic cleaning</span>
+          <span>No pets</span>
+          <span>You & Host</span>
+          <span>Finalized exchange</span>
+        </div>
 
-<!-- Footer -->
+        <div class="details-row">
+          <span>Beach House</span>
+          <span>LA, USA</span>
+          <span>July 10 - 23</span>
+          <span>basic cleaning</span>
+          <span>No pets</span>
+          <span>You & Host</span>
+          <span>Confirmed booking</span>
+        </div>
+
+        <div class="details-row">
+          <span>Beach House</span>
+          <span>LA, USA</span>
+          <span>July 10 - 23</span>
+          <span>Basic cleaning</span>
+          <span>No pets</span>
+          <span>You & Host</span>
+          <span>Finalized exchange</span>
+        </div>
+
+        <div class="details-row">
+          <span>Beach House</span>
+          <span>LA, USA</span>
+          <span>July 10 - 23</span>
+          <span>Basic cleaning</span>
+          <span>No pets</span>
+          <span>You & Host</span>
+          <span>Finalized exchange</span>
+        </div>
+
+      </div>
+
+      <div class="details-buttons">
+        <button class="details-btn">Update Agreement</button>
+        <button class="details-btn">Cancel Exchange</button>
+        <button class="details-btn">Download Contract</button>
+      </div>
+
+    </section>
+
+
+
+       <!-- Footer -->
         <footer class="footer">
             <div class="footer-container">
                 <div class="footer-left">
-                    <a href="home.html">
-                        <img src="assets/logo.png" alt="NestChange Logo" class="footer-logo">
+                    <a href="/">
+                        <img src="/assets/logo.png" alt="NestChange Logo" class="footer-logo">
                     </a>
                 </div>
                 <div class="footer-nav">
@@ -162,5 +160,7 @@
                 </div>
             </div>
         </footer>
-</body>
+
+
+    </body>
 </html>

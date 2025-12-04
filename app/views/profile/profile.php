@@ -4,7 +4,7 @@
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>NestChange - My Exchanges</title>
-      <link rel="stylesheet" href="css/theme.css">
+      <link rel="stylesheet" href="/css/theme.css">
     </head>
 
     <body class="dark-page">
@@ -13,19 +13,19 @@
         <header class="header">
             <div class="header-container">
                 <div class="header-left">
-                    <a href="home.html">
-                        <img src="assets/logo.png" alt="NestChange Logo" class="logo-icon">
+                    <a href="/">
+                        <img src="/assets/logo.png" alt="NestChange Logo" class="logo-icon">
                     </a>
                     <nav class="nav-links">
-                        <a href="home.html" class="nav-link">Home</a>
-                        <a href="#" class="nav-link">Listings</a>
+                        <a href="/" class="nav-link">Home</a>
+                        <a href="/listings" class="nav-link">Listings</a>
                         <a href="#" class="nav-link">Chat</a>
                         <a href="#" class="nav-link">Pricing</a>
                         <a href="#" class="nav-link">Contact</a>
                     </nav>
                 </div>
                 <div class="header-right">
-                    <a href="profile.html" class="btn-signin">My Profile</a>
+                    <a href="/profile" class="btn-signin">My Profile</a>
                 </div>
             </div>
         </header>
@@ -33,9 +33,9 @@
         <!-- Breadcrumbs -->
         <div class="breadcrumbs">
             <div class="breadcrumbs-container">
-                <a href="home.html" class="breadcrumb-link">Home</a>
+                <a href="/" class="breadcrumb-link">Home</a>
                 <span class="breadcrumb-separator">/</span>
-                <span class="breadcrumb-current"><a href="profile.html" class="breadcrumb-link">My Profile</a></span>
+                <span class="breadcrumb-current"><a href="/profile" class="breadcrumb-link">My Profile</a></span>
             </div>
         </div>
 
@@ -43,7 +43,7 @@
     <section id="profile-dashboard">
 
         <div class="profile-sidebar">
-            <div class="profile-avatar"><img src="assets/logo.png"/>
+            <div class="profile-avatar"><img src="/assets/logo.png"/>
             </div>
             <h2 class="profile-name">Muhammed Arif EREN</h2>
             <p class="profile-username">@mariferen52</p>
@@ -59,7 +59,7 @@
                 </div>
             </div>
 
-            <button class="profile-edit-btn"><a href="edit_profile.html">Edit Profile</a></button>
+            <button class="profile-edit-btn"><a href="/profile/edit">Edit Profile</a></button>
         </div>
 
     <div class="profile-content">
@@ -71,20 +71,20 @@
             <div class="profile-card add-card">
                 <h3>Add New Listing</h3>
                 <p>Create a new property listing and start hosting.</p>
-                <a href="addListing.html" class="profile-card-btn">Add Listing</a>
+                <a href="/listings/add-listing" class="profile-card-btn">Add Listing</a>
             </div>
 
 
             <div class="profile-card">
                 <h3>Your Listings</h3>
                 <p>You have 3 active property listings.</p>
-                <a href="my_exchanges.html" class="profile-card-btn">View Listings</a>
+                <a href="/listings/my-exchanges" class="profile-card-btn">View Listings</a>
             </div>
 
             <div class="profile-card">
                 <h3>My Exchanges</h3>
                 <p>No upcoming stays.</p>
-                <a href="listing_details.html" class="profile-card-btn">View Exchanges</a>
+                <a href="/listings/exchange-details" class="profile-card-btn">View Exchanges</a>
             </div>
 
             <div class="profile-card">
@@ -109,7 +109,7 @@
 
             <div class="profile-comment">
                 <div class="comment-header">
-                    <img src="assets/logo.png" class="comment-avatar">
+                    <img src="/assets/logo.png" class="comment-avatar">
                     <div>
                         <h4 class="comment-name">Emily Rose</h4>
                         <p class="comment-date">2 weeks ago</p>
@@ -122,7 +122,7 @@
 
             <div class="profile-comment">
                 <div class="comment-header">
-                    <img src="assets/logo.png" class="comment-avatar">
+                    <img src="/assets/logo.png" class="comment-avatar">
                     <div>
                         <h4 class="comment-name">David Keller</h4>
                         <p class="comment-date">1 month ago</p>
@@ -143,8 +143,8 @@
         <footer class="footer">
             <div class="footer-container">
                 <div class="footer-left">
-                    <a href="home.html">
-                        <img src="assets/logo.png" alt="NestChange Logo" class="footer-logo">
+                    <a href="/">
+                        <img src="/assets/logo.png" alt="NestChange Logo" class="footer-logo">
                     </a>
                 </div>
                 <div class="footer-nav">

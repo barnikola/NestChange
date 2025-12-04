@@ -4,27 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NestChange - Home Page</title>
-    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="/css/theme.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-container">
             <div class="header-left">
-                <a href="home.html">
-                    <img src="assets/logo.png" alt="NestChange Logo" class="logo-icon">
+                <a href="/">
+                    <img src="/assets/logo.png" alt="NestChange Logo" class="logo-icon">
                 </a>
                 <nav class="nav-links">
-                    <a href="home.html" class="nav-link">Home</a>
-                    <a href="#" class="nav-link">Listings</a>
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/listings" class="nav-link">Listings</a>
                     <a href="#" class="nav-link">Chat</a>
                     <a href="#" class="nav-link">Pricing</a>
                     <a href="#" class="nav-link">Contact</a>
                 </nav>
             </div>
             <div class="header-right">
-                <a href="signin.html" class="btn-signin">Sign in</a>
-                <a href="register.html" class="btn-register">Register</a>
+                <a href="/auth/signin" class="btn-signin">Sign in</a>
+                <a href="/auth/register" class="btn-register">Register</a>
             </div>
         </div>
     </header>
@@ -50,9 +50,9 @@
     <section class="action-cards">
         <div class="action-card">
             <div class="action-card-image">
-                <img src="assets/listing.jpg" alt="Property listing" class="action-card-image">
+                <img src="/assets/listing.jpg" alt="Property listing" class="action-card-image">
                 <div class="action-overlay">
-                 <a href="addListing.html">
+                 <a href="/listings/add-listing">
                     <button class="action-btn">
                         <span class="action-icon">+</span>
                         <span >Add listing</span>
@@ -63,7 +63,7 @@
         </div>
         <div class="action-card">
             <div class="action-card-image">
-                <img src="assets/listing.jpg" alt="Property listing" class="action-card-image">
+                <img src="/assets/listing.jpg" alt="Property listing" class="action-card-image">
 
                 <div class="action-overlay">
                     <button class="action-btn">
@@ -82,32 +82,32 @@
             <p class="listings-subtitle">Available stays</p>
             <div class="listings-grid">
                 <div class="listing-card">
-                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
+                    <img src="/assets/listing.jpg" alt="Property listing" class="listing-image">
                     <h3 class="listing-title">Listing</h3>
                     <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 </div>
                 <div class="listing-card">
-                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
+                    <img src="/assets/listing.jpg" alt="Property listing" class="listing-image">
                     <h3 class="listing-title">Listing</h3>
                     <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 </div>
                 <div class="listing-card">
-                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
+                    <img src="/assets/listing.jpg" alt="Property listing" class="listing-image">
                     <h3 class="listing-title">Listing</h3>
                     <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 </div>
                 <div class="listing-card">
-                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
+                    <img src="/assets/listing.jpg" alt="Property listing" class="listing-image">
                     <h3 class="listing-title">Listing</h3>
                     <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 </div>
                 <div class="listing-card">
-                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
+                    <img src="/assets/listing.jpg" alt="Property listing" class="listing-image">
                     <h3 class="listing-title">Listing</h3>
                     <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 </div>
                 <div class="listing-card">
-                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
+                    <img src="/assets/listing.jpg" alt="Property listing" class="listing-image">
                     <h3 class="listing-title">Listing</h3>
                     <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 </div>
@@ -119,8 +119,8 @@
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-left">
-                <a href="home.html">
-                    <img src="assets/logo.png" alt="NestChange Logo" class="footer-logo">
+                <a href="/">
+                    <img src="/assets/logo.png" alt="NestChange Logo" class="footer-logo">
                 </a>
             </div>
             <div class="footer-nav">

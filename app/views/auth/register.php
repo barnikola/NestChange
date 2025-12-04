@@ -3,29 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NestChange - Forgot Password</title>
-    <link rel="stylesheet" href="css/theme.css">
+    <title>NestChange - Register</title>
+    <link rel="stylesheet" href="/css/theme.css">
 </head>
 <body>
-
     <!-- Header -->
     <header class="header">
         <div class="header-container">
             <div class="header-left">
-                <a href="home.html">
-                    <img src="assets/logo.png" alt="NestChange Logo" class="logo-icon">
+                <a href="/">
+                    <img src="/assets/logo.png" alt="NestChange Logo" class="logo-icon">
                 </a>
                 <nav class="nav-links">
-                    <a href="home.html" class="nav-link">Home</a>
-                    <a href="#" class="nav-link">Listings</a>
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/listings" class="nav-link">Listings</a>
                     <a href="#" class="nav-link">Chat</a>
                     <a href="#" class="nav-link">Pricing</a>
                     <a href="#" class="nav-link">Contact</a>
                 </nav>
             </div>
             <div class="header-right">
-                <a href="signin.html" class="btn-signin">Sign in</a>
-                <a href="register.html" class="btn-register">Register</a>
+                <a href="/auth/signin" class="btn-signin">Sign in</a>
+                <a href="/auth/register" class="btn-register">Register</a>
             </div>
         </div>
     </header>
@@ -33,32 +32,68 @@
     <!-- Breadcrumbs -->
     <div class="breadcrumbs">
         <div class="breadcrumbs-container">
-            <a href="home.html" class="breadcrumb-link">Home</a>
+            <a href="/" class="breadcrumb-link">Home</a>
             <span class="breadcrumb-separator">/</span>
-            <span class="breadcrumb-current">Forgot Password</span>
+            <span class="breadcrumb-current">Register</span>
         </div>
     </div>
 
-    <!-- Forgot Password Form Section -->
+    <!-- Register Form Section -->
     <section class="form-section">
         <div class="form-container">
             <h1 class="form-title">
-                <span class="form-title-main">Forgot Password</span>
+                <span class="form-title-main">Register</span>
             </h1>
             
             <div class="form-box">
                 <form class="auth-form">
                     <div class="form-group">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" id="name" name="name" class="form-input" placeholder="Value" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="surname" class="form-label">Surname</label>
+                        <input type="text" id="surname" name="surname" class="form-input" placeholder="Value" required>
+                    </div>
+                    
+                    <div class="form-group">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email" required>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="Value" required>
                     </div>
                     
-                    <button type="submit" class="btn-submit">Send Reset Link</button>
-                    
-                    <div class="form-links">
-                        <a href="signin.html" class="form-link">Back to Sign in</a>
-                        <a href="register.html" class="form-link">Register</a>
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" name="password" class="form-input" placeholder="Value" required>
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm-password" class="form-label">Confirm password</label>
+                        <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder="Value" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id-document" class="form-label">Identification document</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="id-document" name="id-document" class="form-input file-input" placeholder="Value">
+                            <span class="file-icon">📎</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="student-id" class="form-label">Student-ID</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="student-id" name="student-id" class="form-input file-input" placeholder="Value">
+                            <span class="file-icon">📎</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="end-date" class="form-label">End of student period</label>
+                        <input type="date" id="end-date" name="end-date" class="form-input" placeholder="dd/mm/yyyy" required>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Register</button>
                 </form>
             </div>
         </div>
@@ -68,8 +103,8 @@
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-left">
-                <a href="home.html">
-                    <img src="assets/logo.png" alt="NestChange Logo" class="footer-logo">
+                <a href="/">
+                    <img src="/assets/logo.png" alt="NestChange Logo" class="footer-logo">
                 </a>
             </div>
             <div class="footer-nav">
@@ -112,6 +147,6 @@
             </div>
         </div>
     </footer>
-
 </body>
 </html>
+

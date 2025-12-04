@@ -2,32 +2,32 @@
 <html>
 <head>
     <title>Basic HTML with CSS</title>
-    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="/css/theme.css">
 </head>
 <body>
 <header class="header">
     <div class="header-container">
         <div class="header-left">
-            <a href="home.html">
-                <img src="assets/logo.png" alt="NestChange Logo" class="logo-icon">
+            <a href="/">
+                <img src="/assets/logo.png" alt="NestChange Logo" class="logo-icon">
             </a>
             <nav class="nav-links">
-                <a href="home.html" class="nav-link">Home</a>
-                <a href="#" class="nav-link">Listings</a>
+                <a href="/" class="nav-link">Home</a>
+                <a href="/listings" class="nav-link">Listings</a>
                 <a href="#" class="nav-link">Chat</a>
                 <a href="#" class="nav-link">Pricing</a>
                 <a href="#" class="nav-link">Contact</a>
             </nav>
         </div>
         <div class="header-right">
-            <a href="signin.html" class="btn-signin">Sign in</a>
-            <a href="register.html" class="btn-register">Register</a>
+            <a href="/auth/signin" class="btn-signin">Sign in</a>
+            <a href="/auth/register" class="btn-register">Register</a>
         </div>
     </div>
 </header>
 <header class="holder">
     <div>
-        <img src="assets/room.jpg" class="room">
+        <img src="/assets/room.jpg" class="room">
     </div>
     <div class="text-box">
         <h2>House Exchange in Greece in 2 Weeks</h2>
@@ -50,7 +50,7 @@
         <div class="pref-item"><span class="icon">i</span>No noise after 11</div>
     </div>
 </header> 
-    <img src="assets/calender.png" style="
+    <img src="/assets/calender.png" style="
     width: 450px;
     height:300px;
     display: block;
@@ -63,8 +63,8 @@
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-left">
-                <a href="home.html">
-                    <img src="assets/logo.png" alt="NestChange Logo" class="footer-logo">
+                <a href="/">
+                    <img src="/assets/logo.png" alt="NestChange Logo" class="footer-logo">
                 </a>
             </div>
             <div class="footer-nav">

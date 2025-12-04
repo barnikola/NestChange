@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NestChange - Set New Password</title>
-    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="/css/theme.css">
 </head>
 <body>
 
@@ -12,11 +12,11 @@
     <header class="header">
         <div class="header-container">
             <div class="header-left">
-                <a href="home.html">
-                    <img src="assets/logo.png" alt="NestChange Logo" class="logo-icon">
+                <a href="/">
+                    <img src="/assets/logo.png" alt="NestChange Logo" class="logo-icon">
                 </a>
                 <nav class="nav-links">
-                    <a href="home.html" class="nav-link">Home</a>
+                    <a href="/" class="nav-link">Home</a>
                     <a href="#" class="nav-link">Listings</a>
                     <a href="#" class="nav-link">Chat</a>
                     <a href="#" class="nav-link">Pricing</a>
@@ -24,8 +24,8 @@
                 </nav>
             </div>
             <div class="header-right">
-                <a href="signin.html" class="btn-signin">Sign in</a>
-                <a href="register.html" class="btn-register">Register</a>
+                <a href="signin.php" class="btn-signin">Sign in</a>
+                <a href="register.php" class="btn-register">Register</a>
             </div>
         </div>
     </header>
@@ -33,7 +33,7 @@
     <!-- Breadcrumbs -->
     <div class="breadcrumbs">
         <div class="breadcrumbs-container">
-            <a href="home.html" class="breadcrumb-link">Home</a>
+            <a href="/" class="breadcrumb-link">Home</a>
             <span class="breadcrumb-separator">/</span>
             <span class="breadcrumb-current">Set New Password</span>
         </div>
@@ -61,7 +61,7 @@
                     <button type="submit" class="btn-submit">Set Password</button>
                     
                     <div class="form-links">
-                        <a href="signin.html" class="form-link">Back to Sign in</a>
+                        <a href="signin.php" class="form-link">Back to Sign in</a>
                     </div>
                 </form>
             </div>
@@ -72,8 +72,8 @@
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-left">
-                <a href="home.html">
-                    <img src="assets/logo.png" alt="NestChange Logo" class="footer-logo">
+                <a href="/">
+                    <img src="/assets/logo.png" alt="NestChange Logo" class="footer-logo">
                 </a>
             </div>
             <div class="footer-nav">
