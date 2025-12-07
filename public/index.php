@@ -9,7 +9,12 @@ $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // Remove the base path if running from public directory
 $basePath = '/';
-$path = str_replace($basePath, '', $requestUri);
+if (strpos($requestUri, $basePath) === 0) {
+    // Strip the configured base path only once from the beginning
+    $path = substr($requestUri, strlen($basePath));
+} else {
+    $path = $requestUri;
+}
 
 // Remove leading/trailing slashes
 $path = trim($path, '/');
@@ -62,7 +67,8 @@ $routes = [
     'auth/new_password' => 'auth/new_password',
     
     // Listings routes
-    'listings' => 'listings/listing',
+    'listings' => 'listings/search',
+    'listings/search' => 'listings/search',
     'listings/listing' => 'listings/listing',
     'listings/add' => 'listings/addListing',
     'listings/add-listing' => 'listings/addListing',
@@ -89,6 +95,10 @@ $routes = [
     // Moderator routes
     'moderator' => 'moderator/dashboard',
     'moderator/dashboard' => 'moderator/dashboard',
+    
+    // Chat routes
+    'chat' => 'chat/index',
+    'chat/index' => 'chat/index',
 ];
 
 // Check if route exists in mapping
@@ -194,4 +204,3 @@ if (file_exists($viewFile)) {
 </body>
 </html>';
 }
-

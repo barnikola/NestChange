@@ -347,6 +347,181 @@ body {
     margin: 0 20px 20px 20px;
 }
 
+.listing-calendar {
+    width: 100%;
+    min-height: 260px;
+}
+
+.calendar-weekdays,
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.calendar-weekdays div {
+    text-align: center;
+    font-size: 12px;
+    color: #999999;
+    text-transform: uppercase;
+}
+
+.calendar-cell {
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.calendar-cell.available {
+    background-color: #f5f5f5;
+    color: #111111;
+}
+
+.calendar-cell.blocked {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+.calendar-cell.available:hover {
+    background-color: #eaeaea;
+    cursor: pointer;
+}
+
+.calendar-cell.selected {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+.calendar-cell.empty {
+    background: transparent;
+}
+
+.preferences-panel {
+    padding: 20px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.preferences-panel h3 {
+    font-size: 24px;
+}
+
+.preferences-panel p {
+    color: #777777;
+}
+
+.pref-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 60px;
+}
+
+.pref-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.pref-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #dddddd;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #666666;
+}
+
+.availability-card {
+    margin: 40px auto;
+    padding: 30px 40px;
+    max-width: 900px;
+    background: #ffffff;
+    border-radius: 32px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+.availability-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.calendar-month-label {
+    min-width: 140px;
+    text-align: center;
+}
+
+.calendar-nav {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.listing-calendar {
+    padding: 0 10px;
+}
+
+.time-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 20px;
+    color: #666666;
+}
+
+.time-value {
+    font-weight: 600;
+    color: #000000;
+}
+
+.listing-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px 40px 60px;
+}
+
+.btn-ghost {
+    min-width: 200px;
+    padding: 14px 32px;
+    border-radius: 999px;
+    border: 1px solid #cfcfcf;
+    background: #f8f8f8;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-primary {
+    min-width: 200px;
+    padding: 14px 32px;
+    border-radius: 999px;
+    border: none;
+    background: #000000;
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22);
+}
+
 /* Footer */
 .footer {
     padding: 60px 40px 40px 40px;
@@ -597,47 +772,6 @@ body {
     color: #000000;
 }
 
-@media (max-width: 1024px) {
-    .listings-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .action-cards {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 768px) {
-    .header {
-        padding: 15px 20px;
-    }
-    
-    .nav-links {
-        display: none;
-    }
-    
-    .hero-title {
-        font-size: 48px;
-    }
-    
-    .listings-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .footer-container {
-        flex-direction: column;
-        gap: 40px;
-    }
-    
-    .footer-nav {
-        flex-wrap: wrap;
-        gap: 40px;
-    }
-}
-
-
-
-
 /*Listing classes*/
 
 .new-listing-page {
@@ -748,6 +882,365 @@ body {
 
 .new-submit-btn:hover {
     background: #333;
+}
+
+/* Chat Page */
+body.chat-page {
+    background-color: #f5f5f7;
+}
+
+.nav-link-active {
+    color: #000000;
+    font-weight: 600;
+    position: relative;
+}
+
+.nav-link-active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 2px;
+    background-color: #000000;
+}
+
+.chat-content-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px 40px 80px;
+}
+
+.chat-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+}
+
+.chat-sidebar {
+    background-color: #ffffff;
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.chat-sidebar-eyebrow {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 4px;
+}
+
+.chat-sidebar-title {
+    font-size: 14px;
+    color: #888888;
+}
+
+.chat-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #ededed;
+    border-radius: 12px;
+    padding: 12px 16px;
+    background-color: #f8f8f8;
+}
+
+.chat-search input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    width: 100%;
+}
+
+.chat-search-icon {
+    font-size: 16px;
+}
+
+.chat-thread-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.chat-thread {
+    display: flex;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 16px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.chat-thread:hover {
+    background-color: #f5f5f5;
+}
+
+.chat-thread.active {
+    background-color: #f0f0f9;
+    box-shadow: inset 0 0 0 1px #deddf8;
+}
+
+.chat-thread-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #333333;
+}
+
+.chat-thread-avatar.support {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+.chat-thread-avatar.large {
+    width: 56px;
+    height: 56px;
+    font-size: 18px;
+}
+
+.chat-thread-body {
+    flex: 1;
+}
+
+.chat-thread-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.chat-thread-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111111;
+}
+
+.chat-thread-time {
+    font-size: 12px;
+    color: #999999;
+}
+
+.chat-thread-subtitle {
+    font-size: 13px;
+    color: #777777;
+}
+
+.chat-panel {
+    background-color: #ffffff;
+    border-radius: 32px;
+    padding: 32px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.chat-panel-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.chat-panel-participant {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.chat-panel-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #111111;
+}
+
+.chat-panel-meta {
+    font-size: 13px;
+    color: #777777;
+}
+
+.chat-panel-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.chat-panel-btn {
+    padding: 10px 18px;
+    border: 1px solid #e0e0e0;
+    border-radius: 999px;
+    background-color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.chat-panel-btn:hover {
+    border-color: #b5b5b5;
+}
+
+.chat-status-pill {
+    align-self: flex-start;
+    padding: 6px 16px;
+    border-radius: 999px;
+    background-color: #e5f7ec;
+    color: #1f8a4c;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.chat-message {
+    max-width: 480px;
+    padding: 14px 18px;
+    border-radius: 18px;
+    position: relative;
+}
+
+.chat-message.outgoing {
+    background-color: #000000;
+    color: #ffffff;
+    align-self: flex-end;
+    border-bottom-right-radius: 6px;
+}
+
+.chat-message.incoming {
+    background-color: #f5f5f5;
+    color: #111111;
+    align-self: flex-start;
+    border-bottom-left-radius: 6px;
+}
+
+.chat-message-time {
+    display: block;
+    font-size: 11px;
+    margin-top: 6px;
+    color: inherit;
+    opacity: 0.8;
+}
+
+.chat-action-card {
+    border: 1px solid #ededed;
+    border-radius: 24px;
+    padding: 20px 24px;
+    background-color: #fafafa;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.chat-action-eyebrow {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #999999;
+    margin-bottom: 6px;
+}
+
+.chat-action-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.chat-action-text {
+    font-size: 14px;
+    color: #666666;
+}
+
+.chat-action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.chat-action-btn {
+    min-width: 96px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: 1px solid #cccccc;
+    background: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.chat-action-btn.primary {
+    background-color: #000000;
+    color: #ffffff;
+    border-color: #000000;
+}
+
+.chat-action-btn.primary:hover {
+    background-color: #1a1a1a;
+}
+
+.chat-action-btn.ghost:hover {
+    border-color: #999999;
+}
+
+.chat-composer {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 18px 22px;
+    border: 1px solid #ededed;
+    border-radius: 999px;
+    background-color: #fdfdfd;
+}
+
+.chat-composer-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.chat-icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.chat-composer-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+}
+
+.chat-send-btn {
+    padding: 10px 24px;
+    background-color: #000000;
+    color: #ffffff;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.chat-send-btn:hover {
+    background-color: #1a1a1a;
 }
 
 /*Exchange Dashboard*/
@@ -1243,10 +1736,6 @@ body {
     color: #fff;
 }
 
-
-
-
-
 /* PUBLIC PROFILE */
 .public-banner {
     width: 100%;
@@ -1388,50 +1877,152 @@ body {
     align-items: center;
     padding:20px 40px;
     justify-content: center;
+}
+.listing-carousel {
+    position: relative;
+    flex: 0 0 55%;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    background: #000;
+}
+.carousel-track {
+    width: 100%;
+    height: 100%;
+}
+.carousel-slide {
+    display: none;
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+}
+.carousel-slide.active {
+    display: block;
+}
+.carousel-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
     align-items: center;
+    justify-content: center;
+}
+.carousel-control.prev {
+    left: 12px;
+}
+.carousel-control.next {
+    right: 12px;
+}
+.carousel-dots {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+}
+.carousel-dot.active {
+    background: #fff;
 }
 .room{
-    width:400px;
-    height: 250px;
-    margin-top:30px ;
+    width:500px;
+    height:320px;
+    object-fit:cover;
+    border-radius:16px;
 }
 .text-box{
-    max-width: 500px;
+    max-width: 520px;
     margin-bottom: 30px;
 }
 .text-box p{
-    color:rgb(109, 107, 107);
+    color:#6d6d6d;
+    line-height:1.6;
 }
 .preferences-box{
     border: #bbb 1px solid;
-    border-radius: 10px;
+    border-radius: 16px;
     padding:20px 30px;
     margin: 20px 40px;
-}
-.pref-item {
-    display: flex;
-    gap:10px;
-}
-.icon {
-    width:20px;
-    height:20px;
-    border: 2px solid black;
-    border-radius: 50%;
-    text-align: center;
-    font-weight:bold;
-    font-size:15px;
+    background:#fff;
 }
 .pref-list {
     display:grid;
     grid-template-columns: repeat(3,1fr);
-    gap: 20px 20px;
-    padding: 10px 10px;
+    gap: 16px 20px;
+    padding: 15px 0;
 }
-.calender {
+.pref-item {
+    display: flex;
+    gap:10px;
+    align-items:center;
+    font-weight:500;
+}
+.icon {
+    width:24px;
+    height:24px;
+    border: 2px solid black;
+    border-radius: 50%;
+    text-align: center;
+    font-weight:bold;
+    font-size:14px;
+    line-height:20px;
+}
+.calendar-card {
     width: 450px;
-    height:300px;
-    padding:0 350px;
-    margin: 30px 0;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 24px;
+    background-color: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+.calendar-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+.calendar-nav {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    cursor: pointer;
+    font-size: 18px;
+}
+.calendar-month-label {
+    min-width: 150px;
+    text-align: center;
+}
+.time-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+    color: #666666;
+}
+.time-value {
+    font-weight: 600;
+    color: #000000;
 }
 .container{
     background-color: whitesmoke;
@@ -1440,7 +2031,22 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 20px 200px;
-    border: 1px solid black;
+    gap:40px;
+}
+.div-button .chat,
+.div-button .listing{
+    flex:1;
+    padding:14px 0;
+    border-radius:999px;
+    border:1px solid #d0d0d0;
+    background:#fff;
+    cursor:pointer;
+    font-weight:600;
+}
+.div-button .listing{
+    background:#000;
+    color:#fff;
+    border-color:#000;
 }
 .chat {
     border:1px solid black;
@@ -1477,4 +2083,462 @@ body {
     height: 20px;
     background-color: #f2efef;
 }
+
+
+/*SEARCH RESULTS PAGE STYLES*/
+
+.search-bar-container {
+    padding: 20px 40px 10px;
+    background-color: #ffffff;
+}
+
+.search-bar {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 999px;
+    padding: 8px 8px 8px 24px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.search-chip {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 8px 16px;
+    border-right: 1px solid #dddddd;
+}
+
+.search-chip:last-of-type {
+    border-right: none;
+}
+
+.search-chip label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #222222;
+    margin-bottom: 2px;
+}
+
+.search-chip input {
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: #717171;
+    background: transparent;
+}
+
+.search-btn {
+    background-color: #000000;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-btn:hover {
+    background-color: #333333;
+}
+
+.search-meta {
+    max-width: 1400px;
+    margin: 24px auto 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 0 40px;
+}
+
+.search-meta h1 {
+    font-size: 28px;
+    margin: 0;
+}
+
+.search-meta p {
+    color: #777777;
+    margin: 4px 0 0;
+}
+
+.search-tabs {
+    display: flex;
+    gap: 12px;
+}
+
+.tab {
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid #dddddd;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.tab.active {
+    border-color: #000;
+    font-weight: 600;
+}
+
+.search-results-container {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr) 420px;
+    gap: 24px;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px 40px 80px;
+}
+
+.filters-sidebar {
+    padding: 30px 24px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.filters-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #222222;
+}
+
+.filter-group {
+    padding: 24px 0;
+    border-bottom: 1px solid #ebebeb;
+}
+
+.filter-group:first-of-type {
+    padding-top: 0;
+}
+
+.filter-label {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #222222;
+}
+
+.price-inputs {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    border: 1px solid #e0e0e0;
+    border-radius: 999px;
+    padding: 8px 18px;
+    background: #f8f8f8;
+    gap: 10px;
+}
+
+.price-inputs span {
+    color: #999999;
+    font-weight: 600;
+}
+
+.price-input {
+    width: 100%;
+    padding: 8px 0;
+    border: none;
+    font-size: 14px;
+    background: transparent;
+    text-align: center;
+}
+
+.price-input:focus {
+    outline: none;
+}
+
+.date-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #b0b0b0;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.date-input:focus {
+    outline: none;
+    border-color: #222222;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #222222;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.amenity-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.amenity-tag {
+    padding: 8px 16px;
+    background-color: #ffffff;
+    border: 1px solid #b0b0b0;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #222222;
+}
+
+.amenity-tag:hover {
+    border-color: #222222;
+    background-color: #f7f7f7;
+}
+
+.amenity-tag.active {
+    background-color: #000000;
+    color: #ffffff;
+    border-color: #000000;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.btn-clear {
+    flex: 1;
+    padding: 12px 20px;
+    background-color: #ffffff;
+    border: 1px solid #222222;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-clear:hover {
+    background-color: #f7f7f7;
+}
+
+.btn-apply {
+    flex: 1;
+    padding: 12px 20px;
+    background-color: #222222;
+    border: none;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-apply:hover {
+    background-color: #000000;
+}
+
+.listings-results {
+    padding: 24px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.results-header {
+    margin-bottom: 24px;
+}
+
+.results-count {
+    font-size: 14px;
+    color: #717171;
+    font-weight: 400;
+}
+
+.listings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.result-card {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 12px;
+    background-color: #ffffff;
+    border: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+}
+
+.result-card:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.result-image {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.result-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.btn-favorite {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: transform 0.2s;
+}
+
+.btn-favorite:hover {
+    transform: scale(1.1);
+}
+
+.btn-favorite.active {
+    color: #ff385c;
+}
+
+.result-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.result-type {
+    font-size: 12px;
+    color: #717171;
+    margin-bottom: 4px;
+}
+
+.result-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #222222;
+    margin: 0;
+}
+
+.result-price-section {
+    text-align: right;
+}
+
+.result-price {
+    font-size: 20px;
+    font-weight: 600;
+    color: #222222;
+}
+
+.price-period {
+    font-size: 14px;
+    color: #717171;
+}
+
+.result-features {
+    font-size: 14px;
+    color: #717171;
+    line-height: 1.6;
+    margin: 8px 0;
+}
+
+.result-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+}
+
+.rating-star {
+    color: #222222;
+}
+
+.rating-value {
+    font-weight: 600;
+    color: #222222;
+}
+
+.rating-count {
+    color: #717171;
+}
+
+.map-container {
+    position: sticky;
+    top: 20px;
+    height: calc(100vh - 160px);
+    background-color: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+.price-marker {
+    background: transparent;
+    border: none;
+}
+
+.price-marker-content {
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #222222;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.price-marker-content:hover {
+    background-color: #222222;
+    color: #ffffff;
+    transform: scale(1.05);
+    z-index: 1000;
 }

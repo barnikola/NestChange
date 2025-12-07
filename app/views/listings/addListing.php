@@ -1,194 +1,108 @@
-<!DOCTYPE html>
-<html lang="eng">
-	<head>
-    	<meta charset="UTF-8">
-    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-    	<title>NestChange - Add Listing</title>
-    <link rel="stylesheet" href="/css/theme.css">
-	</head>
-	
-	<body>
-		<!-- Header -->
-		<header class="header">
-        <div class="header-container">
-            <div class="header-left">
-                <a href="/">
-                    <img src="/assets/logo.png" alt="NestChange Logo" class="logo-icon">
-                </a>
-                <nav class="nav-links">
-                    <a href="/" class="nav-link">Home</a>
-                    <a href="#" class="nav-link">Listings</a>
-                    <a href="#" class="nav-link">Chat</a>
-                    <a href="#" class="nav-link">Pricing</a>
-                    <a href="#" class="nav-link">Contact</a>
-                </nav>
-            </div>
-            <div class="header-right">
-                <a href="/auth/signin" class="btn-signin">Sign in</a>
-                <a href="/auth/register" class="btn-register">Register</a>
-            </div>
-        </div>
-    </header>
+<?php
+$pageTitle = 'NestChange - Add Listing';
+$activeNav = 'listings';
+$breadcrumbs = [
+    ['label' => 'Home', 'url' => '/'],
+    ['label' => 'New Listing'],
+];
 
-    <!-- Breadcrumbs -->
-    <div class="breadcrumbs">
-        <div class="breadcrumbs-container">
-            <a href="/" class="breadcrumb-link">Home</a>
-            <span class="breadcrumb-separator">/</span>
-            <span class="breadcrumb-current">New Listing</span>
+ob_start();
+?>
+<section class="form-section">  
+    <div class="form-container">
+        <h1 class="form-title">
+            <span class="form-title-main">New Listing</span>
+        </h1>
+
+        <div class="form-box">
+            <form class="listing-form">
+                <h3 class="step-header">Step 1</h3>
+                <div class="step-line"></div>
+
+                <div class="new-form-group">
+                    <label>Name of Listing</label>
+                    <input type="text" placeholder="Value">
+                </div>
+
+                <div class="new-form-group">
+                    <label>Do you own or rent?</label>
+                    <div class="radio-row">
+                        <label><input type="radio" name="ownRent"> Rent</label>
+                        <label><input type="radio" name="ownRent"> Own</label>
+                    </div>
+                </div>
+
+                <div class="new-form-group">
+                    <label>Upload home ownership documentation</label>
+                    <div class="upload-box">⬆</div>
+                </div>
+
+                <h3 class="step-header">Step 2</h3>
+                <div class="step-line"></div>
+
+                <div class="new-form-group">
+                    <label>Room Type</label>
+                    <div class="radio-row">
+                        <label><input type="radio" name="room"> Whole apartment</label>
+                        <label><input type="radio" name="room"> Single room</label>
+                    </div>
+                </div>
+
+                <div class="new-form-group">
+                    <label>Address</label>
+                    <select>
+                        <option>Country</option>
+                    </select>
+                    <input type="text" placeholder="Address">
+                    <input type="text" placeholder="City">
+                    <input type="text" placeholder="Postcode">
+                </div>
+
+                <div class="new-form-group">
+                    <label>Upload images</label>
+                    <div class="upload-box">⬆</div>
+                </div>
+
+                <div class="new-form-group">
+                    <label>Date and Duration</label>
+                    <input type="date">
+                </div>
+
+                <h3 class="step-header">Step 3</h3>
+                <div class="step-line"></div>
+
+                <div class="new-form-group">
+                    <label>Description</label>
+                    <textarea placeholder="Value"></textarea>
+                </div>
+
+                <div class="new-form-group">
+                    <label>Preferences</label>
+                    <div class="tag-box">
+                        <span class="tag">No gender preference</span>
+                        <span class="tag">Only Female Students</span>
+                        <span class="tag">No overnight guests</span>
+                        <span class="tag">No pets allowed</span>
+                        <span class="tag">Smoking not allowed</span>
+                    </div>
+                </div>
+
+                <div class="new-form-group">
+                    <label>Services</label>
+                    <div class="tag-box">
+                        <span class="tag">Plant watering</span>
+                        <span class="tag">Deep Cleaning</span>
+                        <span class="tag">Tutoring</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="new-submit-btn">
+                    Validate &amp; Publish
+                </button>
+            </form>
         </div>
     </div>
-
-
-
-    <!-- New Listing Form Section -->
-    <section class="form-section">  
-        <div class="form-container">
-            <h1 class="form-title">
-                <span class="form-title-main">New Listing</span>
-            </h1>
-
-            <div class="form-box">
-                <form class="listing-form">
-
-                    <h3 class="step-header">Step 1</h3>
-                    <div class="step-line"></div>
-
-                    <div class="new-form-group">
-                        <label>Name of Listing</label>
-                        <input type="text" placeholder="Value">
-                    </div>
-
-                    <div class="new-form-group">
-                        <label>Do you own or rent?</label>
-                        <div class="radio-row">
-                            <label><input type="radio" name="ownRent"> Rent</label>
-                            <label><input type="radio" name="ownRent"> Own</label>
-                        </div>
-                    </div>
-
-                    <div class="new-form-group">
-                        <label>Upload home ownership documentation</label>
-                        <div class="upload-box">⬆</div>
-                    </div>
-
-                    <h3 class="step-header">Step 2</h3>
-                    <div class="step-line"></div>
-
-                    <div class="new-form-group">
-                        <label>Room Type</label>
-                        <div class="radio-row">
-                            <label><input type="radio" name="room"> Whole apartment</label>
-                            <label><input type="radio" name="room"> Single room</label>
-                        </div>
-                    </div>
-
-                    <div class="new-form-group">
-                        <label>Address</label>
-                        <select>
-                            <option>Country</option>
-                        </select>
-                        <input type="text" placeholder="Address">
-                        <input type="text" placeholder="City">
-                        <input type="text" placeholder="Postcode">
-                    </div>
-
-                    <div class="new-form-group">
-                        <label>Upload images</label>
-                        <div class="upload-box">⬆</div>
-                    </div>
-
-                    <div class="new-form-group">
-                        <label>Date and Duration</label>
-                        <input type="date">
-                    </div>
-
-                    <h3 class="step-header">Step 3</h3>
-                    <div class="step-line"></div>
-
-                    <div class="new-form-group">
-                        <label>Description</label>
-                        <textarea placeholder="Value"></textarea>
-                    </div>
-
-                    <div class="new-form-group">
-                        <label>Preferences</label>
-                        <div class="tag-box">
-                            <span class="tag">No gender preference</span>
-                            <span class="tag">Only Female Students</span>
-                            <span class="tag">No overnight guests</span>
-                            <span class="tag">No pets allowed</span>
-                            <span class="tag">Smoking not allowed</span>
-                        </div>
-                    </div>
-
-                    <div class="new-form-group">
-                        <label>Services</label>
-                        <div class="tag-box">
-                            <span class="tag">Plant watering</span>
-                            <span class="tag">Deep Cleaning</span>
-                            <span class="tag">Tutoring</span>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="new-submit-btn">
-                        Validate & Publish
-                    </button>
-
-                </form>
-            </div>
-        </div>
-    </section>
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-left">
-                <a href="/">
-                    <img src="/assets/logo.png" alt="NestChange Logo" class="footer-logo">
-                </a>
-            </div>
-            <div class="footer-nav">
-                <div class="footer-nav-column">
-                    <h4 class="footer-nav-title">Use cases</h4>
-                    <ul class="footer-nav-links">
-                        <li><a href="#">UI design</a></li>
-                        <li><a href="#">UX design</a></li>
-                        <li><a href="#">Wireframing</a></li>
-                        <li><a href="#">Diagramming</a></li>
-                        <li><a href="#">Brainstorming</a></li>
-                        <li><a href="#">Online whiteboard</a></li>
-                        <li><a href="#">Team collaboration</a></li>
-                    </ul>
-                </div>
-                <div class="footer-nav-column">
-                    <h4 class="footer-nav-title">Explore</h4>
-                    <ul class="footer-nav-links">
-                        <li><a href="#">Design</a></li>
-                        <li><a href="#">Prototyping</a></li>
-                        <li><a href="#">Development features</a></li>
-                        <li><a href="#">Design systems</a></li>
-                        <li><a href="#">Collaboration features</a></li>
-                        <li><a href="#">Design process</a></li>
-                        <li><a href="#">FigJam</a></li>
-                    </ul>
-                </div>
-                <div class="footer-nav-column">
-                    <h4 class="footer-nav-title">Resources</h4>
-                    <ul class="footer-nav-links">
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Best practices</a></li>
-                        <li><a href="#">Colors</a></li>
-                        <li><a href="#">Color wheel</a></li>
-                        <li><a href="#">Support</a></li>
-                        <li><a href="#">Developers</a></li>
-                        <li><a href="#">Resource library</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-
-	</body>
-
-</html>
+</section>
+<?php
+$content = ob_get_clean();
+include __DIR__ . '/../layouts/main.php';
