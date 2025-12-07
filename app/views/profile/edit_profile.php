@@ -1,97 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NestChange - Edit Profile</title>
-    <link rel="stylesheet" href="/css/theme.css">
-</head>
+<?php
+$pageTitle = 'NestChange - Edit Profile';
+$activeNav = '';
+$bodyClass = 'dark-page';
+$breadcrumbs = [
+    ['label' => 'Home', 'url' => '/'],
+    ['label' => 'My Profile', 'url' => '/profile'],
+    ['label' => 'Edit Profile'],
+];
 
-<body class="dark-page">
-
-<!-- Header -->
-    <header class="header">
-        <div class="header-container">
-            <div class="header-left">
-                <a href="/">
-                    <img src="/assets/logo.png" alt="NestChange Logo" class="logo-icon">
-                </a>
-                <nav class="nav-links">
-                    <a href="/" class="nav-link">Home</a>
-                    <a href="/listings" class="nav-link">Listings</a>
-                    <a href="#" class="nav-link">Chat</a>
-                    <a href="#" class="nav-link">Pricing</a>
-                    <a href="#" class="nav-link">Contact</a>
-                </nav>
-            </div>
-            <div class="header-right">
-                <a href="/profile" class="btn-signin">My Profile</a>
-            </div>
-        </div>
-    </header>
-
-    <!-- Breadcrumbs -->
-    <div class="breadcrumbs">
-        <div class="breadcrumbs-container">
-            <a href="/" class="breadcrumb-link">Home</a>
-            <span class="breadcrumb-separator">/</span>
-            <span class="breadcrumb-current"><a href="/profile" class="breadcrumb-link">My Profile</a></span>
-            <span class="breadcrumb-separator">/</span>
-            <span class="breadcrumb-current"><a href="/profile/edit" class="breadcrumb-link">Edit Profile</a></span>
-        </div>
-    </div>
-
+ob_start();
+?>
 <section class="edit-profile-section">
-
     <div class="edit-profile-card">
-
         <h1 class="edit-title">Edit Profile</h1>
 
         <form class="edit-form">
-
-            <!-- Profile Photo -->
             <label class="edit-label">Profile Photo</label>
             <div class="edit-photo-row">
                 <div class="edit-photo-preview">
-                    <img src="/assets/logo.png" id="previewImg">
+                    <img src="/assets/logo.png" id="previewImg" alt="Preview">
                 </div>
                 <input type="file" class="edit-input" accept="image/*" id="photoUpload">
             </div>
 
-            <!-- Full Name -->
             <label class="edit-label">Full Name</label>
             <input type="text" class="edit-input" value="Muhammed Arif EREN">
 
-            <!-- Username -->
             <label class="edit-label">Username</label>
             <input type="text" class="edit-input" value="mariferen52">
 
-            <!-- Location -->
             <label class="edit-label">Location</label>
             <input type="text" class="edit-input" placeholder="Ankara, Turkey">
 
-            <!-- Bio -->
             <label class="edit-label">Bio</label>
             <textarea class="edit-textarea" placeholder="Tell us about yourself..."></textarea>
 
-
             <button class="edit-save-btn">Save Changes</button>
-
         </form>
     </div>
-
 </section>
-
-<!-- Footer -->
-<footer class="footer">
-    <div class="footer-container">
-        <div class="footer-left">
-            <a href="/">
-                <img src="/assets/logo.png" alt="NestChange Logo" class="footer-logo">
-            </a>
-        </div>
-    </div>
-</footer>
-
-</body>
-</html>
+<?php
+$content = ob_get_clean();
+include __DIR__ . '/../layouts/main.php';

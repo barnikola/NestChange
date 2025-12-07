@@ -1,79 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>NestChange - My Exchanges</title>
-      <link rel="stylesheet" href="/css/theme.css">
-    </head>
+<?php
+$pageTitle = 'NestChange - My Profile';
+$activeNav = '';
+$bodyClass = 'dark-page';
+$breadcrumbs = [
+    ['label' => 'Home', 'url' => '/'],
+    ['label' => 'My Profile'],
+];
 
-    <body class="dark-page">
+ob_start();
+?>
+<section id="profile-dashboard">
+    <div class="profile-sidebar">
+        <div class="profile-avatar">
+            <img src="/assets/logo.png" alt="Profile avatar"/>
+        </div>
+        <h2 class="profile-name">Muhammed Arif EREN</h2>
+        <p class="profile-username">@mariferen52</p>
 
-    <!-- Header -->
-        <header class="header">
-            <div class="header-container">
-                <div class="header-left">
-                    <a href="/">
-                        <img src="/assets/logo.png" alt="NestChange Logo" class="logo-icon">
-                    </a>
-                    <nav class="nav-links">
-                        <a href="/" class="nav-link">Home</a>
-                        <a href="/listings" class="nav-link">Listings</a>
-                        <a href="#" class="nav-link">Chat</a>
-                        <a href="#" class="nav-link">Pricing</a>
-                        <a href="#" class="nav-link">Contact</a>
-                    </nav>
-                </div>
-                <div class="header-right">
-                    <a href="/profile" class="btn-signin">My Profile</a>
-                </div>
+        <div class="profile-stats">
+            <div>
+                <h3>5</h3>
+                <p>Exchanges</p>
             </div>
-        </header>
-
-        <!-- Breadcrumbs -->
-        <div class="breadcrumbs">
-            <div class="breadcrumbs-container">
-                <a href="/" class="breadcrumb-link">Home</a>
-                <span class="breadcrumb-separator">/</span>
-                <span class="breadcrumb-current"><a href="/profile" class="breadcrumb-link">My Profile</a></span>
+            <div>
+                <h3>4.8</h3>
+                <p>Rating</p>
             </div>
         </div>
 
-    <!-- PROFILE DASHBOARD -->
-    <section id="profile-dashboard">
-
-        <div class="profile-sidebar">
-            <div class="profile-avatar"><img src="/assets/logo.png"/>
-            </div>
-            <h2 class="profile-name">Muhammed Arif EREN</h2>
-            <p class="profile-username">@mariferen52</p>
-
-            <div class="profile-stats">
-                <div>
-                    <h3>5</h3>
-                    <p>Exchanges</p>
-                </div>
-                <div>
-                    <h3>4.8</h3>
-                    <p>Rating</p>
-                </div>
-            </div>
-
-            <button class="profile-edit-btn"><a href="/profile/edit">Edit Profile</a></button>
-        </div>
+        <button class="profile-edit-btn"><a href="/profile/edit">Edit Profile</a></button>
+    </div>
 
     <div class="profile-content">
-
         <h2 class="profile-section-title">Your Dashboard</h2>
 
         <div class="profile-cards">
-
             <div class="profile-card add-card">
                 <h3>Add New Listing</h3>
                 <p>Create a new property listing and start hosting.</p>
                 <a href="/listings/add-listing" class="profile-card-btn">Add Listing</a>
             </div>
-
 
             <div class="profile-card">
                 <h3>Your Listings</h3>
@@ -90,26 +56,24 @@
             <div class="profile-card">
                 <h3>Messages</h3>
                 <p>You have 2 unread messages.</p>
-                <a href="#" class="profile-card-btn">Open Chat</a>
+                <a href="/chat" class="profile-card-btn">Open Chat</a>
             </div>
-
         </div>
 
         <h2 class="profile-section-title" style="margin-top:40px;">Account Settings</h2>
 
         <div class="profile-settings-list">
             <a href="#" class="profile-settings-item">Change password</a>
-            <a href="#" class="profile-settings-item">Privacy & security</a>
+            <a href="#" class="profile-settings-item">Privacy &amp; security</a>
             <a href="#" class="profile-settings-item">Delete account</a>
         </div>
 
         <h2 class="profile-section-title" style="margin-top:40px;">Comments</h2>
         
         <div class="profile-comments-box">
-
             <div class="profile-comment">
                 <div class="comment-header">
-                    <img src="/assets/logo.png" class="comment-avatar">
+                    <img src="/assets/logo.png" class="comment-avatar" alt="Emily">
                     <div>
                         <h4 class="comment-name">Emily Rose</h4>
                         <p class="comment-date">2 weeks ago</p>
@@ -122,7 +86,7 @@
 
             <div class="profile-comment">
                 <div class="comment-header">
-                    <img src="/assets/logo.png" class="comment-avatar">
+                    <img src="/assets/logo.png" class="comment-avatar" alt="David">
                     <div>
                         <h4 class="comment-name">David Keller</h4>
                         <p class="comment-date">1 month ago</p>
@@ -132,60 +96,9 @@
                     “Everything was smooth. Check-in was easy and the apartment looked exactly like the photos.”
                 </p>
             </div>
-
         </div>
-
     </div>
-
-    </section>
-
-      <!-- Footer -->
-        <footer class="footer">
-            <div class="footer-container">
-                <div class="footer-left">
-                    <a href="/">
-                        <img src="/assets/logo.png" alt="NestChange Logo" class="footer-logo">
-                    </a>
-                </div>
-                <div class="footer-nav">
-                    <div class="footer-nav-column">
-                        <h4 class="footer-nav-title">Use cases</h4>
-                        <ul class="footer-nav-links">
-                            <li><a href="#">UI design</a></li>
-                            <li><a href="#">UX design</a></li>
-                            <li><a href="#">Wireframing</a></li>
-                            <li><a href="#">Diagramming</a></li>
-                            <li><a href="#">Brainstorming</a></li>
-                            <li><a href="#">Online whiteboard</a></li>
-                            <li><a href="#">Team collaboration</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-nav-column">
-                        <h4 class="footer-nav-title">Explore</h4>
-                        <ul class="footer-nav-links">
-                            <li><a href="#">Design</a></li>
-                            <li><a href="#">Prototyping</a></li>
-                            <li><a href="#">Development features</a></li>
-                            <li><a href="#">Design systems</a></li>
-                            <li><a href="#">Collaboration features</a></li>
-                            <li><a href="#">Design process</a></li>
-                            <li><a href="#">FigJam</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-nav-column">
-                        <h4 class="footer-nav-title">Resources</h4>
-                        <ul class="footer-nav-links">
-                            <li><a href="#">Blog</a></li>
-                            <li><a href="#">Best practices</a></li>
-                            <li><a href="#">Colors</a></li>
-                            <li><a href="#">Color wheel</a></li>
-                            <li><a href="#">Support</a></li>
-                            <li><a href="#">Developers</a></li>
-                            <li><a href="#">Resource library</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </footer>
-</body>
-</html>
+</section>
+<?php
+$content = ob_get_clean();
+include __DIR__ . '/../layouts/main.php';
