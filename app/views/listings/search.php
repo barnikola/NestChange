@@ -23,15 +23,15 @@ ob_start();
     <div class="search-bar">
         <div class="search-chip">
             <label>Location</label>
-            <input type="text" id="location" placeholder="Bordeaux" value="Bordeaux">
+            <input type="text" id="location" placeholder="Anywhere" value="<?php echo htmlspecialchars($filters['location'] ?? ''); ?>">
         </div>
         <div class="search-chip">
             <label>Dates</label>
-            <input type="text" id="checkin" placeholder="Feb 19-26" value="Feb 19-26">
+            <input type="text" id="available_from" placeholder="Anytime" onfocus="(this.type='date')" onblur="(this.type='text')" value="<?php echo htmlspecialchars($filters['available_from'] ?? ''); ?>">
         </div>
         <div class="search-chip">
             <label>Guests</label>
-            <input type="text" id="guests" placeholder="2 guests" value="2 guests">
+            <input type="number" id="guests" placeholder="Guests" min="1" value="<?php echo htmlspecialchars($filters['max_guests'] ?? '2'); ?>">
         </div>
         <button class="search-btn" onclick="performSearch()">🔍</button>
     </div>
@@ -45,15 +45,6 @@ ob_start();
     <aside class="filters-sidebar">
         <h3 class="filters-title">Filters</h3>
         
-        <!-- Price Range -->
-        <div class="filter-group">
-            <h4 class="filter-label">Price range</h4>
-            <div class="price-inputs">
-                <input type="number" class="price-input" placeholder="0" value="0">
-                <span>—</span>
-                <input type="number" class="price-input" placeholder="1000" value="1000">
-            </div>
-        </div>
 
         <!-- Dates -->
         <div class="filter-group">
@@ -123,83 +114,84 @@ ob_start();
     <!-- Center - Listings Results -->
     <main class="listings-results">
         <div class="listings-list" id="listings-list">
-            <!-- Listing Card 1 -->
-            <article class="result-card">
-                <div class="result-image">
-                    <img src="/assets/listing.jpg" alt="Bordeaux Getaway">
-                    <button class="btn-favorite">♡</button>
+            <?php if (empty($listings)): ?>
+                <div class="no-results">
+                    <h3>No listings found</h3>
+                    <p>Try adjusting your search filters or exploring different locations.</p>
                 </div>
-                <div class="result-details">
-                    <div class="result-header">
-                        <div>
-                            <p class="result-type">Entire home in Bordeaux</p>
-                            <h3 class="result-title">Bordeaux Getaway</h3>
+            <?php else: ?>
+                <?php foreach ($listings as $listing): ?>
+                    <article class="result-card" data-listing-id="<?php echo htmlspecialchars($listing['id']); ?>">
+                        <div class="result-image">
+                            <?php if (!empty($listing['primary_image'])): ?>
+                                <img src="/<?php echo ltrim($listing['primary_image'], '/'); ?>" alt="<?php echo htmlspecialchars($listing['title']); ?>">
+                            <?php else: ?>
+                                <img src="/assets/listing.jpg" alt="<?php echo htmlspecialchars($listing['title']); ?>">
+                            <?php endif; ?>
+                            <button class="btn-favorite">♡</button>
                         </div>
-                        <div class="result-price-section">
-                            <span class="result-price">$325</span>
-                            <span class="price-period">/night</span>
+                        <div class="result-details">
+                            <div class="result-header">
+                                <div>
+                                    <p class="result-type">
+                                        <?php echo $listing['room_type'] === 'whole_apartment' ? 'Entire home' : 'Private room'; ?> 
+                                        in <?php echo htmlspecialchars($listing['city']); ?>
+                                    </p>
+                                    <h3 class="result-title">
+                                        <a href="<?php echo BASE_URL; ?>/listings/<?php echo htmlspecialchars($listing['id']); ?>">
+                                            <?php echo htmlspecialchars($listing['title']); ?>
+                                        </a>
+                                    </h3>
+                                </div>
+                            </div>
+                            <p class="result-features">
+                                <?php if (!empty($listing['max_guests'])): ?>
+                                    <?php echo htmlspecialchars($listing['max_guests']); ?> guests · 
+                                <?php endif; ?>
+                                <?php echo $listing['room_type'] === 'whole_apartment' ? 'Entire Home' : 'Private Room'; ?>
+                                <?php if (!empty($listing['host_first_name'])): ?>
+                                    <br>Host: <?php echo htmlspecialchars($listing['host_first_name']); ?>
+                                <?php endif; ?>
+                            </p>
+                            <p class="result-description">
+                                <?php echo htmlspecialchars(substr($listing['description'] ?? '', 0, 100)); ?>
+                                <?php if (strlen($listing['description'] ?? '') > 100): ?>...<?php endif; ?>
+                            </p>
                         </div>
-                    </div>
-                    <p class="result-features">6 guests · Entire Home · 4 beds · 2 bath<br>Wifi · Pool · Parking</p>
-                    <div class="result-rating">
-                        <span class="rating-star">★</span>
-                        <span class="rating-value">4.8</span>
-                        <span class="rating-count">(210 reviews)</span>
-                    </div>
-                </div>
-            </article>
+                    </article>
+                <?php endforeach; ?>
+            <?php endif; ?>
 
-            <!-- Listing Card 2 -->
-            <article class="result-card">
-                <div class="result-image">
-                    <img src="/assets/listing.jpg" alt="Charming Waterfront Condo">
-                    <button class="btn-favorite">♡</button>
+            
+            <!-- Pagination -->
+            <?php if (isset($pagination) && $pagination['total_pages'] > 1): ?>
+                <div class="pagination" style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+                    <?php 
+                        $queryParams = $_GET;
+                        $curPage = $pagination['current_page'];
+                        $prevPage = max(1, $curPage - 1);
+                        $nextPage = min($pagination['total_pages'], $curPage + 1);
+                        
+                        // Previous Link
+                        $queryParams['page'] = $prevPage;
+                        $prevUrl = '?' . http_build_query($queryParams);
+                        
+                        // Next Link
+                        $queryParams['page'] = $nextPage;
+                        $nextUrl = '?' . http_build_query($queryParams);
+                    ?>
+                    
+                    <?php if ($curPage > 1): ?>
+                        <a href="<?php echo htmlspecialchars($prevUrl); ?>" class="pagination-btn">« Previous</a>
+                    <?php endif; ?>
+                    
+                    <span class="pagination-info">Page <?php echo $curPage; ?> of <?php echo $pagination['total_pages']; ?></span>
+                    
+                    <?php if ($curPage < $pagination['total_pages']): ?>
+                        <a href="<?php echo htmlspecialchars($nextUrl); ?>" class="pagination-btn">Next »</a>
+                    <?php endif; ?>
                 </div>
-                <div class="result-details">
-                    <div class="result-header">
-                        <div>
-                            <p class="result-type">Entire home in Bordeaux</p>
-                            <h3 class="result-title">Charming Waterfront Condo</h3>
-                        </div>
-                        <div class="result-price-section">
-                            <span class="result-price">$200</span>
-                            <span class="price-period">/night</span>
-                        </div>
-                    </div>
-                    <p class="result-features">4 guests · Entire Home · 2 beds · 2 bath<br>Wifi · Kitchen · Washer</p>
-                    <div class="result-rating">
-                        <span class="rating-star">★</span>
-                        <span class="rating-value">4.9</span>
-                        <span class="rating-count">(145 reviews)</span>
-                    </div>
-                </div>
-            </article>
-
-            <!-- Listing Card 3 -->
-            <article class="result-card">
-                <div class="result-image">
-                    <img src="/assets/listing.jpg" alt="Historic City Center Home">
-                    <button class="btn-favorite">♡</button>
-                </div>
-                <div class="result-details">
-                    <div class="result-header">
-                        <div>
-                            <p class="result-type">Entire home in Bordeaux</p>
-                            <h3 class="result-title">Historic City Center Home</h3>
-                        </div>
-                        <div class="result-price-section">
-                            <span class="result-price">$125</span>
-                            <span class="price-period">/night</span>
-                        </div>
-                    </div>
-                    <p class="result-features">4-6 guests · Entire Home · 5 beds · 3 bath<br>Wifi · Kitchen · Free Parking</p>
-                    <div class="result-rating">
-                        <span class="rating-star">★</span>
-                        <span class="rating-value">5.0</span>
-                        <span class="rating-count">(318 reviews)</span>
-                    </div>
-                </div>
-            </article>
+            <?php endif; ?>
         </div>
     </main>
 
@@ -209,8 +201,28 @@ ob_start();
 </div>
 
 <script>
-    // Initialize the map centered on Bordeaux
-    const map = L.map('map').setView([44.8378, -0.5792], 12);
+    // Listings data from database
+    const listingsData = <?php echo json_encode(array_map(function($l) {
+        return [
+            'id' => $l['id'],
+            'lat' => floatval($l['latitude'] ?? 0),
+            'lng' => floatval($l['longitude'] ?? 0),
+            'title' => $l['title'],
+            'city' => $l['city'],
+            'room_type' => $l['room_type']
+        ];
+    }, $listings ?? [])); ?>;
+
+    // Initialize the map - center on first listing or default location
+    let defaultLat = 44.8378;
+    let defaultLng = -0.5792;
+    
+    if (listingsData.length > 0 && listingsData[0].lat && listingsData[0].lng) {
+        defaultLat = listingsData[0].lat;
+        defaultLng = listingsData[0].lng;
+    }
+    
+    const map = L.map('map').setView([defaultLat, defaultLng], 12);
 
     // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -218,66 +230,71 @@ ob_start();
         maxZoom: 19
     }).addTo(map);
 
-    // Sample listings data with coordinates
-    const listings = [
-        { lat: 44.8378, lng: -0.5792, price: '$325', title: 'Bordeaux Getaway' },
-        { lat: 44.8450, lng: -0.5650, price: '$200', title: 'Charming Waterfront Condo' },
-        { lat: 44.8320, lng: -0.5900, price: '$125', title: 'Historic City Center Home' }
-    ];
-
-    // Custom marker icon for price tags
-    const createPriceMarker = (price) => {
+    // Custom marker icon
+    const createMarker = (title) => {
         return L.divIcon({
-            className: 'price-marker',
-            html: `<div class="price-marker-content">${price}</div>`,
-            iconSize: [60, 30],
-            iconAnchor: [30, 30]
+            className: 'property-marker',
+            html: `<div class="property-marker-content">📍</div>`,
+            iconSize: [30, 30],
+            iconAnchor: [15, 30]
         });
     };
 
-    // Add markers to the map
-    listings.forEach(listing => {
-        const marker = L.marker([listing.lat, listing.lng], {
-            icon: createPriceMarker(listing.price)
-        }).addTo(map);
-        
-        marker.bindPopup(`<b>${listing.title}</b><br>${listing.price}/night`);
-        
-        // Add hover effect
-        marker.on('mouseover', function() {
-            this.openPopup();
-        });
+    // Add markers to the map for listings with coordinates
+    const bounds = [];
+    listingsData.forEach(listing => {
+        if (listing.lat && listing.lng && listing.lat !== 0 && listing.lng !== 0) {
+            const marker = L.marker([listing.lat, listing.lng], {
+                icon: createMarker(listing.title)
+            }).addTo(map);
+            
+            marker.bindPopup(`<b>${listing.title}</b><br>${listing.city}<br><a href="<?php echo BASE_URL; ?>/listings/${listing.id}">View Listing</a>`);
+            
+            marker.on('mouseover', function() {
+                this.openPopup();
+            });
+            
+            bounds.push([listing.lat, listing.lng]);
+        }
     });
+    
+    // Fit map to show all markers
+    if (bounds.length > 1) {
+        map.fitBounds(bounds, { padding: [50, 50] });
+    }
 
-    // Search functionality
+    // Search functionality - redirects to search with query params
     function performSearch() {
         const location = document.getElementById('location').value;
-        const checkin = document.getElementById('checkin').value;
         const guests = document.getElementById('guests').value;
+        const availableFrom = document.getElementById('available_from').value;
         
-        console.log('Searching for:', { location, checkin, guests });
-        // Add AJAX call to backend here
+        const params = new URLSearchParams();
+        if (location) params.set('location', location);
+        if (guests) {
+            const guestNum = parseInt(guests);
+            if (!isNaN(guestNum)) params.set('guests', guestNum);
+        }
+        if (availableFrom) params.set('available_from', availableFrom);
+        
+        window.location.href = '<?php echo BASE_URL; ?>/listings' + (params.toString() ? '?' + params.toString() : '');
     }
 
     // Filter functionality
     document.querySelector('.btn-clear').addEventListener('click', function() {
         document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-        document.querySelectorAll('.price-input').forEach(input => input.value = '');
         document.querySelectorAll('.date-input').forEach(input => input.value = '');
         document.querySelectorAll('.amenity-tag').forEach(tag => tag.classList.remove('active'));
     });
 
     document.querySelector('.btn-apply').addEventListener('click', function() {
         const filters = {
-            priceMin: document.querySelectorAll('.price-input')[0].value,
-            priceMax: document.querySelectorAll('.price-input')[1].value,
             stayTypes: Array.from(document.querySelectorAll('input[name="stay_type"]:checked')).map(cb => cb.value),
             rules: Array.from(document.querySelectorAll('input[name="rules"]:checked')).map(cb => cb.value),
             amenities: Array.from(document.querySelectorAll('.amenity-tag.active')).map(tag => tag.textContent)
         };
         
-        console.log('Applying filters:', filters);
-        // Add AJAX call to backend here
+        window.location.href = '<?php echo BASE_URL; ?>/listings' + (params.toString() ? '?' + params.toString() : '');
     });
 
     // Amenity tag toggle
