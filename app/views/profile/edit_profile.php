@@ -18,7 +18,7 @@ ob_start();
             <label class="edit-label">Profile Photo</label>
             <div class="edit-photo-row">
                 <div class="edit-photo-preview">
-                    <img src="/assets/logo.png" id="previewImg" alt="Preview">
+                    <img src="assets/logo.png" id="previewImg" alt="Preview">
                 </div>
                 <input type="file" class="edit-input" accept="image/*" id="photoUpload">
             </div>

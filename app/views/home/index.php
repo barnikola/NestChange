@@ -25,28 +25,23 @@ ob_start();
     <section class="action-cards">
         <div class="action-card">
             <div class="action-card-image">
-                <img src="/assets/listing.jpg" alt="Property listing" class="action-card-image">
+                <img src="assets/listing.jpg" alt="Property listing" class="action-card-image">
                 <div class="action-overlay">
-                 <a href="/listings/add-listing">
-                    <button class="action-btn">
+                 <a href="listings/add-listing" class="action-btn">
                         <span class="action-icon">+</span>
                         <span >Add listing</span>
-                    </button>
                 </a>
                 </div>
             </div>
         </div>
         <div class="action-card">
             <div class="action-card-image">
-                <img src="/assets/listing.jpg" alt="Property listing" class="action-card-image">
+                <img src="assets/listing.jpg" alt="Property listing" class="action-card-image">
 
                 <div class="action-overlay">
-                <a href="/listings/search">
-
-                    <button class="action-btn">
+                <a href="listings/search" class="action-btn">
                         <span class="action-icon">🔍</span>
                         <span>Find listing</span>
-                    </button>
                 </a>
                 </div>
             </div>
@@ -60,32 +55,32 @@ ob_start();
             <p class="listings-subtitle">Available stays</p>
             <div class="listings-grid">
                 <div class="listing-card">
-                    <img src="/assets/listing.jpg" alt="Property listing" class="listing-image">
+                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
                     <h3 class="listing-title">Listing</h3>
                     <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 </div>
                 <div class="listing-card">
-                    <img src="/assets/listing.jpg" alt="Property listing" class="listing-image">
+                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
                     <h3 class="listing-title">Listing</h3>
                     <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 </div>
                 <div class="listing-card">
-                    <img src="/assets/listing.jpg" alt="Property listing" class="listing-image">
+                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
                     <h3 class="listing-title">Listing</h3>
                     <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 </div>
                 <div class="listing-card">
-                    <img src="/assets/listing.jpg" alt="Property listing" class="listing-image">
+                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
                     <h3 class="listing-title">Listing</h3>
                     <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 </div>
                 <div class="listing-card">
-                    <img src="/assets/listing.jpg" alt="Property listing" class="listing-image">
+                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
                     <h3 class="listing-title">Listing</h3>
                     <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 </div>
                 <div class="listing-card">
-                    <img src="/assets/listing.jpg" alt="Property listing" class="listing-image">
+                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
                     <h3 class="listing-title">Listing</h3>
                     <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 </div>

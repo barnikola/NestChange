@@ -4,20 +4,47 @@
  * Handles routing to view files and serving static assets
  */
 
+session_start();
+if (file_exists(__DIR__ . '/../core/database.php')) {
+    require_once __DIR__ . '/../core/database.php';
+}
+
+
+
+
 // Get the request URI and remove query string
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
+$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+
 // Remove the base path if running from public directory
-$basePath = '/';
-if (strpos($requestUri, $basePath) === 0) {
-    // Strip the configured base path only once from the beginning
-    $path = substr($requestUri, strlen($basePath));
+if (strpos($requestUri, $scriptDir) === 0) {
+    $path = substr($requestUri, strlen($scriptDir));
 } else {
     $path = $requestUri;
 }
 
 // Remove leading/trailing slashes
 $path = trim($path, '/');
+
+if (isset($_GET['target']) && !empty($_GET['target'])) {
+    
+    $target = $_GET['target'];
+
+    if ($target === 'listings') {
+        $target = 'listing';
+    }
+    
+    $controllerName = $target . 'Controller';
+    $controllerPath = __DIR__ . '/../app/controllers/' . $controllerName . '.php';
+
+    if (file_exists($controllerPath)) {
+        require_once $controllerPath;
+        exit;
+    }
+}
+
+
 
 // Debug: Log the path (remove in production)
 // error_log("Request path: " . $path);
@@ -37,7 +64,7 @@ if (strpos($path, 'assets/') === 0) {
 // Handle CSS files
 if (strpos($path, 'css/') === 0) {
     // Serve CSS from frontend/css/
-    $cssFile = __DIR__ . '/../frontend/' . $path;
+    $cssFile = __DIR__ . '' . $path;
     if (file_exists($cssFile)) {
         header('Content-Type: text/css');
         readfile($cssFile);
@@ -46,7 +73,7 @@ if (strpos($path, 'css/') === 0) {
 }
 
 // Default route
-if (empty($path) || $path === 'index.php') {
+if (empty($path) || $path === 'index.php' || $path === 'public' || $path === 'public/index.php') {
     $path = 'home/index';
 }
 

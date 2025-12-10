@@ -13,7 +13,7 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
-    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/NestChange/public/css/theme.css?v=<?php echo time(); ?>">
     <?php echo $extraHead; ?>
 </head>
 <body<?php echo $bodyAttr; ?>>
@@ -22,19 +22,19 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
         <div class="header-container">
             <div class="header-left">
                 <a href="/">
-                    <img src="/assets/logo.png" alt="NestChange Logo" class="logo-icon">
+                    <img src="/NestChange/public/assets/logo.png" alt="NestChange Logo" class="logo-icon">
                 </a>
                 <nav class="nav-links">
                     <a href="/" class="nav-link<?php echo $activeNav === 'home' ? ' nav-link-active' : ''; ?>">Home</a>
-                    <a href="/listings" class="nav-link<?php echo $activeNav === 'listings' ? ' nav-link-active' : ''; ?>">Listings</a>
-                    <a href="/chat" class="nav-link<?php echo $activeNav === 'chat' ? ' nav-link-active' : ''; ?>">Chat</a>
+                    <a href="listings" class="nav-link<?php echo $activeNav === 'listings' ? ' nav-link-active' : ''; ?>">Listings</a>
+                    <a href="chat" class="nav-link<?php echo $activeNav === 'chat' ? ' nav-link-active' : ''; ?>">Chat</a>
                     <a href="#" class="nav-link">Pricing</a>
                     <a href="#" class="nav-link">Contact</a>
                 </nav>
             </div>
             <div class="header-right">
-                <a href="/auth/signin" class="btn-signin">Sign in</a>
-                <a href="/auth/register" class="btn-register">Register</a>
+                <a href="auth/signin" class="btn-signin">Sign in</a>
+                <a href="auth/register" class="btn-register">Register</a>
             </div>
         </div>
     </header>
@@ -67,7 +67,7 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
         <div class="footer-container">
             <div class="footer-left">
                 <a href="/">
-                    <img src="/assets/logo.png" alt="NestChange Logo" class="footer-logo">
+                    <img src="assets/logo.png" alt="NestChange Logo" class="footer-logo">
                 </a>
             </div>
             <div class="footer-nav">
