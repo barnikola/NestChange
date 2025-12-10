@@ -25,63 +25,87 @@ ob_start();
     <div class="listing-carousel">
         <button class="carousel-control prev" type="button" aria-label="Previous photo">‹</button>
         <div class="carousel-track">
-            <?php foreach ($carouselImages ?? [] as $index => $image): ?>
-                <img
-                    src="<?php echo htmlspecialchars($image, ENT_QUOTES, 'UTF-8'); ?>"
-                    alt="Listing photo <?php echo $index + 1; ?>"
-                    class="carousel-slide<?php echo $index === 0 ? ' active' : ''; ?>">
-            <?php endforeach; ?>
+            <?php if (!empty($listing['images'])): ?>
+                <?php foreach ($listing['images'] as $index => $img): ?>
+                    <img
+                        src="/<?php echo ltrim($img['image'], '/'); ?>"
+                        alt="<?php echo htmlspecialchars($listing['title']); ?> photo <?php echo $index + 1; ?>"
+                        class="carousel-slide<?php echo $index === 0 ? ' active' : ''; ?>">
+                <?php endforeach; ?>
+            <?php else: ?>
+                <img src="/assets/listing.jpg" alt="Default listing photo" class="carousel-slide active">
+            <?php endif; ?>
         </div>
         <button class="carousel-control next" type="button" aria-label="Next photo">›</button>
         <div class="carousel-dots">
-            <?php foreach ($carouselImages ?? [] as $index => $image): ?>
-                <span class="carousel-dot<?php echo $index === 0 ? ' active' : ''; ?>"
-                      data-index="<?php echo $index; ?>"></span>
-            <?php endforeach; ?>
+            <?php if (!empty($listing['images'])): ?>
+                <?php foreach ($listing['images'] as $index => $img): ?>
+                    <span class="carousel-dot<?php echo $index === 0 ? ' active' : ''; ?>"
+                          data-index="<?php echo $index; ?>"></span>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
     <div class="text-box">
-    <h2>House Exchange in Greece in 2 Weeks</h2>
-        <p>Experience a smooth and secure house exchange in Greece tailored for short-term stays.</p>
-        <p>Our platform makes it easy to connect, verify, and exchange homes within 2 weeks.<br>
-            Fast process, trusted hosts, and a perfect Greek getaway without high costs.</p>
+        <h2><?php echo htmlspecialchars($listing['title']); ?></h2>
+        <p class="listing-location"><?php echo htmlspecialchars($listing['city']); ?>, <?php echo htmlspecialchars($listing['country']); ?></p>
+        <p class="listing-details">
+            <?php echo $listing['room_type'] === 'whole_apartment' ? 'Entire home' : 'Private room'; ?> · 
+            <?php echo htmlspecialchars($listing['max_guests'] ?? 0); ?> guests
+        </p>
+        <div class="listing-description">
+            <?php echo nl2br(htmlspecialchars($listing['description'])); ?>
+        </div>
     </div>
 </section>
 
 <section class="preferences-box">
     <div class="preferences">
-        <h3>Preferences</h3>
+        <h3>Preferences & Amenities</h3>
         <p class="subtext">These are rules and preferences of this listing</p>
     </div>
     <div class="pref-list">
-        <div class="pref-item"><span class="icon">i</span>No smoking</div>
-        <div class="pref-item"><span class="icon">i</span>House exchange</div>
-        <div class="pref-item"><span class="icon">i</span>Pet care</div>
-        <div class="pref-item"><span class="icon">i</span>Only female students</div>
-        <div class="pref-item"><span class="icon">i</span>Language exchange</div>
-        <div class="pref-item"><span class="icon">i</span>No noise after 11</div>
+        <?php if (!empty($listing['attributes'])): ?>
+            <?php foreach ($listing['attributes'] as $attr): ?>
+                <div class="pref-item"><span class="icon">i</span><?php echo htmlspecialchars($attr['name']); ?></div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No specific preferences listed.</p>
+        <?php endif; ?>
     </div>
 </section>
 
 <section class="calendar-card">
     <div class="calendar-header-row">
         <button class="calendar-nav" data-direction="prev" aria-label="Previous month">‹</button>
-        <div class="calendar-month-label">April 2025</div>
+        <div class="calendar-month-label"><?php echo date('F Y'); ?></div>
         <button class="calendar-nav" data-direction="next" aria-label="Next month">›</button>
     </div>
     <div class="listing-calendar">
-        <div id="availability-calendar" data-year="2025" data-month="4"></div>
+        <div id="availability-calendar" 
+             data-year="<?php echo date('Y'); ?>" 
+             data-month="<?php echo date('n'); ?>"
+             data-listing-id="<?php echo $listing['id']; ?>">
+        </div>
     </div>
-    <div class="time-row">
-        <span>Time</span>
-        <span class="time-value">9:41 AM</span>
-    </div>
+    <?php if (!empty($listing['availability'])): ?>
+        <div class="availability-info" style="margin-top: 10px; font-size: 0.9em; color: #666;">
+            <strong>Available periods:</strong><br>
+            <?php foreach ($listing['availability'] as $period): ?>
+                <?php 
+                    $from = date('M j, Y', strtotime($period['available_from']));
+                    $until = $period['available_until'] ? date('M j, Y', strtotime($period['available_until'])) : 'Ongoing';
+                    echo "{$from} - {$until}<br>";
+                ?>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 </section>
 
 <section class="container">
     <div class="div-button">
-        <button class="chat" onclick="window.location.href='/chat'">Chat</button>
-        <button class="listing" onclick="window.location.href='/listings/apply-for-listing'">Apply for listing</button>
+        <button class="chat" onclick="window.location.href='/chat/<?php echo $listing['host_profile_id']; ?>'">Chat</button>
+        <button class="listing" onclick="window.location.href='/listings/apply/<?php echo $listing['id']; ?>'">Apply for listing</button>
     </div>
 </section>
 
@@ -90,7 +114,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('availability-calendar');
     const monthLabel = document.querySelector('.calendar-month-label');
     const navButtons = document.querySelectorAll('.calendar-nav');
-    const blockedDates = <?php echo json_encode($blockedDates); ?>;
+    
+    const blockedDates = <?php echo json_encode($blockedDates ?? []); ?>; 
+    
     let currentYear = parseInt(calendarEl.dataset.year, 10);
     let currentMonth = parseInt(calendarEl.dataset.month, 10);
     let selectedDate = null;
