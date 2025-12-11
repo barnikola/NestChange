@@ -1,24 +1,37 @@
 <?php
-$pageTitle = 'NestChange - Moderator Dashboard';
-$activeNav = '';
-$breadcrumbs = [
-    ['label' => 'Home', 'url' => '/'],
-    ['label' => 'Moderator Dashboard'],
-];
-
-ob_start();
 ?>
-<section class="listings-section">
-    <div class="listings-container">
-        <h2 class="listings-title">Moderator Dashboard</h2>
-        <p class="listings-subtitle">Moderation actions and insights.</p>
-        <div class="profile-settings-list">
-            <a href="#" class="profile-settings-item">Pending approvals</a>
-            <a href="#" class="profile-settings-item">Flagged conversations</a>
-            <a href="#" class="profile-settings-item">User reports</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Moderator Interface - NestChange</title>
+    <link rel="stylesheet" href="/css/panel.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <h2>🛠 NestChange — Moderator Interface</h2>
+    </header>
+
+    <section class="container">
+        <div class="panel-box">
+            <h1>Moderator Dashboard</h1>
+            <p>Moderators help maintain a safe and clean platform.</p>
+
+            <div class="options">
+                <div class="card">
+                    <h3>🏘 Review Listings</h3>
+                    <p>Approve or remove inappropriate listings.</p>
+                </div>
+
+                <div class="card">
+                    <h3>📄 Check Documents</h3>
+                    <p>Review user verification documents.</p>
+                </div>
+            </div>
         </div>
-    </div>
-</section>
-<?php
-$content = ob_get_clean();
-include __DIR__ . '/../layouts/main.php';
+    </section>
+
+</body>
+</html>
