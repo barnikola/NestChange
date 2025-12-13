@@ -1,24 +1,40 @@
 <?php
-$pageTitle = 'NestChange - Admin Dashboard';
-$activeNav = '';
-$breadcrumbs = [
-    ['label' => 'Home', 'url' => '/'],
-    ['label' => 'Admin Dashboard'],
-];
-
-ob_start();
 ?>
-<section class="listings-section">
-    <div class="listings-container">
-        <h2 class="listings-title">Admin Dashboard</h2>
-        <p class="listings-subtitle">Administrative tools will appear here.</p>
-        <div class="profile-settings-list">
-            <a href="#" class="profile-settings-item">Manage listings</a>
-            <a href="#" class="profile-settings-item">Review verifications</a>
-            <a href="#" class="profile-settings-item">View analytics</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/css/panel.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <h2>NestChange — Admin Interface</h2>
+    </header>
+
+    <section class="container">
+        <div class="panel-box">
+            <h1>Admin Dashboard</h1>
+            <p>This interface allows the admin to manage the entire platform.</p>
+
+            <div class="options">
+                <div class="card">
+                    <h3>👥 Manage Users</h3>
+                    <p>Approve, block or delete user accounts.</p>
+                </div>
+
+                <div class="card">
+                    <h3>🏘 Manage Listings</h3>
+                    <p>View or remove property listings.</p>
+                </div>
+
+                <div class="card">
+                    <h3>📄 Verify Documents</h3>
+                    <p>Review ID proofs and uploaded documents.</p>
+                </div>
+            </div>
         </div>
-    </div>
-</section>
-<?php
-$content = ob_get_clean();
-include __DIR__ . '/../layouts/main.php';
+    </section>
+
+</body>
+</html>

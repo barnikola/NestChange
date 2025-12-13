@@ -1,9 +1,9 @@
 <?php
-$pageTitle = 'NestChange - Set New Password';
+$pageTitle = 'NestChange - Reset Password';
 $activeNav = '';
 $breadcrumbs = [
     ['label' => 'Home', 'url' => '/'],
-    ['label' => 'Set New Password'],
+    ['label' => 'Reset Password'],
 ];
 
 ob_start();
@@ -11,25 +11,50 @@ ob_start();
 <section class="form-section">
     <div class="form-container">
         <h1 class="form-title">
-            <span class="form-title-main">Set New Password</span>
+            <span class="form-title-main">Reset Password</span>
         </h1>
         
         <div class="form-box">
-            <form class="auth-form" action="/update-password" method="POST">
+            <?php if (isset($_SESSION['_flash']['error'])): ?>
+                <div class="alert alert-error">
+                    <p><?= htmlspecialchars($_SESSION['_flash']['error']) ?></p>
+                </div>
+                <?php unset($_SESSION['_flash']['error']); ?>
+            <?php endif; ?>
+
+            <form class="auth-form" method="POST" action="/auth/reset-password">
+                <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
+                <input type="hidden" name="token" value="<?= htmlspecialchars($token ?? '') ?>">
+                
                 <div class="form-group">
-                    <label for="new-password" class="form-label">New Password</label>
-                    <input type="password" id="new-password" name="new-password" class="form-input" placeholder="Enter new password" required>
+                    <label for="password" class="form-label">New Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input" 
+                        placeholder="At least 8 characters" 
+                        required
+                    >
+                    <small>Must be at least 8 characters with uppercase, lowercase, and a number</small>
                 </div>
                 
                 <div class="form-group">
-                    <label for="confirm-password" class="form-label">Confirm Password</label>
-                    <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder="Confirm new password" required>
+                    <label for="password_confirm" class="form-label">Confirm Password</label>
+                    <input 
+                        type="password" 
+                        id="password_confirm" 
+                        name="password_confirm" 
+                        class="form-input" 
+                        placeholder="Re-enter password" 
+                        required
+                    >
                 </div>
                 
-                <button type="submit" class="btn-submit">Set Password</button>
+                <button type="submit" class="btn-submit">Reset Password</button>
                 
                 <div class="form-links">
-                    <a href="/auth/signin" class="form-link">Back to Sign in</a>
+                    <a href="/auth/signin" class="form-link">Back to sign in</a>
                 </div>
             </form>
         </div>

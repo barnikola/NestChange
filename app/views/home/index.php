@@ -14,10 +14,10 @@ ob_start();
                 <span class="nest">Nest</span><span class="change">Change</span>
             </h1>
             <p class="hero-tagline">Explore the world for free!</p>
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search for listing">
-                <button class="search-clear">×</button>
-            </div>
+            <form action="/listings" method="GET" class="search-container">
+                <input type="text" name="location" class="search-input" placeholder="Search for listing">
+                <button type="button" class="search-clear" onclick="this.form.reset()">×</button>
+            </form>
         </div>
     </section>
 
@@ -27,7 +27,8 @@ ob_start();
             <div class="action-card-image">
                 <img src="assets/listing.jpg" alt="Property listing" class="action-card-image">
                 <div class="action-overlay">
-                 <a href="listings/add-listing" class="action-btn">
+                 <a href="/listings/create">
+                    <button class="action-btn">
                         <span class="action-icon">+</span>
                         <span >Add listing</span>
                 </a>
@@ -39,7 +40,9 @@ ob_start();
                 <img src="assets/listing.jpg" alt="Property listing" class="action-card-image">
 
                 <div class="action-overlay">
-                <a href="listings/search" class="action-btn">
+                <a href="/listings">
+
+                    <button class="action-btn">
                         <span class="action-icon">🔍</span>
                         <span>Find listing</span>
                 </a>
@@ -51,39 +54,28 @@ ob_start();
     <!-- Listings Section -->
     <section class="listings-section">
         <div class="listings-container">
-            <h2 class="listings-title">Listings</h2>
+            <h2 class="listings-title">Recent Listings</h2>
             <p class="listings-subtitle">Available stays</p>
             <div class="listings-grid">
-                <div class="listing-card">
-                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
-                    <h3 class="listing-title">Listing</h3>
-                    <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                </div>
-                <div class="listing-card">
-                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
-                    <h3 class="listing-title">Listing</h3>
-                    <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                </div>
-                <div class="listing-card">
-                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
-                    <h3 class="listing-title">Listing</h3>
-                    <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                </div>
-                <div class="listing-card">
-                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
-                    <h3 class="listing-title">Listing</h3>
-                    <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                </div>
-                <div class="listing-card">
-                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
-                    <h3 class="listing-title">Listing</h3>
-                    <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                </div>
-                <div class="listing-card">
-                    <img src="assets/listing.jpg" alt="Property listing" class="listing-image">
-                    <h3 class="listing-title">Listing</h3>
-                    <p class="listing-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                </div>
+                <?php if (!empty($listings)): ?>
+                    <?php foreach ($listings as $listing): ?>
+                        <div class="listing-card">
+                            <?php if (!empty($listing['primary_image'])): ?>
+                                <img src="/assets/listing.jpg" alt="Property listing" class="listing-image">
+                            <?php endif; ?>
+                            <h3 class="listing-title">
+                                <a href="/listings/<?php echo $listing['id']; ?>" style="text-decoration: none; color: inherit;">
+                                    <?php echo htmlspecialchars($listing['title']); ?>
+                                </a>
+                            </h3>
+                            <p class="listing-description">
+                                <?php echo htmlspecialchars(substr($listing['description'] ?? '', 0, 100)); ?>...
+                            </p>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No listings available at the moment.</p>
+                <?php endif; ?>
             </div>
         </div>
     </section>
