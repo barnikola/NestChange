@@ -909,12 +909,18 @@ body.chat-page {
     max-width: 1400px;
     margin: 0 auto;
     padding: 30px 40px 80px;
+    height: calc(100vh - 80px); /* Adjust based on header/footer height */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .chat-layout {
     display: grid;
     grid-template-columns: 320px 1fr;
     gap: 30px;
+    flex: 1;
+    min-height: 0; /* Important for grid children to respect height */
 }
 
 .chat-sidebar {
@@ -925,6 +931,13 @@ body.chat-page {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    height: 100%;
+    overflow: hidden;
+    min-height: 0; /* Important for flex children */
+}
+
+.chat-sidebar-header {
+    flex-shrink: 0;
 }
 
 .chat-sidebar-eyebrow {
@@ -965,6 +978,30 @@ body.chat-page {
     display: flex;
     flex-direction: column;
     gap: 6px;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0; /* Important for scrolling */
+    /* Custom scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: #d0d0d0 transparent;
+}
+
+.chat-thread-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-thread-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-thread-list::-webkit-scrollbar-thumb {
+    background-color: #d0d0d0;
+    border-radius: 3px;
+}
+
+.chat-thread-list::-webkit-scrollbar-thumb:hover {
+    background-color: #b0b0b0;
 }
 
 .chat-thread {
@@ -995,11 +1032,6 @@ body.chat-page {
     justify-content: center;
     font-weight: 600;
     color: #333333;
-}
-
-.chat-thread-avatar.support {
-    background-color: #111111;
-    color: #ffffff;
 }
 
 .chat-thread-avatar.large {
@@ -1043,6 +1075,16 @@ body.chat-page {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    height: 100%;
+    overflow: hidden;
+    min-height: 0; /* Important for flex children */
+}
+
+.chat-panel-header,
+.chat-status-pill,
+#chat-action-container,
+.chat-composer {
+    flex-shrink: 0; /* Prevent these from shrinking */
 }
 
 .chat-panel-header {
@@ -1105,6 +1147,31 @@ body.chat-page {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0; /* Important for scrolling */
+    padding-right: 8px; /* Space for scrollbar */
+    /* Custom scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: #d0d0d0 transparent;
+}
+
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background-color: #d0d0d0;
+    border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background-color: #b0b0b0;
 }
 
 .chat-message {
@@ -1145,6 +1212,11 @@ body.chat-page {
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 12px;
+}
+
+.chat-action-content {
+    flex: 1;
+    min-width: 200px;
 }
 
 .chat-action-eyebrow {
@@ -1241,6 +1313,25 @@ body.chat-page {
 
 .chat-send-btn:hover {
     background-color: #1a1a1a;
+}
+
+/* Chat empty states */
+.chat-empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: #666666;
+}
+
+.chat-empty-hint {
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    opacity: 0.8;
+}
+
+/* Chat action container - prevents overflow */
+#chat-action-container {
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 /*Exchange Dashboard*/
