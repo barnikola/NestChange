@@ -1,4 +1,15 @@
-<IfModule mod_dir.c>
-    DirectoryIndex index.php
-    FallbackResource /index.php
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1. Güvenlik: Eğer istenen şey "index.php" ise döngüye sokma
+    RewriteRule ^index\.php$ - [L]
+
+    # 2. Kontrol: İstenen şey gerçek bir dosya (!-f) değilse...
+    RewriteCond %{REQUEST_FILENAME} !-f
+
+    # 3. Kontrol: Ve gerçek bir klasör (!-d) değilse...
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # 4. Yönlendirme: Her şeyi index.php'ye gönder (QSA: Parametreleri koru)
+    RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>

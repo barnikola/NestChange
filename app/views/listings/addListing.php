@@ -41,6 +41,12 @@ ob_start();
             <span class="form-title-main">New Listing</span>
         </h1>
 
+        <?php if (isset($alert) && $alert): ?>
+            <div style="background-color: #f8d7da; color: #721c24; padding: 15px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #f5c6cb;">
+                <?= $alert ?>
+            </div>
+        <?php endif; ?>
+
         <div class="form-box">
             <?php if (isset($_SESSION['flash_error'])): ?>
                 <div class="alert alert-error" style="background:#ffe6e6; color:#d00; padding:10px; margin-bottom:20px;">
@@ -70,6 +76,9 @@ ob_start();
                     <?= getError('host_role', $errors ?? []) ?>
                 </div>
 
+                <div class="new-form-group">
+                    <label>Upload home ownership documentation</label>
+                    <input type="file" name="verification_doc" id="doc-upload" accept=".pdf, image/*" required>
                 <div class="new-form-group <?= hasError('verification_document', $errors ?? []) ?>">
                     <label>Upload home ownership documentation (PDF, JPG, PNG)</label>
                     <input type="file" name="verification_document" accept=".pdf,.jpg,.jpeg,.png">
@@ -94,7 +103,22 @@ ob_start();
                 </div>
 
                 <div class="new-form-group">
+                    <label>Max Guests</label>
+                    <input type="number" name="max_guests" value="1" min="1" style="width: 100px;">
+                </div>
+                
+                <div class="new-form-group">
                     <label>Address</label>
+                    <select name="country" required>
+                        <option value="">Select Country</option>
+                        <option value="France">France</option>
+                        <option value="Turkey">Turkey</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Croatia">Croatia</option>
+                        <option value="India">India</option>
+                    </select>
+                    <input type="text" name="address_line" placeholder="Address" required>
+                    <input type="text" placeholder="City" name="city" required>
                     <div class="<?= hasError('country', $errors ?? []) ?>">
                         <input type="text" name="country" placeholder="Country" value="<?= old('country', '', $old ?? []) ?>" required style="margin-bottom: 5px;">
                         <?= getError('country', $errors ?? []) ?>
@@ -107,8 +131,6 @@ ob_start();
                          <input type="text" name="city" placeholder="City" value="<?= old('city', '', $old ?? []) ?>" required style="margin-bottom: 5px;">
                          <?= getError('city', $errors ?? []) ?>
                     </div>
-                    <!-- Coordinates optional -->
-                    <!-- Coordinates automatically fetched -->
                 </div>
 
                 <div class="new-form-group <?= hasError('images', $errors ?? []) ?>">
@@ -120,6 +142,10 @@ ob_start();
                 <div class="new-form-group">
                     <label>Date Available From</label>
                     <input type="date" name="available_from" value="<?= old('available_from', '', $old ?? []) ?>">
+                </div>
+                <div class="new-form-group">
+                    <label>Date Available Until</label>
+                    <input type="date" name="available_until" value="<?= old('available_until', '', $old ?? []) ?>">
                 </div>
 
                 <h3 class="step-header">Step 3</h3>

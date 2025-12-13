@@ -25,20 +25,19 @@ ob_start();
     <section class="action-cards">
         <div class="action-card">
             <div class="action-card-image">
-                <img src="/assets/listing.jpg" alt="Property listing" class="action-card-image">
+                <img src="assets/listing.jpg" alt="Property listing" class="action-card-image">
                 <div class="action-overlay">
                  <a href="/listings/create">
                     <button class="action-btn">
                         <span class="action-icon">+</span>
                         <span >Add listing</span>
-                    </button>
                 </a>
                 </div>
             </div>
         </div>
         <div class="action-card">
             <div class="action-card-image">
-                <img src="/assets/listing.jpg" alt="Property listing" class="action-card-image">
+                <img src="assets/listing.jpg" alt="Property listing" class="action-card-image">
 
                 <div class="action-overlay">
                 <a href="/listings">
@@ -46,7 +45,6 @@ ob_start();
                     <button class="action-btn">
                         <span class="action-icon">🔍</span>
                         <span>Find listing</span>
-                    </button>
                 </a>
                 </div>
             </div>

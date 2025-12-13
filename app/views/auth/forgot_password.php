@@ -49,7 +49,8 @@ ob_start();
                 <button type="submit" class="btn-submit">Send Reset Link</button>
                 
                 <div class="form-links">
-                    <a href="/auth/signin" class="form-link">Back to sign in</a>
+                    <a href="auth/signin" class="form-link">Back to Sign in</a>
+                    <a href="auth/register" class="form-link">Register</a>
                 </div>
             </form>
         </div>
