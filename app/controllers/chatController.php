@@ -210,21 +210,13 @@ class ChatController extends Controller
         $user = $this->currentUser();
         $currentProfileId = $this->getUserProfileId();
         
-        if (!$currentProfileId) {
-            $this->flash('error', 'Please complete your profile first.');
-            $this->redirect(BASE_URL . '/profile');
-        }
-        
-        // Prevent chatting with yourself
         if ($currentProfileId === $profileId) {
             $this->flash('error', 'You cannot start a chat with yourself.');
             $this->redirect(BASE_URL . '/chat');
         }
         
-        // Get listing ID from query if provided (for context)
         $listingId = $this->getInput('listing_id');
         
-        // Find or create a chat
         $chatId = $this->chatModel->findOrCreateDirectChat($currentProfileId, $profileId, $listingId);
         
         if (!$chatId) {
