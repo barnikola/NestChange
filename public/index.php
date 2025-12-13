@@ -81,12 +81,18 @@ $router->get('/applications/list.json', ['ApplicationController', 'listJson']);
 // ====== API/AJAX Routes ======
 $router->get('/api/listings/search', ['ListingController', 'search']);
 
+// ====== Chat Routes ======
+$router->get('/chat', ['ChatController', 'index']);
+$router->post('/chat/send', ['ChatController', 'sendMessage']);
+$router->get('/chat/messages', ['ChatController', 'getMessages']);
+$router->get('/chat/search', ['ChatController', 'search']);
+$router->get('/chat/details', ['ChatController', 'getChatDetails']);
+
 // ====== Admin/Moderator Routes ======
 $router->get('/admin', 'admin/dashboard');
 $router->get('/admin/dashboard', 'admin/dashboard');
 $router->get('/moderator', 'moderator/dashboard');
 $router->get('/moderator/dashboard', 'moderator/dashboard');
-$router->get('/chat', 'chat/index');
 
 // Dispatch the request
 $router->dispatch();
