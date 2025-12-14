@@ -22,6 +22,12 @@ class Session
 
         if (session_status() === PHP_SESSION_NONE) {
             // Configure session settings
+            $sessionPath = sys_get_temp_dir() . '/nestchange_sessions';
+            if (!is_dir($sessionPath)) {
+                mkdir($sessionPath, 0777, true);
+            }
+            session_save_path($sessionPath);
+
             ini_set('session.use_strict_mode', 1);
             ini_set('session.use_cookies', 1);
             ini_set('session.use_only_cookies', 1);

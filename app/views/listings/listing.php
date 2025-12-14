@@ -99,8 +99,18 @@ ob_start();
 
 <section class="container">
     <div class="div-button">
-        <button class="chat" onclick="window.location.href='/chat/<?php echo $listing['host_profile_id']; ?>'">Chat</button>
-        <button class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/apply'">Apply for listing</button>
+        <?php 
+        $currentUser = Session::getUser();
+        $userProfileId = $currentUser['profile_id'] ?? null;
+        $isOwner = $userProfileId && $userProfileId === $listing['host_profile_id'];
+        ?>
+
+        <?php if (!$isOwner): ?>
+            <button class="chat" onclick="window.location.href='/chat/<?php echo $listing['host_profile_id']; ?>'">Chat</button>
+            <button class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/apply'">Apply for listing</button>
+        <?php else: ?>
+             <button class="listing" style="background: #ccc; cursor: default;" disabled>You own this listing</button>
+        <?php endif; ?>
     </div>
 </section>
 
