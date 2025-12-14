@@ -1,7 +1,4 @@
 <?php
-// Start session
-session_start();
-
 // Load core files
 require_once __DIR__ . '/../app/config.php';
 require_once __DIR__ . '/../app/core/router.php';
@@ -10,83 +7,107 @@ require_once __DIR__ . '/../app/core/session.php';
 require_once __DIR__ . '/../app/core/model.php';
 require_once __DIR__ . '/../app/core/controller.php';
 
+// Start session with secure settings
+Session::start();
+
 // Create router instance
 $router = new Router();
+$cacheFile = __DIR__ . '/../app/cache/routes.php';
 
-// ====== Authentication Routes ======
-$router->get('/login', ['AuthController', 'showLogin']);
-$router->get('/signin', ['AuthController', 'showLogin']);
-$router->get('/auth/signin', ['AuthController', 'showLogin']);
-$router->get('/auth/login', ['AuthController', 'showLogin']);
-$router->post('/login', ['AuthController', 'login']);
-$router->post('/signin', ['AuthController', 'login']);
-$router->post('/auth/login', ['AuthController', 'login']);
+// CHECK: Do we have a cached version?
+if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
+    
+    // --- FAST PATH ---
+    // Load the array directly from the file
+    $cachedRoutes = require $cacheFile;
+    $router->setRoutes($cachedRoutes);
 
-$router->get('/register', ['AuthController', 'showRegister']);
-$router->get('/auth/register', ['AuthController', 'showRegister']);
-$router->post('/register', ['AuthController', 'register']);
-$router->post('/auth/register', ['AuthController', 'register']);
+} else {
 
-$router->get('/logout', ['AuthController', 'logout']);
-$router->post('/logout', ['AuthController', 'logout']);
-$router->get('/auth/logout', ['AuthController', 'logout']);
+    // --- SLOW PATH (First Run) ---
+    // ====== Authentication Routes ======
+    $router->get('/login', ['AuthController', 'showLogin']);
+    $router->get('/signin', ['AuthController', 'showLogin']);
+    $router->get('/auth/signin', ['AuthController', 'showLogin']);
+    $router->get('/auth/login', ['AuthController', 'showLogin']);
+    $router->post('/login', ['AuthController', 'login']);
+    $router->post('/signin', ['AuthController', 'login']);
+    $router->post('/auth/login', ['AuthController', 'login']);
 
-$router->get('/forgot-password', ['AuthController', 'showForgotPassword']);
-$router->get('/auth/forgot-password', ['AuthController', 'showForgotPassword']);
-$router->post('/forgot-password', ['AuthController', 'forgotPassword']);
-$router->post('/auth/forgot-password', ['AuthController', 'forgotPassword']);
+    $router->get('/register', ['AuthController', 'showRegister']);
+    $router->get('/auth/register', ['AuthController', 'showRegister']);
+    $router->post('/register', ['AuthController', 'register']);
+    $router->post('/auth/register', ['AuthController', 'register']);
 
-$router->get('/reset-password', ['AuthController', 'showResetPassword']);
-$router->get('/auth/reset-password', ['AuthController', 'showResetPassword']);
-$router->post('/reset-password', ['AuthController', 'resetPassword']);
-$router->post('/auth/reset-password', ['AuthController', 'resetPassword']);
+    $router->get('/logout', ['AuthController', 'logout']);
+    $router->post('/logout', ['AuthController', 'logout']);
+    $router->get('/auth/logout', ['AuthController', 'logout']);
 
-// ====== Home Routes ======
-$router->get('/', ['HomeController', 'index']);
-$router->get('/home', ['HomeController', 'index']);
+    $router->get('/forgot-password', ['AuthController', 'showForgotPassword']);
+    $router->get('/auth/forgot-password', ['AuthController', 'showForgotPassword']);
+    $router->post('/forgot-password', ['AuthController', 'forgotPassword']);
+    $router->post('/auth/forgot-password', ['AuthController', 'forgotPassword']);
 
-// ====== Listing Routes ======
-$router->get('/listings', ['ListingController', 'index']);
-$router->get('/listings/search', ['ListingController', 'search']);
-$router->get('/listings/create', ['ListingController', 'create']);
-$router->post('/listings/create', ['ListingController', 'store']);
-$router->get('/listings/{id}', ['ListingController', 'show']);
-$router->get('/listings/{id}/edit', ['ListingController', 'edit']);
-$router->post('/listings/{id}/edit', ['ListingController', 'update']);
-$router->post('/listings/{id}/delete', ['ListingController', 'destroy']);
-$router->post('/listings/{id}/publish', ['ListingController', 'publish']);
-$router->post('/listings/{id}/pause', ['ListingController', 'pause']);
-$router->get('/my-listings', ['ListingController', 'myListings']);
-$router->post('/listings/{listingId}/images/{imageId}/delete', ['ListingController', 'deleteImage']);
+    $router->get('/reset-password', ['AuthController', 'showResetPassword']);
+    $router->get('/auth/reset-password', ['AuthController', 'showResetPassword']);
+    $router->post('/reset-password', ['AuthController', 'resetPassword']);
+    $router->post('/auth/reset-password', ['AuthController', 'resetPassword']);
 
-// ====== Profile Routes ======
-$router->get('/profile', ['ProfileController', 'index']);
-$router->get('/profile/edit', ['ProfileController', 'edit']);
-$router->post('/profile/edit', ['ProfileController', 'update']);
-$router->post('/profile/update', ['ProfileController', 'update']);
-$router->get('/profile/{id}', ['ProfileController', 'show']);
-$router->post('/profile/upload-document', ['ProfileController', 'uploadDocument']);
+    // ====== Home Routes ======
+    $router->get('/', ['HomeController', 'index']);
+    $router->get('/home', ['HomeController', 'index']);
 
-// ====== Application Routes ======
-$router->get('/my-applications', ['ApplicationController', 'myApplications']);
-$router->get('/received-applications', ['ApplicationController', 'receivedApplications']);
-$router->get('/applications/{id}', ['ApplicationController', 'show']);
-$router->get('/listings/{listingId}/apply', ['ApplicationController', 'create']);
-$router->post('/listings/{listingId}/apply', ['ApplicationController', 'store']);
-$router->post('/applications/{id}/accept', ['ApplicationController', 'accept']);
-$router->post('/applications/{id}/reject', ['ApplicationController', 'reject']);
-$router->post('/applications/{id}/withdraw', ['ApplicationController', 'withdraw']);
-$router->get('/applications/list.json', ['ApplicationController', 'listJson']);
+    // ====== Listing Routes ======
+    $router->get('/listings', ['ListingController', 'index']);
+    $router->get('/listings/search', ['ListingController', 'search']);
+    $router->get('/listings/create', ['ListingController', 'create']);
+    $router->post('/listings/create', ['ListingController', 'store']);
+    $router->get('/listings/{id}', ['ListingController', 'show']);
+    $router->get('/listings/{id}/edit', ['ListingController', 'edit']);
+    $router->post('/listings/{id}/edit', ['ListingController', 'update']);
+    $router->post('/listings/{id}/delete', ['ListingController', 'destroy']);
+    $router->post('/listings/{id}/publish', ['ListingController', 'publish']);
+    $router->post('/listings/{id}/pause', ['ListingController', 'pause']);
+    $router->get('/my-listings', ['ListingController', 'myListings']);
+    $router->post('/listings/{listingId}/images/{imageId}/delete', ['ListingController', 'deleteImage']);
 
-// ====== API/AJAX Routes ======
-$router->get('/api/listings/search', ['ListingController', 'search']);
+    // ====== Profile Routes ======
+    $router->get('/profile', ['ProfileController', 'index']);
+    $router->get('/profile/edit', ['ProfileController', 'edit']);
+    $router->post('/profile/edit', ['ProfileController', 'update']);
+    $router->post('/profile/update', ['ProfileController', 'update']);
+    $router->get('/profile/{id}', ['ProfileController', 'show']);
+    $router->post('/profile/upload-document', ['ProfileController', 'uploadDocument']);
 
-// ====== Admin/Moderator Routes ======
-$router->get('/admin', 'admin/dashboard');
-$router->get('/admin/dashboard', 'admin/dashboard');
-$router->get('/moderator', 'moderator/dashboard');
-$router->get('/moderator/dashboard', 'moderator/dashboard');
-$router->get('/chat', 'chat/index');
+    // ====== Application Routes ======
+    $router->get('/my-applications', ['ApplicationController', 'myApplications']);
+    $router->get('/received-applications', ['ApplicationController', 'receivedApplications']);
+    $router->get('/applications/{id}', ['ApplicationController', 'show']);
+    $router->get('/listings/{listingId}/apply', ['ApplicationController', 'create']);
+    $router->post('/listings/{listingId}/apply', ['ApplicationController', 'store']);
+    $router->post('/applications/{id}/accept', ['ApplicationController', 'accept']);
+    $router->post('/applications/{id}/reject', ['ApplicationController', 'reject']);
+    $router->post('/applications/{id}/withdraw', ['ApplicationController', 'withdraw']);
+    $router->get('/applications/list.json', ['ApplicationController', 'listJson']);
+
+    // ====== API/AJAX Routes ======
+    $router->get('/api/listings/search', ['ListingController', 'search']);
+
+    // ====== Admin/Moderator Routes ======
+    $router->get('/admin', 'admin/dashboard');
+    $router->get('/admin/dashboard', 'admin/dashboard');
+    $router->get('/moderator', 'moderator/dashboard');
+    $router->get('/moderator/dashboard', 'moderator/dashboard');
+    $router->get('/chat', 'chat/index');
+
+    // AFTER defining all routes, save them to the cache file
+    // We use var_export to turn the array into PHP code
+    if (getenv('APP_ENV') !== 'development') {
+        file_put_contents($cacheFile, '<?php return ' . var_export($router->getRoutes(), true) . ';');
+    }
+}
+
+
 
 // Dispatch the request
 $router->dispatch();

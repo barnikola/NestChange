@@ -48,7 +48,7 @@ class User extends Model
     }
 
 
-    public function updatePassword(int|string $userId, string $newPassword): bool
+    public function updatePassword(int|string $table, $userId, string $newPassword): bool
     {
         $hash = password_hash($newPassword, PASSWORD_ALGO, ['cost' => PASSWORD_COST]);
         return $this->update($userId, ['password_hash' => $hash]) > 0;
@@ -87,7 +87,7 @@ class User extends Model
 
     public function getUserWithProfile(int|string $userId): array|false
     {
-        $sql = "SELECT a.*, p.first_name, p.last_name, p.phone, p.bio, p.city, p.country, p.profile_picture
+        $sql = "SELECT a.*, p.id as profile_id, p.first_name, p.last_name, p.phone, p.bio, p.city, p.country, p.profile_picture
                 FROM account a
                 LEFT JOIN user_profile p ON a.id = p.account_id
                 WHERE a.id = ?";

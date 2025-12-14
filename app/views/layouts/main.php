@@ -33,8 +33,12 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                 </nav>
             </div>
             <div class="header-right">
-                <a href="/auth/signin" class="btn-signin">Sign in</a>
-                <a href="/auth/register" class="btn-register">Register</a>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="/auth/logout" class="btn-signin">Sign Out</a>
+                <?php else: ?>
+                    <a href="/auth/signin" class="btn-signin">Sign in</a>
+                    <a href="/auth/register" class="btn-register">Register</a>
+                <?php endif; ?>
             </div>
         </div>
     </header>

@@ -184,7 +184,11 @@ class AuthController extends Controller
         }
 
         // Login successful
-        $safeUser = $this->userModel->getSafeUserData($user);
+        $userWithProfile = $this->userModel->getUserWithProfile($user['id']);
+        // If for some reason profile doesn't exist (shouldn't happen for approved users normally but safe check)
+        $sessionUser = $userWithProfile ?: $user;
+        
+        $safeUser = $this->userModel->getSafeUserData($sessionUser);
         Session::login($safeUser);
 
         // Handle remember me

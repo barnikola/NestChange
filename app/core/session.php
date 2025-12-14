@@ -31,6 +31,13 @@ class Session
                 ini_set('session.cookie_secure', 1);
             }
             
+            // Set writable save path to avoid permission issues
+            $sessionPath = sys_get_temp_dir() . '/nestchange_sessions';
+            if (!file_exists($sessionPath)) {
+                mkdir($sessionPath, 0777, true);
+            }
+            session_save_path($sessionPath);
+            
             session_name(SESSION_NAME);
             session_set_cookie_params([
                 'lifetime' => SESSION_LIFETIME,

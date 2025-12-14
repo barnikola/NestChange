@@ -140,7 +140,7 @@ class Database
 
     /**
      * Delete rows from a table
-     * 
+     *  public function create(array $data): int|string
      * @param string $table The table name
      * @param string $where WHERE clause
      * @param array $params Parameters for WHERE clause
@@ -184,6 +184,7 @@ class Database
     {
         return $this->pdo->lastInsertId();
     }
+
 
     /**
      * Prevent cloning of the instance
