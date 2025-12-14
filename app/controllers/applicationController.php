@@ -85,7 +85,16 @@ class ApplicationController extends Controller
     public function create(string $listingId): void
     {
         $this->requireAuth();
+        $user = $this->currentUser();
 
+        if (isset($user['profile_id'])) {
+            $listingModel = $this->model('Listing');
+            if ($listingModel->isOwner($listingId, $user['profile_id'])) {
+                $this->flash('error', 'You cannot apply to your own listing.');
+                $this->redirect(BASE_URL . '/listings/' . $listingId);
+                return;
+            }
+        }
         $this->view('applications/create', [
             'listingId'  => $listingId,
             'csrf_token' => $this->getCsrfToken(),
