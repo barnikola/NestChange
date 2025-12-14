@@ -13,8 +13,7 @@ Session::start();
 // Create router instance
 $router = new Router();
 $cacheFile = __DIR__ . '/../app/cache/routes.php';
-<<<<<<< HEAD
-=======
+
 
 // CHECK: Do we have a cached version?
 if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
@@ -194,6 +193,7 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
     // We use var_export to turn the array into PHP code
     if (getenv('APP_ENV') !== 'development') {
         file_put_contents($cacheFile, '<?php return ' . var_export($router->getRoutes(), true) . ';');
+    }
     }
 }
 
