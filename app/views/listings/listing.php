@@ -12,12 +12,7 @@ $carouselImages = [
     '/assets/carousel-interior.jpg',
 ];
 
-$blockedDates = [
-    '2025-04-05',
-    '2025-04-06',
-    '2025-04-12',
-    '2025-04-21',
-];
+$availablePeriods = $listing['availability'] ?? [];
 
 ob_start();
 ?>
@@ -105,7 +100,7 @@ ob_start();
 <section class="container">
     <div class="div-button">
         <button class="chat" onclick="window.location.href='/chat/<?php echo $listing['host_profile_id']; ?>'">Chat</button>
-        <button class="listing" onclick="window.location.href='/listings/apply/<?php echo $listing['id']; ?>'">Apply for listing</button>
+        <button class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/apply'">Apply for listing</button>
     </div>
 </section>
 
@@ -114,19 +109,60 @@ document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('availability-calendar');
     const monthLabel = document.querySelector('.calendar-month-label');
     const navButtons = document.querySelectorAll('.calendar-nav');
+    const applyButton = document.querySelector('.div-button .listing'); // Apply button
     
-    const blockedDates = <?php echo json_encode($blockedDates ?? []); ?>; 
+    // Initial apply link base
+    const applyBaseUrl = applyButton.getAttribute('onclick').match(/'([^']+)'/)[1];
+    
+    const availablePeriods = <?php echo json_encode($availablePeriods ?? []); ?>; 
     
     let currentYear = parseInt(calendarEl.dataset.year, 10);
     let currentMonth = parseInt(calendarEl.dataset.month, 10);
-    let selectedDate = null;
+    
+    // Selection state
+    let startDate = null;
+    let endDate = null;
 
     function render() {
-        renderAvailabilityCalendar(calendarEl, currentYear, currentMonth, blockedDates, selectedDate, (dateStr) => {
-            selectedDate = dateStr;
+        renderAvailabilityCalendar(calendarEl, currentYear, currentMonth, availablePeriods, startDate, endDate, (dateStr) => {
+            handleDateSelect(dateStr);
         });
         const displayDate = new Date(currentYear, currentMonth - 1, 1);
         monthLabel.textContent = displayDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+        updateApplyButton();
+    }
+    
+    function handleDateSelect(dateStr) {
+        if (!startDate || (startDate && endDate)) {
+            // Start new selection
+            startDate = dateStr;
+            endDate = null;
+        } else {
+            // Complete selection
+            if (dateStr < startDate) {
+                endDate = startDate;
+                startDate = dateStr;
+            } else {
+                endDate = dateStr;
+            }
+        }
+        render();
+    }
+
+        function updateApplyButton() {
+        if (startDate && endDate) {
+            applyButton.onclick = function() {
+                window.location.href = `${applyBaseUrl}?start=${startDate}&end=${endDate}`;
+            };
+            applyButton.textContent = `Apply (${formatDateDMY(startDate)} to ${formatDateDMY(endDate)})`;
+        } else if (startDate) {
+             applyButton.textContent = `Select End Date`;
+        } else {
+            applyButton.onclick = function() {
+                window.location.href = applyBaseUrl;
+            };
+            applyButton.textContent = 'Apply for listing';
+        }
     }
 
     navButtons.forEach(btn => {
@@ -152,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initListingCarousel();
 });
 
-function renderAvailabilityCalendar(container, year, month, blockedDates, selectedDate, onSelect) {
+function renderAvailabilityCalendar(container, year, month, availablePeriods, startDate, endDate, onSelect) {
     const monthIndex = month - 1;
     const firstDay = new Date(year, monthIndex, 1);
     const totalDays = new Date(year, month, 0).getDate();
@@ -182,13 +218,35 @@ function renderAvailabilityCalendar(container, year, month, blockedDates, select
         const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         const cell = document.createElement('div');
         cell.className = 'calendar-cell';
-        const isBlocked = blockedDates.includes(dateStr);
-        cell.classList.add(isBlocked ? 'blocked' : 'available');
-        if (selectedDate === dateStr) {
-            cell.classList.add('selected');
+
+        let isAvailable = false;
+        const currentCheckDate = new Date(dateStr);
+        
+        if (availablePeriods.length === 0) {
+            isAvailable = true;
+        } else {
+            for (const period of availablePeriods) {
+                const start = new Date(period.available_from);
+                const end = period.available_until ? new Date(period.available_until) : new Date('9999-12-31');
+                
+                if (currentCheckDate >= start && currentCheckDate <= end) {
+                    isAvailable = true;
+                    break;
+                }
+            }
         }
+
+        cell.classList.add(isAvailable ? 'available' : 'blocked');
+        
+        if (startDate && dateStr === startDate) cell.classList.add('selected', 'selected-start');
+        if (endDate && dateStr === endDate) cell.classList.add('selected', 'selected-end');
+        
+        if (startDate && endDate && dateStr > startDate && dateStr < endDate) {
+            cell.classList.add('selected-range');
+        }
+
         cell.innerHTML = `<span>${day}</span>`;
-        if (!isBlocked && typeof onSelect === 'function') {
+        if (isAvailable && typeof onSelect === 'function') {
             cell.addEventListener('click', () => onSelect(dateStr));
         }
         calendarGrid.appendChild(cell);
@@ -221,6 +279,12 @@ function initListingCarousel() {
         const index = parseInt(dot.dataset.index, 10);
         showSlide(index);
     }));
+}
+
+function formatDateDMY(dateStr) {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
 }
 </script>
 <?php

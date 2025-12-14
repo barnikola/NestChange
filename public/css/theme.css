@@ -4,6 +4,11 @@
     box-sizing: border-box;
 }
 
+a{
+    text-decoration: none;
+}
+
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background-color: #ffffff;
@@ -394,6 +399,22 @@ body {
 .calendar-cell.selected {
     background-color: #111111;
     color: #ffffff;
+}
+
+.calendar-cell.selected-range {
+    background-color: #e0e0e0;
+    color: #111111;
+    border-radius: 0;
+}
+
+.calendar-cell.selected-start {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.calendar-cell.selected-end {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }
 
 .calendar-cell.empty {
