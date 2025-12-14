@@ -94,40 +94,89 @@ class ListingAttribute extends Model
 
         public function seedDefaults(): void
         {
-            $defaults = [
-                // Amenities
-                ['name' => 'WiFi', 'category' => 'Amenities'],
-                ['name' => 'Air Conditioning', 'category' => 'Amenities'],
-                ['name' => 'Heating', 'category' => 'Amenities'],
-                ['name' => 'Kitchen', 'category' => 'Amenities'],
-                ['name' => 'Washing Machine', 'category' => 'Amenities'],
-                ['name' => 'Dryer', 'category' => 'Amenities'],
-                ['name' => 'TV', 'category' => 'Amenities'],
-                ['name' => 'Workspace', 'category' => 'Amenities'],
-                
-                // Safety
-                ['name' => 'Smoke Alarm', 'category' => 'Safety'],
-                ['name' => 'Carbon Monoxide Alarm', 'category' => 'Safety'],
-                ['name' => 'First Aid Kit', 'category' => 'Safety'],
-                ['name' => 'Fire Extinguisher', 'category' => 'Safety'],
-                
-                // Location
-                ['name' => 'Near Public Transport', 'category' => 'Location'],
-                ['name' => 'City Center', 'category' => 'Location'],
-                ['name' => 'Near University', 'category' => 'Location'],
-                ['name' => 'Quiet Neighborhood', 'category' => 'Location'],
-                
-                // Room Features
-                ['name' => 'Private Bathroom', 'category' => 'Room'],
-                ['name' => 'Balcony', 'category' => 'Room'],
-                ['name' => 'Garden Access', 'category' => 'Room'],
-                ['name' => 'Furnished', 'category' => 'Room'],
-            ];
+            $defaults = $this->getDefaultAttributesWithDescriptions();
             
             foreach ($defaults as $attr) {
                 if (!$this->nameExists($attr['name'])) {
                     $this->create($attr);
                 }
             }
+        }
+
+
+        /**
+         * Get default attributes with descriptions for tooltips
+         * @return array
+         */
+        public function getDefaultAttributesWithDescriptions(): array
+        {
+            return [
+                // Amenities
+                ['name' => 'WiFi', 'category' => 'Amenities', 'description' => 'Wireless internet access available throughout the property'],
+                ['name' => 'Air Conditioning', 'category' => 'Amenities', 'description' => 'Climate control system to keep rooms cool during hot weather'],
+                ['name' => 'Heating', 'category' => 'Amenities', 'description' => 'Central or portable heating available for cold weather'],
+                ['name' => 'Kitchen', 'category' => 'Amenities', 'description' => 'Fully equipped kitchen with stove, fridge, and cooking utensils'],
+                ['name' => 'Washing Machine', 'category' => 'Amenities', 'description' => 'In-unit laundry facilities for washing clothes'],
+                ['name' => 'Dryer', 'category' => 'Amenities', 'description' => 'Clothes dryer available for convenient laundry'],
+                ['name' => 'TV', 'category' => 'Amenities', 'description' => 'Television with cable or streaming services'],
+                ['name' => 'Workspace', 'category' => 'Amenities', 'description' => 'Dedicated desk and chair suitable for remote work'],
+                
+                // Safety
+                ['name' => 'Smoke Alarm', 'category' => 'Safety', 'description' => 'Working smoke detectors installed for fire safety'],
+                ['name' => 'Carbon Monoxide Alarm', 'category' => 'Safety', 'description' => 'CO detector to alert against dangerous gas levels'],
+                ['name' => 'First Aid Kit', 'category' => 'Safety', 'description' => 'Basic medical supplies available for minor injuries'],
+                ['name' => 'Fire Extinguisher', 'category' => 'Safety', 'description' => 'Fire extinguisher readily accessible in case of emergency'],
+                
+                // Location
+                ['name' => 'Near Public Transport', 'category' => 'Location', 'description' => 'Bus, metro, or train station within 5 minutes walk'],
+                ['name' => 'City Center', 'category' => 'Location', 'description' => 'Located in or near the downtown/city center area'],
+                ['name' => 'Near University', 'category' => 'Location', 'description' => 'Close proximity to university campus'],
+                ['name' => 'Quiet Neighborhood', 'category' => 'Location', 'description' => 'Peaceful residential area with minimal noise'],
+                
+                // Room Features
+                ['name' => 'Private Bathroom', 'category' => 'Room', 'description' => 'Your own bathroom not shared with other guests'],
+                ['name' => 'Balcony', 'category' => 'Room', 'description' => 'Private outdoor space with balcony or terrace'],
+                ['name' => 'Garden Access', 'category' => 'Room', 'description' => 'Access to a private or shared garden area'],
+                ['name' => 'Furnished', 'category' => 'Room', 'description' => 'Room comes fully furnished with bed, storage, etc.'],
+            ];
+        }
+
+
+        /**
+         * Get description for a specific attribute by name
+         * @param string $name
+         * @return string
+         */
+        public function getDescriptionForAttribute(string $name): string
+        {
+            $defaults = $this->getDefaultAttributesWithDescriptions();
+            
+            foreach ($defaults as $attr) {
+                if (strtolower($attr['name']) === strtolower($name)) {
+                    return $attr['description'] ?? '';
+                }
+            }
+            
+            // Generic fallback
+            return "This property includes {$name}";
+        }
+
+
+        /**
+         * Get attributes with descriptions for a listing (for tooltips)
+         * @param string $listingId
+         * @return array
+         */
+        public function getForListingWithDescriptions(string $listingId): array
+        {
+            $attributes = $this->getForListing($listingId);
+            
+            foreach ($attributes as &$attr) {
+                if (empty($attr['description'])) {
+                    $attr['description'] = $this->getDescriptionForAttribute($attr['name']);
+                }
+            }
+            
+            return $attributes;
         }
 }

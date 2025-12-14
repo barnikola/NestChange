@@ -5,6 +5,7 @@ $breadcrumbs = [
     ['label' => 'Home', 'url' => '/'],
     ['label' => 'New Listing'],
 ];
+$extraHead = '<link rel="stylesheet" href="/css/listings.css">';
 
 function old($key, $default = '', $data = []) {
     return isset($data['old'][$key]) ? htmlspecialchars($data['old'][$key]) : $default;
@@ -134,10 +135,10 @@ ob_start();
                 <?php if (!empty($attributes)): ?>
                 <div class="new-form-group">
                     <label>Amenities & Preferences</label>
-                    <div class="tag-box" style="display: flex; flex-wrap: wrap; gap: 5px;">
+                    <div class="tag-box">
                         <?php foreach ($attributes as $category => $attrs): ?>
                             <?php foreach ($attrs as $attr): ?>
-                                <label style="background: #f0f0f0; padding: 5px 10px; border-radius: 15px; font-size: 0.9em; cursor: pointer;">
+                                <label>
                                     <input type="checkbox" name="attributes[]" value="<?= $attr['id'] ?>" <?= isChecked('attributes', $attr['id'], $old ?? []) ?>>
                                     <?= htmlspecialchars($attr['name']) ?>
                                 </label>
@@ -149,10 +150,11 @@ ob_start();
 
                 <?php if (!empty($services)): ?>
                 <div class="new-form-group">
-                    <label>Services</label>
-                    <div class="tag-box" style="display: flex; flex-wrap: wrap; gap: 5px;">
+                    <label>Guest Requirements</label>
+                    <p style="font-size: 0.85em; color: #666; margin-bottom: 8px;">Select mandatory responsibilities and requirements for guests</p>
+                    <div class="tag-box">
                          <?php foreach ($services as $service): ?>
-                            <label style="background: #f0f0f0; padding: 5px 10px; border-radius: 15px; font-size: 0.9em; cursor: pointer;">
+                            <label>
                                 <input type="checkbox" name="services[]" value="<?= $service['id'] ?>" <?= isChecked('services', $service['id'], $old ?? []) ?>>
                                 <?= htmlspecialchars($service['name']) ?>
                             </label>

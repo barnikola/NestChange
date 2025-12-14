@@ -145,14 +145,22 @@ $router->get('/listings', ['ListingController', 'index']);
 $router->get('/listings/search', ['ListingController', 'search']);
 $router->get('/listings/create', ['ListingController', 'create']);
 $router->post('/listings/create', ['ListingController', 'store']);
+// Specific routes must come before parameterized routes
+$router->get('/listings/my-listings', ['ListingController', 'myListings']);
+$router->get('/my-listings', ['ListingController', 'myListings']);
+// Parameterized routes
 $router->get('/listings/{id}', ['ListingController', 'show']);
 $router->get('/listings/{id}/edit', ['ListingController', 'edit']);
 $router->post('/listings/{id}/edit', ['ListingController', 'update']);
 $router->post('/listings/{id}/delete', ['ListingController', 'destroy']);
 $router->post('/listings/{id}/publish', ['ListingController', 'publish']);
 $router->post('/listings/{id}/pause', ['ListingController', 'pause']);
-$router->get('/my-listings', ['ListingController', 'myListings']);
+$router->post('/listings/{id}/unpause', ['ListingController', 'unpause']);
 $router->post('/listings/{listingId}/images/{imageId}/delete', ['ListingController', 'deleteImage']);
+
+// ====== Exchange Routes ======
+$router->get('/listings/my-exchanges', ['ExchangeController', 'myExchanges']);
+$router->get('/listings/exchange-details', ['ExchangeController', 'exchangeDetails']);
 
 // ====== Profile Routes ======
 $router->get('/profile', ['ProfileController', 'index']);
@@ -178,6 +186,7 @@ $router->get('/api/listings/search', ['ListingController', 'search']);
 
 // ====== Chat Routes ======
 $router->get('/chat', ['ChatController', 'index']);
+$router->get('/chat/{profileId}', ['ChatController', 'startChat']);
 $router->post('/chat/send', ['ChatController', 'sendMessage']);
 $router->get('/chat/messages', ['ChatController', 'getMessages']);
 $router->get('/chat/search', ['ChatController', 'search']);
