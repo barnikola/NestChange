@@ -103,7 +103,7 @@ class ChatController extends Controller
                 'first_name' => $profile['first_name'] ?? '',
                 'last_name' => $profile['last_name'] ?? '',
                 'created_at' => date('Y-m-d H:i:s'),
-                'formatted_time' => date('g:i A')
+                'formatted_time' => date('H:i')
             ]
         ]);
     }

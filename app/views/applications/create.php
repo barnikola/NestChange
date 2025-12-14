@@ -1,6 +1,22 @@
 <?php
 $pageTitle = 'Apply for Listing - NestChange';
 ob_start();
+
+// Prefill dates from listing calendar selection (query params), fallback to today.
+$today = date('Y-m-d');
+$rawStart = $_GET['start'] ?? null;
+$rawEnd = $_GET['end'] ?? null;
+
+$isValidYmd = static function ($value): bool {
+    if (!is_string($value) || $value === '') {
+        return false;
+    }
+    $dt = DateTime::createFromFormat('Y-m-d', $value);
+    return $dt !== false && $dt->format('Y-m-d') === $value;
+};
+
+$startValue = $isValidYmd($rawStart) ? $rawStart : $today;
+$endValue = $isValidYmd($rawEnd) ? $rawEnd : $today;
 ?>
 <style>
         .apply-section {
@@ -56,12 +72,28 @@ ob_start();
                 
                 <div class="form-group">
                     <label class="form-label">Check-in Date</label>
-                    <input type="date" name="startdate" class="form-input" required min="<?php echo date('Y-m-d'); ?>" value="<?php echo $_GET['start'] ?? ''; ?>">
+                    <input
+                        type="date"
+                        name="startdate"
+                        class="form-input"
+                        required
+                        min="<?php echo htmlspecialchars($today); ?>"
+                        value="<?php echo htmlspecialchars($startValue); ?>"
+                        placeholder="<?php echo htmlspecialchars($today); ?>"
+                    >
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Check-out Date</label>
-                    <input type="date" name="enddate" class="form-input" required min="<?php echo date('Y-m-d'); ?>" value="<?php echo $_GET['end'] ?? ''; ?>">
+                    <input
+                        type="date"
+                        name="enddate"
+                        class="form-input"
+                        required
+                        min="<?php echo htmlspecialchars($today); ?>"
+                        value="<?php echo htmlspecialchars($endValue); ?>"
+                        placeholder="<?php echo htmlspecialchars($today); ?>"
+                    >
                 </div>
 
                 <div class="form-group">

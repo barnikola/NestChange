@@ -13,7 +13,10 @@ class Chat extends Model
         $sql = "SELECT 
                     c.id as chat_id,
                     c.application_id,
-                    c.last_message_at,
+                    COALESCE(
+                        c.last_message_at,
+                        (SELECT MAX(created_at) FROM chat_message WHERE chat_id = c.id)
+                    ) as last_message_at,
                     la.listing_id,
                     la.applicant_profile_id,
                     la.start_date,
@@ -33,7 +36,7 @@ class Chat extends Model
                 INNER JOIN user_profile ap ON la.applicant_profile_id = ap.id
                 WHERE (la.applicant_profile_id = ? OR l.host_profile_id = ?)
                 AND EXISTS (SELECT 1 FROM chat_message WHERE chat_id = c.id LIMIT 1)
-                ORDER BY c.last_message_at DESC";
+                ORDER BY last_message_at DESC";
         
         return $this->db->fetchAll($sql, [$profileId, $profileId, $profileId, $profileId, $profileId]);
     }
@@ -98,7 +101,10 @@ class Chat extends Model
         $sql = "SELECT 
                     c.id as chat_id,
                     c.application_id,
-                    c.last_message_at,
+                    COALESCE(
+                        c.last_message_at,
+                        (SELECT MAX(created_at) FROM chat_message WHERE chat_id = c.id)
+                    ) as last_message_at,
                     la.listing_id,
                     la.applicant_profile_id,
                     l.title as listing_title,
@@ -116,7 +122,7 @@ class Chat extends Model
                 WHERE (la.applicant_profile_id = ? OR l.host_profile_id = ?)
                 AND (hp.first_name LIKE ? OR hp.last_name LIKE ? OR ap.first_name LIKE ? OR ap.last_name LIKE ? OR l.title LIKE ?)
                 AND EXISTS (SELECT 1 FROM chat_message WHERE chat_id = c.id LIMIT 1)
-                ORDER BY c.last_message_at DESC";
+                ORDER BY last_message_at DESC";
         
         return $this->db->fetchAll($sql, [$profileId, $profileId, $profileId, $profileId, $profileId, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm]);
     }
@@ -141,11 +147,17 @@ class Chat extends Model
         );
     }
 
-    public static function formatTime(string $datetime): string
+    public static function formatTime(?string $datetime): string
     {
+        if (empty($datetime)) {
+            return '';
+        }
         $timestamp = strtotime($datetime);
+        if ($timestamp === false) {
+            return '';
+        }
         $now = time();
-        if (date('Y-m-d', $timestamp) === date('Y-m-d', $now)) return date('g:i A', $timestamp);
+        if (date('Y-m-d', $timestamp) === date('Y-m-d', $now)) return date('H:i', $timestamp);
         if (date('Y-m-d', $timestamp) === date('Y-m-d', strtotime('-1 day'))) return 'Yesterday';
         if ($now - $timestamp < 7 * 24 * 60 * 60) return date('D', $timestamp);
         if (date('Y', $timestamp) === date('Y', $now)) return date('M j', $timestamp);

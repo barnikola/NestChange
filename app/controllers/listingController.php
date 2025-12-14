@@ -31,6 +31,7 @@ class ListingController extends Controller
             'room_type' => $this->getInput('room_type'),
             'max_guests' => $this->getInput('guests'),
             'available_from' => $this->getInput('available_from'),
+            'available_until' => $this->getInput('available_until'),
             'attributes' => $this->getInput('attributes'),
             'services' => $this->getInput('services'),
             'sort' => $this->getInput('sort', 'newest'),
@@ -76,6 +77,7 @@ class ListingController extends Controller
             'room_type' => $this->getInput('room_type'),
             'max_guests' => $this->getInput('guests'),
             'available_from' => $this->getInput('available_from'),
+            'available_until' => $this->getInput('available_until'),
             'attributes' => $this->getInput('attributes'),
             'services' => $this->getInput('services'),
             'sort' => $this->getInput('sort', 'newest'),
@@ -104,7 +106,9 @@ class ListingController extends Controller
             $this->redirect(BASE_URL . '/listings');
         }
         
-
+        // Fetch attributes and services with descriptions for tooltips
+        $listing['attributes'] = $this->attributeModel->getForListingWithDescriptions($id);
+        $listing['services'] = $this->serviceModel->getForListingWithDescriptions($id);
         
         $this->data['listing'] = $listing;
         $this->view('listings/listing', $this->data);
@@ -452,6 +456,7 @@ class ListingController extends Controller
     public function publish(string $id): void
     {
         AuthMiddleware::requireAuth();
+        AuthMiddleware::requireModerator(); // Only admin/moderator can publish
         
         if (!$this->isPost()) {
             $this->redirect(BASE_URL . '/listings/' . $id);
@@ -467,13 +472,6 @@ class ListingController extends Controller
         if (!$listing) {
             $this->flash('error', 'Listing not found.');
             $this->redirect(BASE_URL . '/listings');
-        }
-        
-        // Check ownership
-        $profileId = $this->getUserProfileId();
-        if ($listing['host_profile_id'] !== $profileId) {
-            $this->flash('error', 'You do not have permission to publish this listing.');
-            $this->redirect(BASE_URL . '/listings/' . $id);
         }
         
         // Check if listing can be published (has required data)
@@ -512,6 +510,30 @@ class ListingController extends Controller
         $this->redirect(BASE_URL . '/listings/' . $id);
     }
 
+
+    public function unpause(string $id): void
+    {
+        AuthMiddleware::requireAuth();
+        
+        if (!$this->isPost() || !$this->verifyCsrf()) {
+            $this->redirect(BASE_URL . '/listings/' . $id);
+        }
+        
+        $listing = $this->listingModel->find($id);
+        $profileId = $this->getUserProfileId();
+        
+        if (!$listing || $listing['host_profile_id'] !== $profileId) {
+            $this->flash('error', 'Access denied.');
+            $this->redirect(BASE_URL . '/listings');
+        }
+        
+        // Unpause sets status back to draft so user can edit it
+        $this->listingModel->updateStatus($id, 'draft');
+        
+        $this->flash('success', 'Listing unpaused. Status set to draft.');
+        $this->redirect(BASE_URL . '/listings/' . $id);
+    }
+
     /**
      * Get user's listings
      */
@@ -523,6 +545,7 @@ class ListingController extends Controller
         $listings = $this->listingModel->getByHostProfile($profileId);
         
         $this->data['listings'] = $listings;
+        $this->data['csrf_token'] = $this->getCsrfToken();
         $this->view('listings/my-listings', $this->data);
     }
 

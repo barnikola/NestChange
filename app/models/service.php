@@ -63,23 +63,73 @@ class Service extends Model
 
     public function seedDefaults(): void
     {
-        $defaults = [
-            ['name' => 'Cleaning', 'description' => 'Regular cleaning service included'],
-            ['name' => 'Laundry', 'description' => 'Laundry service available'],
-            ['name' => 'Breakfast', 'description' => 'Breakfast included or available'],
-            ['name' => 'Airport Pickup', 'description' => 'Transportation from airport'],
-            ['name' => 'Bike Rental', 'description' => 'Bicycles available for rent'],
-            ['name' => 'Parking', 'description' => 'Parking space available'],
-            ['name' => 'Gym Access', 'description' => 'Access to fitness facilities'],
-            ['name' => 'Pool Access', 'description' => 'Access to swimming pool'],
-            ['name' => 'Pet Friendly', 'description' => 'Pets are welcome'],
-            ['name' => 'Language Exchange', 'description' => 'Opportunity for language practice'],
-        ];
+        $defaults = $this->getDefaultServicesWithDescriptions();
         
         foreach ($defaults as $service) {
             if (!$this->nameExists($service['name'])) {
                 $this->create($service);
             }
         }
+    }
+
+
+    /**
+     * Get default services with detailed descriptions for tooltips
+     * These are mandatory requirements for guests, not optional services
+     * @return array
+     */
+    public function getDefaultServicesWithDescriptions(): array
+    {
+        return [
+            ['name' => 'Cleaning', 'description' => 'Guest is required to maintain cleanliness and perform regular cleaning during stay'],
+            ['name' => 'Laundry', 'description' => 'Guest is responsible for doing their own laundry'],
+            ['name' => 'Breakfast', 'description' => 'Guest is required to prepare or provide their own breakfast'],
+            ['name' => 'Airport Pickup', 'description' => 'Guest must arrange their own transportation from/to the airport'],
+            ['name' => 'Bike Rental', 'description' => 'Guest must rent bicycles themselves if needed'],
+            ['name' => 'Parking', 'description' => 'Guest must arrange and pay for parking if bringing a vehicle'],
+            ['name' => 'Gym Access', 'description' => 'Guest must arrange gym access themselves if needed'],
+            ['name' => 'Pool Access', 'description' => 'Guest must arrange pool access themselves if available'],
+            ['name' => 'Pet Friendly', 'description' => 'Guest is responsible for their pet\'s care and any related costs'],
+            ['name' => 'Language Exchange', 'description' => 'Guest is expected to participate in language exchange activities'],
+        ];
+    }
+
+
+    /**
+     * Get description for a specific service by name
+     * @param string $name
+     * @return string
+     */
+    public function getDescriptionForService(string $name): string
+    {
+        $defaults = $this->getDefaultServicesWithDescriptions();
+        
+        foreach ($defaults as $service) {
+            if (strtolower($service['name']) === strtolower($name)) {
+                return $service['description'] ?? '';
+            }
+        }
+        
+        // Generic fallback - present as guest requirement
+        return "Guest is required to handle " . strtolower($name);
+    }
+
+
+    /**
+     * Get services with descriptions for a listing (for tooltips)
+     * @param string $listingId
+     * @return array
+     */
+    public function getForListingWithDescriptions(string $listingId): array
+    {
+        $services = $this->getForListing($listingId);
+        
+        foreach ($services as &$service) {
+            if (empty($service['description'])) {
+                $service['description'] = $this->getDescriptionForService($service['name']);
+            }
+        }
+        
+        return $services;
     }
 }
