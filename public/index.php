@@ -11,7 +11,9 @@ require_once __DIR__ . '/../app/core/model.php';
 require_once __DIR__ . '/../app/core/controller.php';
 
 // Create router instance
-$router = new Router();
+$basePath = dirname($_SERVER['SCRIPT_NAME']);
+$basePath = str_replace('\\', '/', $basePath); // Normalize for Windows
+$router = new Router($basePath);
 
 // ====== Authentication Routes ======
 $router->get('/login', ['AuthController', 'showLogin']);
@@ -84,8 +86,13 @@ $router->get('/api/listings/search', ['ListingController', 'search']);
 // ====== Admin/Moderator Routes ======
 $router->get('/admin', 'admin/dashboard');
 $router->get('/admin/dashboard', 'admin/dashboard');
+$router->get('/admin/users','admin/user_table');
+$router->get('/admin/documents', 'admin/document_table');
+$router->get('/admin/listings', 'admin/listing_table');
 $router->get('/moderator', 'moderator/dashboard');
 $router->get('/moderator/dashboard', 'moderator/dashboard');
+$router->get('/moderator/listings', 'moderator/listing_table');
+$router->get('/moderator/documents', 'moderator/document_table');
 $router->get('/chat', 'chat/index');
 
 // Dispatch the request

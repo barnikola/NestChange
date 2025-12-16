@@ -116,10 +116,10 @@ class User extends Model
                 WHERE a.email LIKE ? 
                    OR p.first_name LIKE ? 
                    OR p.last_name LIKE ?
-                LIMIT ?";
+                LIMIT {$limit}";
         
         $searchTerm = "%{$query}%";
-        return $this->db->fetchAll($sql, [$searchTerm, $searchTerm, $searchTerm, $limit]);
+        return $this->db->fetchAll($sql, [$searchTerm, $searchTerm, $searchTerm]);
     }
 
 
@@ -155,5 +155,17 @@ class User extends Model
     {
         unset($user['password_hash']);
         return $user;
+    }
+    public function getAllDocuments(): array
+    {
+        $sql = "SELECT ud.*, 
+                       p.first_name, p.last_name, 
+                       a.email, a.status as user_status
+                FROM user_document ud
+                JOIN account a ON ud.account_id = a.id
+                JOIN user_profile p ON a.id = p.account_id
+                ORDER BY a.created_at DESC";
+        
+        return $this->db->fetchAll($sql);
     }
 }
