@@ -156,4 +156,28 @@ class User extends Model
         unset($user['password_hash']);
         return $user;
     }
+
+    public function getAllDocuments(): array
+    {
+        // Fetch document status as well
+        $sql = "SELECT d.*, d.status as document_status, p.first_name, p.last_name, a.email, a.status as user_status, a.id as account_id
+                FROM user_document d
+                JOIN account a ON d.account_id = a.id
+                LEFT JOIN user_profile p ON a.id = p.account_id
+                ORDER BY d.created_at DESC";
+                
+        return $this->db->fetchAll($sql);
+    }
+
+    public function updateDocumentStatus(string $documentId, string $status): bool
+    {
+        return $this->db->update('user_document', ['status' => $status], 'id = ?', [$documentId]) > 0;
+    }
+
+    public function countPendingDocuments(int|string $userId): int
+    {
+        $sql = "SELECT COUNT(*) as count FROM user_document WHERE account_id = ? AND status = 'pending'";
+        $result = $this->db->fetchOne($sql, [$userId]);
+        return (int)($result['count'] ?? 0);
+    }
 }

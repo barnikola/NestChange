@@ -28,6 +28,9 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                     <a href="/" class="nav-link<?php echo $activeNav === 'home' ? ' nav-link-active' : ''; ?>">Home</a>
                     <a href="/listings" class="nav-link<?php echo $activeNav === 'listings' ? ' nav-link-active' : ''; ?>">Listings</a>
                     <a href="/chat" class="nav-link<?php echo $activeNav === 'chat' ? ' nav-link-active' : ''; ?>">Chat</a>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="/notifications" class="nav-link">Notifications</a>
+                    <?php endif; ?>
                     <a href="#" class="nav-link">Pricing</a>
                     <a href="#" class="nav-link">Contact</a>
                 </nav>

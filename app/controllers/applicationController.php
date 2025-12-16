@@ -226,6 +226,11 @@ class ApplicationController extends Controller
 
         $appModel->setStatus($id, $status);
         
+        // Chat Bootstrap Hook
+        if ($status === 'accepted' && class_exists('Chat') && method_exists('Chat', 'bootstrapThread')) {
+            Chat::bootstrapThread($id);
+        }
+        
         $this->flash('success', 'Application status updated to ' . ucfirst($status));
         $this->redirect(BASE_URL . "/applications/$id");
     }
