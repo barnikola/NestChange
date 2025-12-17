@@ -352,74 +352,6 @@ body {
     margin: 0 20px 20px 20px;
 }
 
-.listing-calendar {
-    width: 100%;
-    min-height: 260px;
-}
-
-.calendar-weekdays,
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-}
-
-.calendar-weekdays div {
-    text-align: center;
-    font-size: 12px;
-    color: #999999;
-    text-transform: uppercase;
-}
-
-.calendar-cell {
-    height: 38px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.calendar-cell.available {
-    background-color: #f5f5f5;
-    color: #111111;
-}
-
-.calendar-cell.blocked {
-    background-color: #111111;
-    color: #ffffff;
-}
-
-.calendar-cell.available:hover {
-    background-color: #eaeaea;
-    cursor: pointer;
-}
-
-.calendar-cell.selected {
-    background-color: #111111;
-    color: #ffffff;
-}
-
-.calendar-cell.selected-range {
-    background-color: #e0e0e0;
-    color: #111111;
-    border-radius: 0;
-}
-
-.calendar-cell.selected-start {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
-.calendar-cell.selected-end {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-
-.calendar-cell.empty {
-    background: transparent;
-}
 
 .preferences-panel {
     padding: 20px 40px;
@@ -461,74 +393,11 @@ body {
     color: #666666;
 }
 
-.availability-card {
-    margin: 40px auto;
-    padding: 30px 40px;
-    max-width: 900px;
-    background: #ffffff;
-    border-radius: 32px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-}
-
-.availability-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    margin-bottom: 20px;
-    font-weight: 600;
-    font-size: 18px;
-}
-
-.calendar-month-label {
-    min-width: 140px;
-    text-align: center;
-}
-
-.calendar-nav {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 1px solid #e0e0e0;
-    background: #fff;
-    cursor: pointer;
-    font-size: 18px;
-}
-
-.listing-calendar {
-    padding: 0 10px;
-}
-
-.time-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 20px;
-    border-top: 1px solid #f0f0f0;
-    margin-top: 20px;
-    color: #666666;
-}
-
-.time-value {
-    font-weight: 600;
-    color: #000000;
-}
-
 .listing-actions {
     display: flex;
     gap: 20px;
     justify-content: center;
     padding: 20px 40px 60px;
-}
-
-.btn-ghost {
-    min-width: 200px;
-    padding: 14px 32px;
-    border-radius: 999px;
-    border: 1px solid #cfcfcf;
-    background: #f8f8f8;
-    cursor: pointer;
-    font-weight: 500;
 }
 
 .btn-primary {
@@ -2095,35 +1964,6 @@ body.chat-page {
     font-size:14px;
     line-height:20px;
 }
-.calendar-card {
-    width: 450px;
-    margin: 40px auto;
-    padding: 30px;
-    border-radius: 24px;
-    background-color: #ffffff;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-}
-.calendar-header-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    font-weight: 600;
-    margin-bottom: 20px;
-}
-.calendar-nav {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1px solid #e0e0e0;
-    background: #fff;
-    cursor: pointer;
-    font-size: 18px;
-}
-.calendar-month-label {
-    min-width: 150px;
-    text-align: center;
-}
 .time-row {
     display: flex;
     justify-content: space-between;
@@ -2309,40 +2149,6 @@ body.chat-page {
     padding: 20px 40px 80px;
 }
 
-.filters-sidebar {
-    padding: 30px 24px;
-    background-color: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    height: fit-content;
-    position: sticky;
-    top: 20px;
-}
-
-.filters-title {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 24px;
-    color: #222222;
-}
-
-.filter-group {
-    padding: 24px 0;
-    border-bottom: 1px solid #ebebeb;
-}
-
-.filter-group:first-of-type {
-    padding-top: 0;
-}
-
-.filter-label {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    color: #222222;
-}
-
-
 .date-input {
     width: 100%;
     padding: 10px 12px;
@@ -2371,73 +2177,6 @@ body.chat-page {
     width: 20px;
     height: 20px;
     cursor: pointer;
-}
-
-.amenity-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.amenity-tag {
-    padding: 8px 16px;
-    background-color: #ffffff;
-    border: 1px solid #b0b0b0;
-    border-radius: 20px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: #222222;
-}
-
-.amenity-tag:hover {
-    border-color: #222222;
-    background-color: #f7f7f7;
-}
-
-.amenity-tag.active {
-    background-color: #000000;
-    color: #ffffff;
-    border-color: #000000;
-}
-
-.filter-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 24px;
-}
-
-.btn-clear {
-    flex: 1;
-    padding: 12px 20px;
-    background-color: #ffffff;
-    border: 1px solid #222222;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.btn-clear:hover {
-    background-color: #f7f7f7;
-}
-
-.btn-apply {
-    flex: 1;
-    padding: 12px 20px;
-    background-color: #222222;
-    border: none;
-    border-radius: 8px;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.btn-apply:hover {
-    background-color: #000000;
 }
 
 .listings-results {

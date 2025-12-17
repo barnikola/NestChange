@@ -11,6 +11,9 @@ class Application extends Model
      */
     public function createApplication(array $data): string
     {
+        // Use app timezone (set in config.php) so this matches other chat messages.
+        $now = date('Y-m-d H:i:s');
+
         // 1. Prepare Application Data
         if (!isset($data['id'])) {
             $data['id'] = $this->generateUuid();
@@ -25,7 +28,7 @@ class Application extends Model
             'start_date' => $data['startdate'] ?? $data['start_date'] ?? null,
             'end_date' => $data['enddate'] ?? $data['end_date'] ?? null,
             'status' => $data['status'] ?? 'pending',
-            'created_at' => date('Y-m-d H:i:s')
+            'created_at' => $now
         ];
 
         // 2. Insert Application
@@ -39,7 +42,9 @@ class Application extends Model
             $this->db->insert('chat', [
                 'id' => $chatId,
                 'application_id' => $appData['id'],
-                'created_at' => date('Y-m-d H:i:s')
+                'created_at' => $now,
+                // Chat list ordering uses chat.last_message_at; set it for the initial application message
+                'last_message_at' => $now
             ]);
 
             // Create Message
@@ -49,7 +54,8 @@ class Application extends Model
                 'sender_id' => $appData['applicant_id'],
                 'sender_profile_id' => $appData['applicant_profile_id'],
                 'content' => $data['message'],
-                'created_at' => date('Y-m-d H:i:s')
+                'status' => 'ok',
+                'created_at' => $now
             ]);
         }
 

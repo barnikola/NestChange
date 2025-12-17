@@ -164,6 +164,128 @@ class Listing extends Model
     }
 
 
+    /**
+     * Sync attributes for a listing - accepts simple array of attribute IDs
+     * This is a convenient wrapper for setAttributes that handles edge cases
+     * 
+     * @param string $listingId The listing UUID
+     * @param array $attributeIds Array of attribute IDs (can be mixed types, will be sanitized)
+     * @return int Number of attributes synced
+     */
+    public function syncAttributes(string $listingId, array $attributeIds): int
+    {
+        // Sanitize and filter the attribute IDs
+        $cleanIds = array_filter(array_map(function($id) {
+            return is_numeric($id) ? (int)$id : null;
+        }, $attributeIds));
+        
+        // Remove duplicates
+        $cleanIds = array_unique($cleanIds);
+        
+        // Use existing setAttributes method
+        $this->setAttributes($listingId, $cleanIds);
+        
+        return count($cleanIds);
+    }
+
+
+    /**
+     * Sync services for a listing - accepts simple array of service IDs
+     * This is a convenient wrapper for setServices that handles edge cases
+     * 
+     * @param string $listingId The listing UUID
+     * @param array $serviceIds Array of service IDs (can be mixed types, will be sanitized)
+     * @return int Number of services synced
+     */
+    public function syncServices(string $listingId, array $serviceIds): int
+    {
+        // Sanitize and filter the service IDs
+        $cleanIds = array_filter(array_map(function($id) {
+            return is_numeric($id) ? (int)$id : null;
+        }, $serviceIds));
+        
+        // Remove duplicates
+        $cleanIds = array_unique($cleanIds);
+        
+        // Use existing setServices method
+        $this->setServices($listingId, $cleanIds);
+        
+        return count($cleanIds);
+    }
+
+
+    /**
+     * Save a listing with all its related data in one call
+     * Handles images, attributes, services, availability, and verification documents
+     * 
+     * @param array $listingData Core listing data
+     * @param array $relations Optional related data:
+     *   - 'attributes' => array of attribute IDs
+     *   - 'services' => array of service IDs
+     *   - 'images' => array of image paths with positions
+     *   - 'availability' => array of availability periods
+     * @return string|false The listing ID on success, false on failure
+     */
+    public function saveWithRelations(array $listingData, array $relations = []): string|false
+    {
+        try {
+            // Create or update the listing
+            $isUpdate = isset($listingData['id']) && $this->find($listingData['id']);
+            
+            if ($isUpdate) {
+                $listingId = $listingData['id'];
+                unset($listingData['id']);
+                $this->update($listingId, $listingData);
+            } else {
+                $listingId = $this->createListing($listingData);
+            }
+            
+            if (!$listingId) {
+                return false;
+            }
+            
+            // Sync attributes if provided
+            if (isset($relations['attributes']) && is_array($relations['attributes'])) {
+                $this->syncAttributes($listingId, $relations['attributes']);
+            }
+            
+            // Sync services if provided
+            if (isset($relations['services']) && is_array($relations['services'])) {
+                $this->syncServices($listingId, $relations['services']);
+            }
+            
+            // Add images if provided
+            if (isset($relations['images']) && is_array($relations['images'])) {
+                foreach ($relations['images'] as $index => $imagePath) {
+                    $position = is_array($imagePath) ? ($imagePath['position'] ?? $index) : $index;
+                    $path = is_array($imagePath) ? ($imagePath['path'] ?? $imagePath) : $imagePath;
+                    $this->addImage($listingId, $path, $position);
+                }
+            }
+            
+            // Add availability periods if provided
+            if (isset($relations['availability']) && is_array($relations['availability'])) {
+                // Clear existing availability first if updating
+                if ($isUpdate) {
+                    $this->db->delete('listing_availability', 'listing_id = ?', [$listingId]);
+                }
+                
+                foreach ($relations['availability'] as $period) {
+                    $from = is_array($period) ? $period['from'] : $period;
+                    $until = is_array($period) ? ($period['until'] ?? null) : null;
+                    $this->addAvailability($listingId, $from, $until);
+                }
+            }
+            
+            return $listingId;
+            
+        } catch (Exception $e) {
+            error_log("Error saving listing with relations: " . $e->getMessage());
+            return false;
+        }
+    }
+
+
     public function getAvailability(string $listingId): array
     {
         $sql = "SELECT * FROM listing_availability 
@@ -275,16 +397,29 @@ class Listing extends Model
             }
         }
         
-        // Availability filter
+        // Availability filter - supports date range
         if (!empty($filters['available_from'])) {
-            $sql .= " AND EXISTS (
-                SELECT 1 FROM listing_availability la 
-                WHERE la.listing_id = l.id 
-                AND la.available_from <= ? 
-                AND (la.available_until IS NULL OR la.available_until >= ?)
-            )";
-            $params[] = $filters['available_from'];
-            $params[] = $filters['available_from'];
+            if (!empty($filters['available_until'])) {
+                // Date range: check if listing is available for the entire period
+                $sql .= " AND EXISTS (
+                    SELECT 1 FROM listing_availability la 
+                    WHERE la.listing_id = l.id 
+                    AND la.available_from <= ?
+                    AND (la.available_until IS NULL OR la.available_until >= ?)
+                )";
+                $params[] = $filters['available_from'];
+                $params[] = $filters['available_until'];
+            } else {
+                // Single date: check if listing is available on that date
+                $sql .= " AND EXISTS (
+                    SELECT 1 FROM listing_availability la 
+                    WHERE la.listing_id = l.id 
+                    AND la.available_from <= ? 
+                    AND (la.available_until IS NULL OR la.available_until >= ?)
+                )";
+                $params[] = $filters['available_from'];
+                $params[] = $filters['available_from'];
+            }
         }
         
         // Sorting
@@ -376,16 +511,29 @@ class Listing extends Model
             }
         }
         
-        // Availability filter
+        // Availability filter - supports date range
         if (!empty($filters['available_from'])) {
-            $sql .= " AND EXISTS (
-                SELECT 1 FROM listing_availability la 
-                WHERE la.listing_id = l.id 
-                AND la.available_from <= ? 
-                AND (la.available_until IS NULL OR la.available_until >= ?)
-            )";
-            $params[] = $filters['available_from'];
-            $params[] = $filters['available_from'];
+            if (!empty($filters['available_until'])) {
+                // Date range: check if listing is available for the entire period
+                $sql .= " AND EXISTS (
+                    SELECT 1 FROM listing_availability la 
+                    WHERE la.listing_id = l.id 
+                    AND la.available_from <= ?
+                    AND (la.available_until IS NULL OR la.available_until >= ?)
+                )";
+                $params[] = $filters['available_from'];
+                $params[] = $filters['available_until'];
+            } else {
+                // Single date: check if listing is available on that date
+                $sql .= " AND EXISTS (
+                    SELECT 1 FROM listing_availability la 
+                    WHERE la.listing_id = l.id 
+                    AND la.available_from <= ? 
+                    AND (la.available_until IS NULL OR la.available_until >= ?)
+                )";
+                $params[] = $filters['available_from'];
+                $params[] = $filters['available_from'];
+            }
         }
         
         $result = $this->db->fetchOne($sql, $params);
@@ -395,7 +543,13 @@ class Listing extends Model
 
     public function getByHostProfile(string $profileId): array
     {
-        return $this->findBy('host_profile_id', $profileId);
+        $sql = "SELECT l.*, 
+                       (SELECT image FROM listing_image WHERE listing_id = l.id ORDER BY position LIMIT 1) as primary_image
+                FROM listing l
+                WHERE l.host_profile_id = ?
+                ORDER BY l.created_at DESC";
+        
+        return $this->db->fetchAll($sql, [$profileId]);
     }
 
 
