@@ -558,6 +558,19 @@ class Listing extends Model
         return $this->findBy('status', $status);
     }
 
+    public function getAllListings(): array
+    {
+        $sql = "SELECT l.*, p.first_name, p.last_name, a.email as host_email,
+                (SELECT GROUP_CONCAT(document) FROM listing_verification_document WHERE listing_id = l.id) as verification_docs,
+                (SELECT GROUP_CONCAT(image) FROM listing_image WHERE listing_id = l.id) as listing_photos
+                FROM listing l
+                LEFT JOIN user_profile p ON l.host_profile_id = p.id
+                LEFT JOIN account a ON p.account_id = a.id
+                ORDER BY l.created_at DESC";
+        
+        return $this->db->fetchAll($sql);
+    }
+
 
     public function updateStatus(string $id, string $status): bool
     {

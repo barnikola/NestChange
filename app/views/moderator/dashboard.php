@@ -1,37 +1,41 @@
 <?php
+$pageTitle = 'NestChange - Moderator Dashboard';
+$activeNav = '';
+$breadcrumbs = [
+    ['label' => 'Home', 'url' => '/'],
+    ['label' => 'Moderator Dashboard'],
+];
+
+ob_start();
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Moderator Interface - NestChange</title>
-    <link rel="stylesheet" href="/css/panel.css">
-</head>
 
-<body>
+<section class="listings-section" style="background-color: #f7f7f7; min-height: 80vh;">
+    <div class="listings-container">
+        <h2 class="listings-title" style="text-align: center; margin-bottom: 10px;">Moderator Dashboard</h2>
+        <p class="listings-subtitle" style="text-align: center; margin-bottom: 40px;">Review content and verifications.</p>
+        
+        <div class="options">
+            <!-- Review Listings -->
+            <div class="card">
+                <a href="/moderator/listings" style="text-decoration:none; color:inherit; display:block; height:100%;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">🏘 Review Listings</h3>
+                    <p>Approve new ads or remove inappropriate content.</p>
+                </a>
+            </div>
 
-    <header class="header">
-        <h2>🛠 NestChange — Moderator Interface</h2>
-    </header>
-
-    <section class="container">
-        <div class="panel-box">
-            <h1>Moderator Dashboard</h1>
-            <p>Moderators help maintain a safe and clean platform.</p>
-
-            <div class="options">
-                <div class="card">
-                    <h3>🏘 Review Listings</h3>
-                    <p>Approve or remove inappropriate listings.</p>
-                </div>
-
-                <div class="card">
-                    <h3>📄 Check Documents</h3>
-                    <p>Review user verification documents.</p>
-                </div>
+            <!-- Check Documents -->
+            <div class="card">
+                <a href="/moderator/documents" style="text-decoration:none; color:inherit; display:block; height:100%;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">📄 Check Documents</h3>
+                    <p>Verify user uploaded ID proofs.</p>
+                </a>
             </div>
         </div>
-    </section>
+        
+    </div>
+</section>
 
-</body>
-</html>
+<?php
+$content = ob_get_clean();
+include __DIR__ . '/../layouts/main.php';
+?>
