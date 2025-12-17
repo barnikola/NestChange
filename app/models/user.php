@@ -160,7 +160,7 @@ class User extends Model
     public function getAllDocuments(): array
     {
         // Fetch document status as well
-        $sql = "SELECT d.*, d.status as document_status, p.first_name, p.last_name, a.email, a.status as user_status, a.id as account_id
+        $sql = "SELECT d.*, p.first_name, p.last_name, a.email, a.status as user_status, a.id as account_id
                 FROM user_document d
                 JOIN account a ON d.account_id = a.id
                 LEFT JOIN user_profile p ON a.id = p.account_id

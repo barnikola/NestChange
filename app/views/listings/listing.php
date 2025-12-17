@@ -162,7 +162,7 @@ ob_start();
 <!-- Amenities & Preferences Section -->
 <section class="preferences-box">
     <div class="preferences">
-        <h3>Amenities & Features</h3>
+        <h3>Amenities & Rules</h3>
         <p class="subtext">Hover over each item to learn more</p>
     </div>
     
@@ -260,14 +260,10 @@ ob_start();
         ?>
 
         <?php if (!$isOwner): ?>
-            <button class="chat" onclick="window.location.href='/chat/<?php echo $listing['host_profile_id']; ?>'">Chat</button>
             <button class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/apply'">Apply for listing</button>
         <?php else: ?>
              <button class="listing" style="background: #ccc; cursor: default;" disabled>You own this listing</button>
         <?php endif; ?>
-        <button class="listing" onclick="window.location.href='<?php echo BASE_URL; ?>/listings/<?php echo $listing['id']; ?>/apply'">
-            Apply for Exchange
-        </button>
     </div>
 </section>
 
@@ -279,7 +275,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const applyButton = document.querySelector('.div-button .listing'); // Apply button
     
     // Initial apply link base
-    const applyBaseUrl = applyButton.getAttribute('onclick').match(/'([^']+)'/)[1];
+    let applyBaseUrl = '';
+    if (applyButton && applyButton.getAttribute('onclick')) {
+        const match = applyButton.getAttribute('onclick').match(/'([^']+)'/);
+        applyBaseUrl = match ? match[1] : '';
+    }
     
     // Get availability dates from PHP
     const availabilityPeriods = <?php echo json_encode($listing['availability'] ?? []); ?>;
@@ -316,6 +316,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     function updateApplyButton() {
+        if (!applyButton || !applyBaseUrl) return;
+        
         // Selection state is stored in selectedStartDate/selectedEndDate
         if (selectedStartDate && selectedEndDate) {
             applyButton.onclick = function () {
@@ -473,10 +475,18 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Initial render
-    render();
+    try {
+        render();
+    } catch (error) {
+        console.error('Calendar render error:', error);
+    }
     
-    // Initialize carousel
-    initListingCarousel();
+    // Initialize carousel - should always run even if calendar fails
+    try {
+        initListingCarousel();
+    } catch (error) {
+        console.error('Carousel initialization error:', error);
+    }
 });
 
 function initListingCarousel() {
