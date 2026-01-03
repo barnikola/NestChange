@@ -9,14 +9,19 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
     <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/dropdown.css">
     <?php echo $extraHead; ?>
 </head>
 <body<?php echo $bodyAttr; ?>>
+    <?php require_once dirname(__DIR__, 2) . '/helpers/ProfileHelper.php'; ?>
+    <?php $navContext = ProfileHelper::navContext(); ?>
+
     <!-- Header -->
     <header class="header">
         <div class="header-container">
@@ -26,18 +31,45 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                 </a>
                 <nav class="nav-links">
                     <a href="/" class="nav-link<?php echo $activeNav === 'home' ? ' nav-link-active' : ''; ?>">Home</a>
-                    <a href="/listings" class="nav-link<?php echo $activeNav === 'listings' ? ' nav-link-active' : ''; ?>">Listings</a>
-                    <a href="/chat" class="nav-link<?php echo $activeNav === 'chat' ? ' nav-link-active' : ''; ?>">Chat</a>
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="/notifications" class="nav-link">Notifications</a>
-                    <?php endif; ?>
+                    <a href="/listings"
+                        class="nav-link<?php echo $activeNav === 'listings' ? ' nav-link-active' : ''; ?>">Listings</a>
+                    <!-- Chat link visible only if logged in or allow access to login via it -->
+                    <a href="/chat"
+                        class="nav-link<?php echo $activeNav === 'chat' ? ' nav-link-active' : ''; ?>">Chat</a>
                     <a href="#" class="nav-link">Pricing</a>
                     <a href="#" class="nav-link">Contact</a>
                 </nav>
             </div>
             <div class="header-right">
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="/auth/logout" class="btn-signin">Sign Out</a>
+                <?php if ($navContext['is_logged_in']): ?>
+                    <div class="user-dropdown" tabindex="0">
+                        <div class="user-avatar-btn">
+                            <?php if ($navContext['avatar']): ?>
+                                <img src="/<?= htmlspecialchars($navContext['avatar']) ?>" alt="Avatar" class="user-avatar-img">
+                            <?php else: ?>
+                                <?= htmlspecialchars($navContext['initials']) ?>
+                            <?php endif; ?>
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name-display"><?= htmlspecialchars($navContext['user_name']) ?></span>
+                        </div>
+
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">
+                                <p>Signed in as</p>
+                                <span><?= htmlspecialchars($navContext['user_name']) ?></span>
+                            </div>
+                            <a href="/profile" class="dropdown-item">My Profile</a>
+                            <a href="/profile/edit" class="dropdown-item">Settings</a>
+                            <a href="#" class="dropdown-item">
+                                Notifications
+                                <?php if ($navContext['notification_count'] > 0): ?>
+                                    <span class="notification-badge"><?= $navContext['notification_count'] ?></span>
+                                <?php endif; ?>
+                            </a>
+                            <a href="/auth/logout" class="dropdown-item">Sign Out</a>
+                        </div>
+                    </div>
                 <?php else: ?>
                     <a href="/auth/signin" class="btn-signin">Sign in</a>
                     <a href="/auth/register" class="btn-register">Register</a>
@@ -117,5 +149,6 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
             </div>
         </div>
     </footer>
-</body>
+    </body>
+
 </html>
