@@ -20,7 +20,15 @@ class ModeratorController extends Controller
     public function index(): void
     {
         $this->requireModerator();
-        $this->view('moderator/dashboard');
+        $userModel = $this->model('User');
+        $listingModel = $this->model('Listing');
+
+        $data = [
+            'pendingDocuments' => $userModel->countAllPendingDocuments(),
+            'pendingListings' => $listingModel->countSearch(['status' => 'pending-approval'])
+        ];
+
+        $this->view('moderator/dashboard', $data);
     }
 
     public function documents(): void

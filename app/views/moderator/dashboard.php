@@ -18,7 +18,12 @@ ob_start();
             <!-- Review Listings -->
             <div class="card">
                 <a href="/moderator/listings" style="text-decoration:none; color:inherit; display:block; height:100%;">
-                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">🏘 Review Listings</h3>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">
+                        🏘 Review Listings
+                        <span style="font-size: 0.8em; background: <?php echo ($pendingListings ?? 0) > 0 ? '#ffcccc' : '#eee'; ?>; color: <?php echo ($pendingListings ?? 0) > 0 ? '#cc0000' : '#666'; ?>; padding: 2px 6px; border-radius: 10px;">
+                            <?php echo $pendingListings ?? 0; ?> Pending
+                        </span>
+                    </h3>
                     <p>Approve new ads or remove inappropriate content.</p>
                 </a>
             </div>
@@ -26,7 +31,12 @@ ob_start();
             <!-- Check Documents -->
             <div class="card">
                 <a href="/moderator/documents" style="text-decoration:none; color:inherit; display:block; height:100%;">
-                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">📄 Check Documents</h3>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">
+                        📄 Check Documents
+                        <?php if (isset($pendingDocuments) && $pendingDocuments > 0): ?>
+                            <span style="font-size: 0.8em; background: #ffcccc; color: #cc0000; padding: 2px 6px; border-radius: 10px;"><?php echo $pendingDocuments; ?> Pending</span>
+                        <?php endif; ?>
+                    </h3>
                     <p>Verify user uploaded ID proofs.</p>
                 </a>
             </div>

@@ -68,6 +68,7 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
     $router->post('/listings/{id}/delete', ['ListingController', 'destroy']);
     $router->post('/listings/{id}/publish', ['ListingController', 'publish']);
     $router->post('/listings/{id}/pause', ['ListingController', 'pause']);
+    $router->post('/listings/{id}/unpause', ['ListingController', 'unpause']);
     $router->get('/my-listings', ['ListingController', 'myListings']);
     $router->post('/listings/{listingId}/images/{imageId}/delete', ['ListingController', 'deleteImage']);
 
@@ -121,6 +122,11 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
     $router->post('/admin/listings/publish', ['AdminController', 'publishListing']);
     $router->post('/admin/listings/pause', ['AdminController', 'pauseListing']);
     $router->post('/admin/listings/delete', ['AdminController', 'deleteListing']);
+
+    // Admin: Legal Content
+    $router->get('/admin/legal', ['AdminController', 'legal']);
+    $router->get('/admin/legal/edit/{type}', ['AdminController', 'editLegal']);
+    $router->post('/admin/legal/update', ['AdminController', 'updateLegal']);
 
     // ====== Moderator Routes ======
     $router->get('/moderator', ['ModeratorController', 'index']);

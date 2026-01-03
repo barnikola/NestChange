@@ -574,7 +574,7 @@ class Listing extends Model
 
     public function updateStatus(string $id, string $status): bool
     {
-        $validStatuses = ['draft', 'published', 'paused', 'archived'];
+        $validStatuses = ['draft', 'pending-approval', 'published', 'paused', 'archived'];
         
         if (!in_array($status, $validStatuses)) {
             throw new InvalidArgumentException("Invalid status: {$status}");

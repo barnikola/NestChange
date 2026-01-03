@@ -260,9 +260,13 @@ ob_start();
         ?>
 
         <?php if (!$isOwner): ?>
-            <button class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/apply'">Apply for listing</button>
+            <?php if (AuthMiddleware::hasAnyRole(['admin', 'moderator'])): ?>
+                <button class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/edit'" style="background: #2196F3;">Edit Listing (Mod)</button>
+            <?php else: ?>
+                <button id="apply-listing-btn" class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/apply'">Apply for listing</button>
+            <?php endif; ?>
         <?php else: ?>
-             <button class="listing" style="background: #ccc; cursor: default;" disabled>You own this listing</button>
+             <button class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/edit'">Edit Listing</button>
         <?php endif; ?>
     </div>
 </section>
@@ -272,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('availability-calendar');
     const monthLabel = document.querySelector('.calendar-month-label');
     const navButtons = document.querySelectorAll('.calendar-nav');
-    const applyButton = document.querySelector('.div-button .listing'); // Apply button
+    const applyButton = document.getElementById('apply-listing-btn'); // Apply button
     
     // Initial apply link base
     let applyBaseUrl = '';
