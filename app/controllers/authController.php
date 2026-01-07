@@ -20,7 +20,7 @@ class AuthController extends Controller
         if (Session::isLoggedIn()) {
             $this->redirect('/home');
         }
-        
+
         $this->data['csrf_token'] = $this->getCsrfToken();
         $this->view('auth/register', $this->data);
     }
@@ -39,7 +39,7 @@ class AuthController extends Controller
         }
 
         $data = $this->allPost();
-        
+
         // Validate input
         $validator = Validator::make($data)
             ->required('name', 'First name is required.')
@@ -70,9 +70,6 @@ class AuthController extends Controller
             // Handle file uploads for documents
             $idDocumentPath = $this->handleFileUpload('id-document', 'documents/id/');
             $studentIdPath = $this->handleFileUpload('student-id', 'documents/student/');
-            
-            // Handle profile picture upload (optional)
-            $profilePicturePath = $this->handleProfilePictureUpload('profile_picture');
 
             // Create user account (id is auto_increment, returns the new ID)
             $accountId = $this->userModel->createUser([
@@ -84,23 +81,15 @@ class AuthController extends Controller
                 'student_status_until' => $data['student_status_until'] ?? null,
             ]);
 
-            // Prepare profile data
-            $profileData = [
+            // Create user profile with names (account_id is bigint)
+            $this->createUserProfile((int) $accountId, [
                 'first_name' => $data['name'],
                 'last_name' => $data['surname'],
-            ];
-            
-            // Add profile picture if uploaded
-            if ($profilePicturePath) {
-                $profileData['profile_picture'] = $profilePicturePath;
-            }
-
-            // Create user profile with names (account_id is bigint)
-            $this->createUserProfile((int)$accountId, $profileData);
+            ]);
 
             // Store document paths if uploaded
             if ($idDocumentPath || $studentIdPath) {
-                $this->storeUserDocuments((int)$accountId, $idDocumentPath, $studentIdPath);
+                $this->storeUserDocuments((int) $accountId, $idDocumentPath, $studentIdPath);
             }
 
             $this->flash('success', 'Registration successful! Please wait for account approval.');
@@ -133,7 +122,7 @@ class AuthController extends Controller
         if (Session::isLoggedIn()) {
             $this->redirect('/home');
         }
-        
+
         $this->data['csrf_token'] = $this->getCsrfToken();
         $this->view('auth/signin', $this->data);
     }
@@ -183,11 +172,15 @@ class AuthController extends Controller
         // Check if account is approved
         if ($user['status'] !== 'approved') {
             $statusMessages = [
-                'pending' => 'Your account is pending approval.',
-                'rejected' => 'Your account has been rejected.',
-                'suspended' => 'Your account has been suspended.',
+                'pending' => 'Login failed: Your account is currently pending approval. Please check back later.',
+                'rejected' => 'Login failed: Your account application has been rejected.',
+                'suspended' => 'Login failed: This account has been suspended.',
             ];
-            $this->flash('error', $statusMessages[$user['status']] ?? 'Account access denied.');
+
+            // Use 'warning' for pending if possible, but 'error' ensures visibility with current CSS
+            $message = $statusMessages[$user['status']] ?? 'Account access denied.';
+            $this->flash('error', $message);
+
             $this->data['old'] = ['email' => $email];
             $this->data['csrf_token'] = $this->getCsrfToken();
             $this->view('auth/signin', $this->data);
@@ -195,11 +188,7 @@ class AuthController extends Controller
         }
 
         // Login successful
-        $userWithProfile = $this->userModel->getUserWithProfile($user['id']);
-        // If for some reason profile doesn't exist (shouldn't happen for approved users normally but safe check)
-        $sessionUser = $userWithProfile ?: $user;
-        
-        $safeUser = $this->userModel->getSafeUserData($sessionUser);
+        $safeUser = $this->userModel->getSafeUserData($user);
         Session::login($safeUser);
 
         // Handle remember me
@@ -235,7 +224,7 @@ class AuthController extends Controller
         if (Session::isLoggedIn()) {
             $this->redirect('/home');
         }
-        
+
         $this->data['csrf_token'] = $this->getCsrfToken();
         $this->view('auth/forgot_password', $this->data);
     }
@@ -272,10 +261,10 @@ class AuthController extends Controller
             // Generate reset token
             $token = bin2hex(random_bytes(32));
             $expiry = date('Y-m-d H:i:s', strtotime('+1 hour'));
-            
+
             // Store token in database (you may need a password_resets table)
             $this->storeResetToken($user['id'], $token, $expiry);
-            
+
             // Send email (implement email sending separately)
             $this->sendResetEmail($email, $token);
         }
@@ -288,12 +277,12 @@ class AuthController extends Controller
     public function showResetPassword(): void
     {
         $token = $this->getInput('token');
-        
+
         if (empty($token) || !$this->validateResetToken($token)) {
             $this->flash('error', 'Invalid or expired reset link.');
             $this->redirect('/forgot-password');
         }
-        
+
         $this->data['token'] = $token;
         $this->data['csrf_token'] = $this->getCsrfToken();
         $this->view('auth/new_password', $this->data);
@@ -342,7 +331,7 @@ class AuthController extends Controller
 
         // Update password
         $this->userModel->updatePassword($resetData['user_id'], $password);
-        
+
         // Delete reset token
         $this->deleteResetToken($token);
 
@@ -357,10 +346,10 @@ class AuthController extends Controller
     private function storeResetToken(int|string $userId, string $token, string $expiry): void
     {
         $db = Database::getInstance();
-        
+
         // Delete any existing tokens for this user
         $db->delete('password_resets', 'user_id = ?', [$userId]);
-        
+
         // Insert new token
         $db->insert('password_resets', [
             'user_id' => $userId,
@@ -380,12 +369,12 @@ class AuthController extends Controller
     {
         $db = Database::getInstance();
         $hashedToken = hash('sha256', $token);
-        
+
         $result = $db->fetchOne(
             "SELECT * FROM password_resets WHERE token = ? AND expires_at > NOW()",
             [$hashedToken]
         );
-        
+
         return $result ?: null;
     }
 
@@ -404,7 +393,7 @@ class AuthController extends Controller
     private function sendResetEmail(string $email, string $token): void
     {
         $resetUrl = '/reset-password?token=' . $token;
-        
+
         // TODO: Implement actual email sending
         // For now, log the reset URL in development
         if (APP_DEBUG) {
@@ -460,63 +449,10 @@ class AuthController extends Controller
     }
 
 
-    private function handleProfilePictureUpload(string $fieldName): ?string
-    {
-        if (!isset($_FILES[$fieldName]) || $_FILES[$fieldName]['error'] === UPLOAD_ERR_NO_FILE) {
-            return null;
-        }
-
-        $file = $_FILES[$fieldName];
-
-        if ($file['error'] !== UPLOAD_ERR_OK) {
-            return null;
-        }
-
-        // Validate file type - only images allowed
-        if (!in_array($file['type'], ALLOWED_IMAGE_TYPES)) {
-            return null;
-        }
-
-        // Validate file size
-        if ($file['size'] > UPLOAD_MAX_SIZE) {
-            return null;
-        }
-
-        // Create upload directory if it doesn't exist
-        $uploadDir = dirname(__DIR__, 2) . '/public/uploads/profile_pictures/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
-
-        // Generate unique filename
-        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        if (!$extension) {
-            // Determine extension from mime type if not provided
-            $extensions = [
-                'image/jpeg' => 'jpg',
-                'image/png' => 'png',
-                'image/gif' => 'gif',
-                'image/webp' => 'webp'
-            ];
-            $extension = $extensions[$file['type']] ?? 'jpg';
-        }
-        
-        $filename = $this->generateUuid() . '.' . $extension;
-        $filepath = $uploadDir . $filename;
-
-        // Move uploaded file
-        if (move_uploaded_file($file['tmp_name'], $filepath)) {
-            return '/uploads/profile_pictures/' . $filename;
-        }
-
-        return null;
-    }
-
-
     private function storeUserDocuments(int $accountId, ?string $idDocPath, ?string $studentIdPath): void
     {
         $db = Database::getInstance();
-        
+
         // Store ID document (document_type_id 1 = PASSPORT)
         if ($idDocPath) {
             $db->insert('user_document', [
@@ -537,4 +473,22 @@ class AuthController extends Controller
             ]);
         }
     }
+    // Google Login Placeholders
+    public function googleRedirect(): void
+    {
+        // Placeholder for Google OAuth redirection
+        // In a real app, this would construct the Google OAuth URL and redirect there
+        $this->redirect('/auth/google/callback');
+    }
+
+    public function googleCallback(): void
+    {
+        // Placeholder for Google OAuth callback
+        // In a real app, this would exchange the code for a token and get user info
+
+        // Flash a message that this feature is coming soon
+        $this->flash('success', 'Google Login is coming soon! (Placeholder)');
+        $this->redirect('/login');
+    }
 }
+

@@ -27,11 +27,15 @@ class Database
         );
 
         $options = [
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES   => false,
-            PDO::ATTR_PERSISTENT         => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
+            PDO::ATTR_PERSISTENT => false,
         ];
+
+        // DEBUG output
+        // echo "DEBUG DSN: " . htmlspecialchars($dsn);
+        // die();
 
         try {
             $this->pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
@@ -111,10 +115,10 @@ class Database
     {
         $columns = implode(', ', array_keys($data));
         $placeholders = implode(', ', array_fill(0, count($data), '?'));
-        
+
         $sql = "INSERT INTO {$table} ({$columns}) VALUES ({$placeholders})";
         $this->query($sql, array_values($data));
-        
+
         return $this->pdo->lastInsertId();
     }
 
@@ -131,16 +135,16 @@ class Database
     {
         $set = implode(' = ?, ', array_keys($data)) . ' = ?';
         $sql = "UPDATE {$table} SET {$set} WHERE {$where}";
-        
+
         $params = array_merge(array_values($data), $whereParams);
         $stmt = $this->query($sql, $params);
-        
+
         return $stmt->rowCount();
     }
 
     /**
      * Delete rows from a table
-     *  public function create(array $data): int|string
+     * 
      * @param string $table The table name
      * @param string $where WHERE clause
      * @param array $params Parameters for WHERE clause
@@ -185,11 +189,12 @@ class Database
         return $this->pdo->lastInsertId();
     }
 
-
     /**
      * Prevent cloning of the instance
      */
-    private function __clone() {}
+    private function __clone()
+    {
+    }
 
     /**
      * Prevent unserialization of the instance

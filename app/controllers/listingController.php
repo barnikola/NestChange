@@ -119,7 +119,7 @@ class ListingController extends Controller
     {
         AuthMiddleware::requireAuth();
         AuthMiddleware::requireApproved();
-
+        
         $this->data['csrf_token'] = $this->getCsrfToken();
         $this->data['attributes'] = $this->attributeModel->getAllGroupedByCategory();
         $this->data['services'] = $this->serviceModel->findAll('name');

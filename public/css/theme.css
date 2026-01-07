@@ -333,7 +333,7 @@ body {
 .listing-image {
     width: 100%;
     height: 200px;
-    background-image: url('../assets/listing.jpg');
+    background-image: url('../listing.jpg');
     background-size: cover;
     background-position: center;
 }
@@ -1862,7 +1862,6 @@ body.chat-page {
 .listing-carousel {
     position: relative;
     flex: 0 0 55%;
-    min-height: 320px;
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
@@ -1877,8 +1876,6 @@ body.chat-page {
     width: 100%;
     height: 320px;
     object-fit: cover;
-    position: relative;
-    z-index: 1;
 }
 .carousel-slide.active {
     display: block;
@@ -1898,7 +1895,6 @@ body.chat-page {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
 }
 .carousel-control.prev {
     left: 12px;
@@ -1914,7 +1910,6 @@ body.chat-page {
     display: flex;
     justify-content: center;
     gap: 10px;
-    z-index: 10;
 }
 .carousel-dot {
     width: 10px;
@@ -1922,11 +1917,6 @@ body.chat-page {
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.4);
     cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
-}
-.carousel-dot:hover {
-    background: rgba(255, 255, 255, 0.6);
-    transform: scale(1.2);
 }
 .carousel-dot.active {
     background: #fff;
@@ -2354,44 +2344,3 @@ body.chat-page {
     transform: scale(1.2);
     z-index: 1000;
 }
-/* Admin Panel Styles Merged from panel.css */
-.panel-box {
-    background: white;
-    padding: 30px;
-    width: 70%;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.options {
-    display: flex;
-    gap: 20px;
-    margin-top: 30px;
-}
-
-.card {
-    flex: 1;
-    padding: 20px;
-    background: #fafafa;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
-    text-align: center;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    background: #f0f0f0;
-}
-
-.card h3 {
-    margin: 0 0 10px 0;
-    color: #333;
-}
-
-.card p {
-    color: #666;
-    margin: 0;
-}
-

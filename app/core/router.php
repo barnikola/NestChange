@@ -15,13 +15,22 @@ class Router
         $this->basePath = rtrim($basePath, '/');
     }
 
-    function getRoutes(): array{
+    /**
+     * Set all routes (used for caching)
+     */
+    public function setRoutes(array $routes): void
+    {
+        $this->routes = $routes;
+    }
+
+    /**
+     * Get all routes (used for caching)
+     */
+    public function getRoutes(): array
+    {
         return $this->routes;
     }
 
-    function setRoutes($routes): void{
-        $this->routes = $routes;
-    }
 
     /**
      * Add a GET route
@@ -63,23 +72,24 @@ class Router
     {
         $method = $_SERVER['REQUEST_METHOD'];
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        
+
         // Remove base path
         if ($this->basePath && strpos($uri, $this->basePath) === 0) {
             $uri = substr($uri, strlen($this->basePath));
         }
-        
+
         $uri = '/' . trim($uri, '/');
-        if ($uri === '/') $uri = '/';
-        
+        if ($uri === '/')
+            $uri = '/';
+
         // Try exact match first
         $handler = $this->findHandler($method, $uri);
-        
+
         if ($handler) {
             $this->executeHandler($handler);
             return;
         }
-        
+
         // Try pattern matching
         foreach ($this->routes[$method] ?? [] as $pattern => $patternHandler) {
             if ($this->matchPattern($pattern, $uri, $params)) {
@@ -87,7 +97,7 @@ class Router
                 return;
             }
         }
-        
+
         // Try wildcard routes
         foreach ($this->routes['*'] ?? [] as $pattern => $patternHandler) {
             if ($this->matchPattern($pattern, $uri, $params)) {
@@ -95,12 +105,12 @@ class Router
                 return;
             }
         }
-        
+
         // Debugging 404
         // echo "URI: $uri <br>";
         // echo "Method: $method <br>";
         // echo "Available Routes: <pre>" . print_r($this->routes[$method], true) . "</pre>";
-        
+
         // 404 Not Found
         $this->notFound();
     }
@@ -114,12 +124,12 @@ class Router
         if (isset($this->routes[$method][$uri])) {
             return $this->routes[$method][$uri];
         }
-        
+
         // Try wildcard
         if (isset($this->routes['*'][$uri])) {
             return $this->routes['*'][$uri];
         }
-        
+
         return null;
     }
 
@@ -129,26 +139,26 @@ class Router
     private function matchPattern(string $pattern, string $uri, &$params = []): bool
     {
         $params = [];
-        
+
         // Convert pattern to regex
         $regex = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '([^/]+)', $pattern);
         $regex = '#^' . $regex . '$#';
-        
+
         if (preg_match($regex, $uri, $matches)) {
             array_shift($matches); // Remove full match
-            
+
             // Extract parameter names
             preg_match_all('/\{([a-zA-Z0-9_]+)\}/', $pattern, $paramNames);
             $paramNames = $paramNames[1];
-            
+
             // Combine names with values
             for ($i = 0; $i < count($paramNames); $i++) {
                 $params[$paramNames[$i]] = $matches[$i] ?? null;
             }
-            
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -163,17 +173,17 @@ class Router
         } elseif (is_array($handler) && count($handler) === 2) {
             // Handler is [ControllerClass, method]
             list($controllerClass, $method) = $handler;
-            
+
             // Load controller file
             $controllerFile = dirname(__DIR__) . '/controllers/' . strtolower(str_replace('Controller', '', $controllerClass)) . 'Controller.php';
-            
+
             if (file_exists($controllerFile)) {
                 require_once $controllerFile;
             }
-            
+
             if (class_exists($controllerClass)) {
                 $controller = new $controllerClass();
-                
+
                 if (method_exists($controller, $method)) {
                     // Call method with parameters
                     call_user_func_array([$controller, $method], array_values($params));
@@ -192,7 +202,7 @@ class Router
     private function renderView(string $viewPath): void
     {
         $viewFile = dirname(__DIR__) . '/views/' . $viewPath . '.php';
-        
+
         if (file_exists($viewFile)) {
             require $viewFile;
         } else {
@@ -206,10 +216,10 @@ class Router
     private function notFound(): void
     {
         http_response_code(404);
-        
+
         $method = $_SERVER['REQUEST_METHOD'];
         $uri = $_SERVER['REQUEST_URI'];
-        
+
         echo '<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -258,7 +268,7 @@ class Router
             Method: ' . htmlspecialchars($method) . '<br>
             Routes checked:<br>
             <pre>';
-            
+
         foreach ($this->routes[$method] ?? [] as $pattern => $handler) {
             echo "Pattern: " . htmlspecialchars($pattern) . "<br>";
             // Simple regex check for debug display
@@ -269,7 +279,7 @@ class Router
             echo "Regex: " . htmlspecialchars($regex) . "<br>";
             echo "-------------------<br>";
         }
-        
+
         echo '</pre>
         </div>
         <p><a href="/">Go to Home</a></p>

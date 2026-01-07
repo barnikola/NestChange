@@ -16,7 +16,7 @@ $cacheFile = __DIR__ . '/../app/cache/routes.php';
 
 // CHECK: Do we have a cached version?
 if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
-    
+
     // --- FAST PATH ---
     // Load the array directly from the file
     $cachedRoutes = require $cacheFile;
@@ -92,49 +92,13 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
 
     // ====== API/AJAX Routes ======
     $router->get('/api/listings/search', ['ListingController', 'search']);
-    $router->post('/notifications/trigger-approval', ['NotificationController', 'triggerApproval']);
-    $router->get('/notifications', ['NotificationController', 'index']);
 
-    // ====== Chat Routes ======
-    $router->get('/chat', ['ChatController', 'index']);
-    $router->post('/chat/send', ['ChatController', 'sendMessage']);
-    $router->get('/chat/messages', ['ChatController', 'getMessages']);
-    $router->get('/chat/search', ['ChatController', 'search']);
-    $router->get('/chat/details', ['ChatController', 'getChatDetails']);
-
-    // ====== Admin Routes ======
-    $router->get('/admin', ['AdminController', 'index']);
-    $router->get('/admin/dashboard', ['AdminController', 'index']);
-    
-    // Admin: Users
-    $router->get('/admin/users', ['AdminController', 'users']);
-    $router->post('/admin/users/approve', ['AdminController', 'approveUser']);
-    $router->post('/admin/users/suspend', ['AdminController', 'suspendUser']);
-    $router->post('/admin/users/delete', ['AdminController', 'deleteUser']);
-    
-    // Admin: Documents
-    $router->get('/admin/documents', ['AdminController', 'documents']);
-    $router->post('/admin/documents/approve', ['AdminController', 'approveDocument']);
-    
-    // Admin: Listings
-    $router->get('/admin/listings', ['AdminController', 'listings']);
-    $router->post('/admin/listings/publish', ['AdminController', 'publishListing']);
-    $router->post('/admin/listings/pause', ['AdminController', 'pauseListing']);
-    $router->post('/admin/listings/delete', ['AdminController', 'deleteListing']);
-
-    // ====== Moderator Routes ======
-    $router->get('/moderator', ['ModeratorController', 'index']);
-    $router->get('/moderator/dashboard', ['ModeratorController', 'index']);
-    
-    // Moderator: Listings
-    $router->get('/moderator/listings', ['ModeratorController', 'listings']);
-    $router->post('/moderator/listings/publish', ['ModeratorController', 'publishListing']);
-    $router->post('/moderator/listings/pause', ['ModeratorController', 'pauseListing']);
-    $router->post('/moderator/listings/delete', ['ModeratorController', 'deleteListing']);
-    
-    // Moderator: Documents
-    $router->get('/moderator/documents', ['ModeratorController', 'documents']);
-    $router->post('/moderator/documents/approve', ['ModeratorController', 'approveDocument']);
+    // ====== Admin/Moderator Routes ======
+    $router->get('/admin', 'admin/dashboard');
+    $router->get('/admin/dashboard', 'admin/dashboard');
+    $router->get('/moderator', 'moderator/dashboard');
+    $router->get('/moderator/dashboard', 'moderator/dashboard');
+    $router->get('/chat', 'chat/index');
 
     // AFTER defining all routes, save them to the cache file
     // We use var_export to turn the array into PHP code
@@ -157,6 +121,12 @@ $router->get('/register', ['AuthController', 'showRegister']);
 $router->get('/auth/register', ['AuthController', 'showRegister']);
 $router->post('/register', ['AuthController', 'register']);
 $router->post('/auth/register', ['AuthController', 'register']);
+
+
+// Google Login Routes
+$router->get('/auth/google/redirect', ['AuthController', 'googleRedirect']);
+$router->get('/auth/google/callback', ['AuthController', 'googleCallback']);
+
 
 $router->get('/logout', ['AuthController', 'logout']);
 $router->post('/logout', ['AuthController', 'logout']);

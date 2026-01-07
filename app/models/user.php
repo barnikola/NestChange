@@ -27,17 +27,17 @@ class User extends Model
             $data['password_hash'] = password_hash($data['password'], PASSWORD_ALGO, ['cost' => PASSWORD_COST]);
             unset($data['password']);
         }
-        
+
         // Set default status if not provided
         if (!isset($data['status'])) {
             $data['status'] = 'pending';
         }
-        
+
         // Set default role if not provided
         if (!isset($data['role'])) {
             $data['role'] = 'student';
         }
-        
+
         return $this->create($data);
     }
 
@@ -48,7 +48,7 @@ class User extends Model
     }
 
 
-    public function updatePassword(int|string $table, $userId, string $newPassword): bool
+    public function updatePassword(int|string $userId, string $newPassword): bool
     {
         $hash = password_hash($newPassword, PASSWORD_ALGO, ['cost' => PASSWORD_COST]);
         return $this->update($userId, ['password_hash' => $hash]) > 0;
@@ -58,11 +58,11 @@ class User extends Model
     public function updateStatus(int|string $userId, string $status): bool
     {
         $validStatuses = ['pending', 'approved', 'rejected', 'suspended'];
-        
+
         if (!in_array($status, $validStatuses)) {
             throw new InvalidArgumentException("Invalid status: {$status}");
         }
-        
+
         return $this->update($userId, ['status' => $status]) > 0;
     }
 
@@ -87,11 +87,11 @@ class User extends Model
 
     public function getUserWithProfile(int|string $userId): array|false
     {
-        $sql = "SELECT a.*, p.id as profile_id, p.first_name, p.last_name, p.phone, p.bio, p.city, p.country, p.profile_picture
+        $sql = "SELECT a.*, p.first_name, p.last_name, p.phone, p.bio, p.city, p.country, p.profile_picture
                 FROM account a
                 LEFT JOIN user_profile p ON a.id = p.account_id
                 WHERE a.id = ?";
-        
+
         return $this->db->fetchOne($sql, [$userId]);
     }
 
@@ -117,7 +117,7 @@ class User extends Model
                    OR p.first_name LIKE ? 
                    OR p.last_name LIKE ?
                 LIMIT ?";
-        
+
         $searchTerm = "%{$query}%";
         return $this->db->fetchAll($sql, [$searchTerm, $searchTerm, $searchTerm, $limit]);
     }
@@ -146,7 +146,7 @@ class User extends Model
         if (empty($user['student_status_until'])) {
             return false;
         }
-        
+
         return strtotime($user['student_status_until']) >= time();
     }
 
@@ -157,27 +157,35 @@ class User extends Model
         return $user;
     }
 
-    public function getAllDocuments(): array
+    public function updateProfile(int|string $userId, array $data): bool
     {
-        // Fetch document status as well
-        $sql = "SELECT d.*, p.first_name, p.last_name, a.email, a.status as user_status, a.id as account_id
-                FROM user_document d
-                JOIN account a ON d.account_id = a.id
-                LEFT JOIN user_profile p ON a.id = p.account_id
-                ORDER BY d.created_at DESC";
-                
-        return $this->db->fetchAll($sql);
+        // Don't allowing updating of id or account_id via this method
+        unset($data['id'], $data['account_id']);
+
+        // Check if profile exists
+        $profile = $this->db->fetchOne("SELECT id FROM user_profile WHERE account_id = ?", [$userId]);
+
+        if ($profile) {
+            return $this->db->update('user_profile', $data, 'account_id = ?', [$userId]) >= 0;
+        } else {
+            // Create profile if it doesn't exist (should exist on register, but safe fallback)
+            $data['id'] = $this->generateUuid(); // Need to ensure UUID generation is available or use DB defaults if possible
+            $data['account_id'] = $userId;
+            $result = $this->db->insert('user_profile', $data);
+            return (bool) $result;
+        }
     }
 
-    public function updateDocumentStatus(string $documentId, string $status): bool
+    // Helper since generateUuid is private in Controller but needed here if we insert.
+    // However, User model doesn't have uuid generator helper currently. 
+    // Assuming profile exists for now as it's created on register.
+    // If we need to create, we might need to duplicate UUID logic or move it to a helper.
+    // For now, I'll rely on the update path primarily.
+    private function generateUuid(): string
     {
-        return $this->db->update('user_document', ['status' => $status], 'id = ?', [$documentId]) > 0;
-    }
-
-    public function countPendingDocuments(int|string $userId): int
-    {
-        $sql = "SELECT COUNT(*) as count FROM user_document WHERE account_id = ? AND status = 'pending'";
-        $result = $this->db->fetchOne($sql, [$userId]);
-        return (int)($result['count'] ?? 0);
+        $data = random_bytes(16);
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 }

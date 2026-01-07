@@ -100,12 +100,6 @@ abstract class Model
         return $this->db->fetchAll($sql, $params);
     }
 
-    /**
-     * Create a new record
-     * 
-     * @param array $data Associative array of column => value
-     * @return string The ID of the inserted record
-     */
     public function create(array $data): int|string
     {
         $this->db->insert($this->table, $data);

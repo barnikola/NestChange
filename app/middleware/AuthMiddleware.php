@@ -8,7 +8,7 @@
 require_once dirname(__DIR__) . '/core/session.php';
 require_once dirname(__DIR__) . '/config.php';
 
-class  AuthMiddleware
+class AuthMiddleware
 {
     /**
      * Check if user is authenticated

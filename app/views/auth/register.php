@@ -13,7 +13,7 @@ ob_start();
         <h1 class="form-title">
             <span class="form-title-main">Register</span>
         </h1>
-        
+
         <div class="form-box">
             <?php if (isset($errors) && !empty($errors)): ?>
                 <div class="alert alert-error">
@@ -42,125 +42,62 @@ ob_start();
             <!-- DEBUG: Form tag should have method="POST" action="/register" enctype="multipart/form-data" -->
             <form class="auth-form" method="POST" action="/register" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
-                
+
                 <div class="form-group">
                     <label for="name" class="form-label">Name</label>
-                    <input 
-                        type="text" 
-                        id="name" 
-                        name="name" 
-                        class="form-input" 
-                        placeholder="Value" 
-                        value="<?= htmlspecialchars($old['name'] ?? '') ?>"
-                        required
-                    >
+                    <input type="text" id="name" name="name" class="form-input" placeholder="Value"
+                        value="<?= htmlspecialchars($old['name'] ?? '') ?>" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="surname" class="form-label">Surname</label>
-                    <input 
-                        type="text" 
-                        id="surname" 
-                        name="surname" 
-                        class="form-input" 
-                        placeholder="Value" 
-                        value="<?= htmlspecialchars($old['surname'] ?? '') ?>"
-                        required
-                    >
+                    <input type="text" id="surname" name="surname" class="form-input" placeholder="Value"
+                        value="<?= htmlspecialchars($old['surname'] ?? '') ?>" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="email" class="form-label">Email</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        class="form-input" 
-                        placeholder="Value" 
-                        value="<?= htmlspecialchars($old['email'] ?? '') ?>"
-                        required
-                    >
+                    <input type="email" id="email" name="email" class="form-input" placeholder="Value"
+                        value="<?= htmlspecialchars($old['email'] ?? '') ?>" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="password" class="form-label">Password</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        class="form-input" 
-                        placeholder="Value" 
-                        required
-                    >
+                    <input type="password" id="password" name="password" class="form-input" placeholder="Value"
+                        required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="confirm-password" class="form-label">Confirm password</label>
-                    <input 
-                        type="password" 
-                        id="confirm-password" 
-                        name="password_confirm" 
-                        class="form-input" 
-                        placeholder="Value" 
-                        required
-                    >
+                    <input type="password" id="confirm-password" name="password_confirm" class="form-input"
+                        placeholder="Value" required>
                 </div>
-                
-                <div class="form-group">
-                    <label for="profile-picture" class="form-label">Profile Picture (Optional)</label>
-                    <div class="file-input-wrapper">
-                        <input 
-                            type="file" 
-                            id="profile-picture" 
-                            name="profile_picture" 
-                            class="form-input file-input" 
-                            accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
-                        >
-                        <span class="file-icon">📎</span>
-                    </div>
-                </div>
-                
+
                 <div class="form-group">
                     <label for="id-document" class="form-label">Identification document</label>
                     <div class="file-input-wrapper">
-                        <input 
-                            type="file" 
-                            id="id-document" 
-                            name="id-document" 
-                            class="form-input file-input" 
-                            placeholder="Value"
-                        >
-                        <span class="file-icon">📎</span>
+                        <input type="file" id="id-document" name="id-document" class="form-input file-input"
+                            placeholder="Value">
+                        <span class="file-icon" aria-hidden="true">📎</span>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="student-id" class="form-label">Student-ID</label>
                     <div class="file-input-wrapper">
-                        <input 
-                            type="file" 
-                            id="student-id" 
-                            name="student-id" 
-                            class="form-input file-input" 
-                            placeholder="Value"
-                        >
-                        <span class="file-icon">📎</span>
+                        <input type="file" id="student-id" name="student-id" class="form-input file-input"
+                            placeholder="Value">
+                        <span class="file-icon" aria-hidden="true">📎</span>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="end-date" class="form-label">End of student period</label>
-                    <input 
-                        type="date" 
-                        id="end-date" 
-                        name="student_status_until" 
-                        class="form-input" 
-                        placeholder="dd/mm/yyyy" 
-                        value="<?= htmlspecialchars($old['student_status_until'] ?? '') ?>"
-                        required
-                    >
+                    <input type="date" id="end-date" name="student_status_until" class="form-input"
+                        placeholder="dd/mm/yyyy" value="<?= htmlspecialchars($old['student_status_until'] ?? '') ?>"
+                        required>
                 </div>
-                
+
                 <button type="submit" class="btn-submit">Register</button>
             </form>
         </div>
