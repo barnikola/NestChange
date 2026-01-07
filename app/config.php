@@ -27,13 +27,30 @@ define('APP_DEBUG', APP_ENV === 'development');
 // Database Configuration
 define('DB_HOST', getenv('DB_HOST') ?: '127.0.0.1');
 define('DB_PORT', getenv('DB_PORT') ?: '3306');
-define('DB_NAME', getenv('DB_NAME') ?: 'nest-dev');
+define('DB_NAME', getenv('DB_NAME') ?: 'nestchange');
 define('DB_USER', getenv('DB_USER') ?: 'root');
 define('DB_PASS', getenv('DB_PASS') ?: '');
 define('DB_CHARSET', 'utf8mb4');
 
 // Application URL Configuration
-define('BASE_URL', getenv('BASE_URL') ?: 'http://localhost:80');
+// If running via web server, prefer to detect the base URL from the request
+$envBase = getenv('BASE_URL') ?: '';
+if (php_sapi_name() === 'cli' || empty($_SERVER['HTTP_HOST'])) {
+    define('BASE_URL', $envBase ?: 'http://localhost');
+} else {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'];
+    $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+    $detected = $scheme . '://' . $host . ($scriptDir !== '' ? $scriptDir : '');
+
+    // If an env BASE_URL was provided and it matches the current host, use it;
+    // otherwise use the detected URL so links work when served from a subpath.
+    if (!empty($envBase) && strpos($envBase, $host) !== false) {
+        define('BASE_URL', rtrim($envBase, '/'));
+    } else {
+        define('BASE_URL', rtrim($detected, '/'));
+    }
+}
 define('APP_ROOT', dirname(__DIR__));
 
 // Session Configuration
