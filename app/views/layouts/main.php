@@ -13,7 +13,7 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
-    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/theme.css">
     <?php echo $extraHead; ?>
 </head>
 <body<?php echo $bodyAttr; ?>>
@@ -21,20 +21,20 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
     <header class="header">
         <div class="header-container">
             <div class="header-left">
-                <a href="/">
-                    <img src="/assets/logo.png" alt="NestChange Logo" class="logo-icon">
+                <a href="<?php echo rtrim(BASE_URL, '/'); ?>">
+                    <img src="<?php echo rtrim(BASE_URL, '/'); ?>/assets/logo.png" alt="NestChange Logo" class="logo-icon">
                 </a>
                 <nav class="nav-links">
-                    <a href="/" class="nav-link<?php echo $activeNav === 'home' ? ' nav-link-active' : ''; ?>">Home</a>
-                    <a href="/listings" class="nav-link<?php echo $activeNav === 'listings' ? ' nav-link-active' : ''; ?>">Listings</a>
-                    <a href="/chat" class="nav-link<?php echo $activeNav === 'chat' ? ' nav-link-active' : ''; ?>">Chat</a>
+                    <a href="<?php echo rtrim(BASE_URL, '/'); ?>" class="nav-link<?php echo $activeNav === 'home' ? ' nav-link-active' : ''; ?>">Home</a>
+                    <a href="<?php echo rtrim(BASE_URL, '/'); ?>/listings" class="nav-link<?php echo $activeNav === 'listings' ? ' nav-link-active' : ''; ?>">Listings</a>
+                    <a href="<?php echo rtrim(BASE_URL, '/'); ?>/chat" class="nav-link<?php echo $activeNav === 'chat' ? ' nav-link-active' : ''; ?>">Chat</a>
                     <a href="#" class="nav-link">Pricing</a>
                     <a href="#" class="nav-link">Contact</a>
                 </nav>
             </div>
             <div class="header-right">
-                <a href="/auth/signin" class="btn-signin">Sign in</a>
-                <a href="/auth/register" class="btn-register">Register</a>
+                <a href="<?php echo rtrim(BASE_URL, '/'); ?>/auth/signin" class="btn-signin">Sign in</a>
+                <a href="<?php echo rtrim(BASE_URL, '/'); ?>/auth/register" class="btn-register">Register</a>
             </div>
         </div>
     </header>
@@ -66,8 +66,8 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-left">
-                <a href="/">
-                    <img src="/assets/logo.png" alt="NestChange Logo" class="footer-logo">
+                <a href="<?php echo rtrim(BASE_URL, '/'); ?>">
+                    <img src="<?php echo rtrim(BASE_URL, '/'); ?>/assets/logo.png" alt="NestChange Logo" class="footer-logo">
                 </a>
             </div>
             <div class="footer-nav">
