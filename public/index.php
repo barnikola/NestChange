@@ -95,5 +95,11 @@ $router->get('/moderator/listings', 'moderator/listing_table');
 $router->get('/moderator/documents', 'moderator/document_table');
 $router->get('/chat', 'chat/index');
 
+// ====== Static Pages ======
+$router->get('/faq', ['StaticController', 'faq']);
+$router->get('/contact', ['StaticController', 'contact']);
+$router->post('/contact', ['StaticController', 'contact']);
+$router->get('/legal', ['StaticController', 'legal']);
+
 // Dispatch the request
 $router->dispatch();

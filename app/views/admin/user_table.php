@@ -1,114 +1,123 @@
 <?php
 require_once __DIR__ . '/../../models/user.php';
 
-// Determine if running through router or direct
-$isRouted = defined('APP_ROOT');
-$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
-$scriptDir = rtrim(str_replace('\\', '/', $scriptDir), '/');
+$pageTitle = 'Manage Users';
+$breadcrumbs = [
+    'Home' => '/NestChange/public/home',
+    'Admin' => '/NestChange/public/admin',
+    'Users' => '/NestChange/public/admin/users'
+];
 
-if ($isRouted) {
-    // Via Router (e.g. /NestChange/public/admin/users) -> script is index.php in public
-    $cssPath = $scriptDir . '/css/panel.css';
-} else {
-    // Direct -> script is user_table.php in views/admin
-    $cssPath = '../../../public/css/panel.css';
-}
+require __DIR__ . '/admin_layout.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Manage Users</title>
-    <link rel="stylesheet" href="<?= $cssPath ?>">
+<div class="panel-box" style="background:#fff; padding:20px; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h1 style="margin:0; font-size:1.5rem; color:#2c3e50;">User Management</h1>
+        <!-- Search or Filter could go here -->
+    </div>
+
     <style>
-        table {
-            width: 90%;
-            margin: 40px auto;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        th, td {
-            padding: 15px;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background: #f5f5f5;
-        }
-        .actions button {
-            padding: 5px 12px;
-            margin-right: 5px;
-            cursor: pointer;
-        }
-        .approve { background: #4CAF50; color: white; }
-        .block { background: #ff9800; color: white; }
-        .delete { background: #f44336; color: white; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #eee; text-align: left; }
+        th { background: #f8f9fa; font-weight: 600; color: #555; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; }
+        .badge-approved { background: #d4edda; color: #155724; }
+        .badge-pending { background: #fff3cd; color: #856404; }
+        .badge-suspended { background: #f8d7da; color: #721c24; }
+        
+        .btn-action { padding: 5px 10px; border-radius: 4px; border:none; cursor: pointer; font-size: 0.85rem; color: white; transition: opacity 0.2s; }
+        .btn-action:hover { opacity: 0.9; }
+        .btn-approve { background: #27ae60; }
+        .btn-suspend { background: #f39c12; }
+        .btn-delete { background: #e74c3c; }
     </style>
-</head>
-<body>
 
-<h1 style="text-align:center; margin-top:30px;">User Management</h1>
-
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Email</th>
-        <th>Name</th>
-        <th>Status</th>
-        <th>Actions</th>
-    </tr>
-
-<?php
-$userModel = new User();
-$users = $userModel->search('', 100); // Fetch up to 100 users with profile info
-?>
-
-    <?php if (empty($users)): ?>
-    <tr>
-        <td colspan="5" style="text-align:center;">No users found.</td>
-    </tr>
-    <?php else: ?>
-        <?php foreach ($users as $u): ?>
-        <tr>
-            <td><?= htmlspecialchars($u['id']) ?></td>
-            <td><?= htmlspecialchars($u['email']) ?></td>
-            <td><?= htmlspecialchars(($u['first_name'] ?? '') . " " . ($u['last_name'] ?? '')) ?></td>
-            <td><?= htmlspecialchars($u['status']) ?></td>
-
-            <td class="actions">
-                <button class="approve" onclick="updateStatus(<?= $u['id'] ?>, 'approved')">Approve</button>
-                <button class="block" onclick="updateStatus(<?= $u['id'] ?>, 'suspended')">Block</button>
-                <button class="delete" onclick="deleteUser(<?= $u['id'] ?>)">Delete</button>
-            </td>
-        </tr>
-        <?php endforeach; ?>
-    <?php endif; ?>
-
-</table>
-
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $userModel = new User();
+            $users = $userModel->search('', 100); 
+            ?>
+            
+            <?php if (empty($users)): ?>
+                <tr><td colspan="5" style="text-align:center; padding:30px; color:#777;">No users found.</td></tr>
+            <?php else: ?>
+                <?php foreach ($users as $u): ?>
+                <tr>
+                    <td>#<?= $u['id'] ?></td>
+                    <td>
+                        <div style="font-weight:bold"><?= htmlspecialchars(($u['first_name'] ?? 'Unknown') . " " . ($u['last_name'] ?? '')) ?></div>
+                        <div style="font-size:0.85rem; color:#888;"><?= htmlspecialchars($u['email']) ?></div>
+                    </td>
+                    <td style="text-transform: capitalize;"><?= htmlspecialchars($u['role']) ?></td>
+                    <td>
+                        <span class="badge badge-<?= $u['status'] ?>">
+                            <?= ucfirst($u['status']) ?>
+                        </span>
+                    </td>
+                    <td style="white-space:nowrap;">
+                        <?php if($u['status'] !== 'approved'): ?>
+                            <button class="btn-action btn-approve" onclick="updateStatus(<?= $u['id'] ?>, 'approved')">Approve</button>
+                        <?php endif; ?>
+                        
+                        <?php if($u['status'] !== 'suspended'): ?>
+                            <button class="btn-action btn-suspend" onclick="updateStatus(<?= $u['id'] ?>, 'suspended')">Suspend</button>
+                        <?php endif; ?>
+                        
+                        <button class="btn-action btn-delete" onclick="deleteUser(<?= $u['id'] ?>)">Delete</button>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
 
 <script>
+    const baseUrl = '/NestChange/public/admin/users';
+
     function updateStatus(userId, status) {
-        if(confirm('Are you sure you want to change the status to ' + status + '?')) {
-            // TODO: Implement AJAX call to update status
-            // Example:
-            // fetch('/admin/users/status', {
-            //     method: 'POST',
-            //     headers: {'Content-Type': 'application/json'},
-            //     body: JSON.stringify({id: userId, status: status})
-            // }).then(...)
-            alert('Update status feature not implemented yet.');
+        let action = status === 'approved' ? 'approve' : 'suspend';
+        if(confirm(`Are you sure you want to ${action} this user?`)) {
+            fetch(`${baseUrl}/${action}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `id=${userId}&status=${status}`
+            })
+            .then(res => {
+                // For demo/simplified usage without backend API implemented completely:
+                alert('Action simulated. Reloading...'); 
+                location.reload(); 
+            });
         }
     }
 
     function deleteUser(userId) {
-        if(confirm('Are you sure you want to delete this user?')) {
-            // TODO: Implement AJAX call to delete user
-            alert('Delete user feature not implemented yet.');
+        if(confirm('Are you sure you want to PERMANENTLY delete this user? This cannot be undone.')) {
+            fetch(`${baseUrl}/delete`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `id=${userId}`
+            })
+            .then(res => {
+                alert('Action simulated. Reloading...'); 
+                location.reload();
+            });
         }
     }
 </script>
+
+</main>
+</div>
 </body>
 </html>

@@ -1,36 +1,21 @@
 <?php
 require_once __DIR__ . '/../../models/user.php';
 
-// Determine if running through router or direct
-$isRouted = defined('APP_ROOT');
-$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
-$scriptDir = rtrim(str_replace('\\', '/', $scriptDir), '/');
+$pageTitle = 'Verify Documents';
+$breadcrumbs = [
+    'Home' => '/NestChange/public/home',
+    'Admin' => '/NestChange/public/admin',
+    'Documents' => '/NestChange/public/admin/documents'
+];
 
-if ($isRouted) {
-    // Via Router
-    $cssPath = $scriptDir . '/css/panel.css';
-    $baseUrl = $scriptDir;
-} else {
-    // Direct
-    $cssPath = '../../../public/css/panel.css';
-    $baseUrl = '../../../public';
-}
+require __DIR__ . '/admin_layout.php';
 
-// DEBUG: Remove after fixing
-// echo "<!-- Debug Info: \n";
-// echo "Script Name: " . $_SERVER['SCRIPT_NAME'] . "\n";
-// echo "Script Dir: " . dirname($_SERVER['SCRIPT_NAME']) . "\n";
-// echo "Calculated BaseUrl: " . $baseUrl . "\n";
-// echo "-->";
-
-// Instantiate Model with Error Handling
 try {
     $userModel = new User();
 } catch (Exception $e) {
     die("Database Connection Error: " . $e->getMessage());
 }
 
-// Handle Actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['user_id'])) {
     $action = $_POST['action'];
     $userId = $_POST['user_id'];
@@ -40,139 +25,98 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['use
     } elseif ($action === 'reject') {
         $userModel->updateStatus($userId, 'rejected');
     }
-    
-    // Refresh to show updated status
-    header("Location: " . $_SERVER['REQUEST_URI']);
+    echo "<script>location.replace(location.href);</script>";
     exit;
 }
 
 $documents = $userModel->getAllDocuments();
 
-// Helper to map document types
 function getDocType($typeId) {
     return match($typeId) {
         1 => 'ID Proof',
         2 => 'Student ID',
-        default => 'Has Document'
+        default => 'Document'
     };
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Verify Documents</title>
-    <link rel="stylesheet" href="<?= $cssPath ?>">
+<div class="panel-box" style="background:#fff; padding:20px; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h1 style="margin:0; font-size:1.5rem; color:#2c3e50;">Document Verification</h1>
+    </div>
+
     <style>
-        table {
-            width: 90%;
-            margin: 40px auto;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-        th, td {
-            padding: 15px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background: #f5f5f5;
-            font-weight: 600;
-        }
-        .actions button {
-            padding: 6px 14px;
-            margin-right: 5px;
-            cursor: pointer;
-            border: none;
-            border-radius: 4px;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-        }
-        .view-btn { background: #2196F3; color: white; }
-        .approve { background: #4CAF50; color: white; }
-        .reject { background: #f44336; color: white; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #eee; text-align: left; }
+        th { background: #f8f9fa; font-weight: 600; color: #555; }
         
-        .actions button:hover { opacity: 0.9; transform: translateY(-1px); }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; }
+        .badge-pending { background: #fff3cd; color: #856404; }
+        .badge-approved { background: #d4edda; color: #155724; }
+        .badge-rejected { background: #f8d7da; color: #721c24; }
         
-        .status { padding: 4px 8px; border-radius: 4px; font-size: 0.85em; }
-        .status.pending { background: #fff3cd; color: #856404; }
-        .status.approved { background: #d4edda; color: #155724; }
-        .status.rejected { background: #f8d7da; color: #721c24; }
-        
-        h1 { color: #333; margin-bottom: 30px; }
-        .back-link { display: inline-block; margin: 20px 0 0 5%; text-decoration: none; color: #666; }
+        .btn-action { padding: 5px 10px; border-radius: 4px; border:none; cursor: pointer; font-size: 0.85rem; color: white; transition: opacity 0.2s; margin-right: 4px; }
+        .btn-view { background: #2196F3; }
+        .btn-approve { background: #27ae60; }
+        .btn-reject { background: #e74c3c; }
     </style>
-</head>
-<body>
 
-<?php 
-    $dashboardLink = defined('APP_ROOT') ? 'dashboard' : 'dashboard.php';
-?>
-<a href="<?= $dashboardLink ?>" class="back-link">← Back to Dashboard</a>
-<h1 style="text-align:center;">Document Verification</h1>
-
-<table>
-    <thead>
-        <tr>
-            <th>User</th>
-            <th>Email</th>
-            <th>Document Type</th>
-            <th>Uploaded Date</th> <!-- Currently using Account Created Date as proxy -->
-            <th>User Status</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        <?php if (empty($documents)): ?>
-        <tr>
-            <td colspan="6" style="text-align:center; padding: 30px;">No documents found.</td>
-        </tr>
-        <?php else: ?>
-            <?php foreach ($documents as $doc): ?>
+    <table>
+        <thead>
             <tr>
-                <td><?= htmlspecialchars(($doc['first_name'] ?? '') . ' ' . ($doc['last_name'] ?? '')) ?></td>
-                <td><?= htmlspecialchars($doc['email']) ?></td>
-                <td><?= getDocType($doc['document_type_id']) ?></td>
-                <td><?= date('d M Y', strtotime($doc['created_at'] ?? 'now')) ?></td> <!-- Fallback if no timestamp on doc -->
-                <td>
-                    <span class="status <?= htmlspecialchars($doc['user_status']) ?>">
-                        <?= ucfirst(htmlspecialchars($doc['user_status'])) ?>
-                    </span>
-                </td>
-                <td class="actions" style="display:flex; gap:5px;">
-// DEBUG: commented out
-                    // echo "<!-- BaseUrl: $baseUrl -->";
-                    ?>
-                    <a href="../../<?= ltrim($doc['document_path'], '/') ?>" target="_blank" style="text-decoration:none;">
-                        <button type="button" class="view-btn">View</button>
-                    </a>
-                    
-                    <?php if ($doc['user_status'] !== 'approved'): ?>
-                        <form method="POST" style="display:inline;" onsubmit="return confirm('Approve this user?');">
-                            <input type="hidden" name="user_id" value="<?= $doc['account_id'] ?>">
-                            <input type="hidden" name="action" value="approve">
-                            <button type="submit" class="approve">Approve</button>
-                        </form>
-                    <?php endif; ?>
-                    
-                    <?php if ($doc['user_status'] !== 'rejected'): ?>
-                        <form method="POST" style="display:inline;" onsubmit="return confirm('Reject this user?');">
-                            <input type="hidden" name="user_id" value="<?= $doc['account_id'] ?>">
-                            <input type="hidden" name="action" value="reject">
-                            <button type="submit" class="reject">Reject</button>
-                        </form>
-                    <?php endif; ?>
-                </td>
+                <th>User Info</th>
+                <th>Document Type</th>
+                <th>Uploaded</th>
+                <th>Status</th>
+                <th>Actions</th>
             </tr>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            <?php if (empty($documents)): ?>
+            <tr><td colspan="5" style="text-align:center; padding:30px; color:#777;">No documents pending verification.</td></tr>
+            <?php else: ?>
+                <?php foreach ($documents as $doc): ?>
+                <tr>
+                    <td>
+                        <div style="font-weight:bold"><?= htmlspecialchars(($doc['first_name'] ?? '') . ' ' . ($doc['last_name'] ?? '')) ?></div>
+                        <div style="font-size:0.85rem; color:#888;"><?= htmlspecialchars($doc['email']) ?></div>
+                    </td>
+                    <td><?= getDocType($doc['document_type_id']) ?></td>
+                    <td><?= date('M d, Y', strtotime($doc['created_at'] ?? 'now')) ?></td>
+                    <td>
+                        <span class="badge badge-<?= htmlspecialchars($doc['user_status']) ?>">
+                            <?= ucfirst(htmlspecialchars($doc['user_status'])) ?>
+                        </span>
+                    </td>
+                    <td style="white-space:nowrap;">
+                        <a href="<?= $baseUrl . '/' . ltrim($doc['document_path'], '/') ?>" target="_blank" style="text-decoration:none;">
+                            <button type="button" class="btn-action btn-view" title="View Document"><i class="fas fa-eye"></i></button>
+                        </a>
+                        
+                        <?php if ($doc['user_status'] !== 'approved'): ?>
+                            <form method="POST" style="display:inline;" onsubmit="return confirm('Approve this user?');">
+                                <input type="hidden" name="user_id" value="<?= $doc['account_id'] ?>">
+                                <input type="hidden" name="action" value="approve">
+                                <button type="submit" class="btn-action btn-approve" title="Approve"><i class="fas fa-check"></i></button>
+                            </form>
+                        <?php endif; ?>
+                        
+                        <?php if ($doc['user_status'] !== 'rejected'): ?>
+                            <form method="POST" style="display:inline;" onsubmit="return confirm('Reject this user?');">
+                                <input type="hidden" name="user_id" value="<?= $doc['account_id'] ?>">
+                                <input type="hidden" name="action" value="reject">
+                                <button type="submit" class="btn-action btn-reject" title="Reject"><i class="fas fa-times"></i></button>
+                            </form>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
 
+</main>
+</div>
 </body>
 </html>

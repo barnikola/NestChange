@@ -1,23 +1,29 @@
 <?php
 // Ensure this file is accessed via the router or with correct paths
 if (defined('APP_ROOT')) {
-    // We are in routed environment, paths are absolute from root
     require_once APP_ROOT . '/app/models/listing.php';
-    $baseUrl = ''; // relative to root
 } else {
-    // Direct access
     require_once __DIR__ . '/../../models/listing.php';
-    $baseUrl = '../../../public';
+    // Fallback for direct access if needed (not recommended with layout)
 }
 
-// Instantiate Model with Error Handling
+$pageTitle = 'Manage Listings';
+$breadcrumbs = [
+    'Home' => '/NestChange/public/home',
+    'Admin' => '/NestChange/public/admin',
+    'Listings' => '/NestChange/public/admin/listings'
+];
+
+require __DIR__ . '/admin_layout.php';
+
+// Instantiate Model
 try {
     $listingModel = new Listing();
 } catch (Exception $e) {
     die("Database Connection Error: " . $e->getMessage());
 }
 
-// Handle Actions
+// Handle Actions (approve, pause, delete)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['listing_id'])) {
     $action = $_POST['action'];
     $listingId = $_POST['listing_id'];
@@ -27,21 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['lis
     } elseif ($action === 'pause') {
         $listingModel->pause($listingId);
     } elseif ($action === 'delete') {
-        // Hard delete or Soft delete? Using delete logic from model if exists, or status update
-        // Model has delete related to image/attribute, but not full listing delete method exposed yet?
-        // Checking model... it extends Model which has delete($id).
         $listingModel->delete($listingId);
     }
-    
-    // Refresh to show updated status
-    header("Location: " . $_SERVER['REQUEST_URI']);
+    // Refresh
+    echo "<script>location.replace(location.href);</script>";
     exit;
 }
 
-// Fetch Listings
 $listings = $listingModel->getAllListings();
 
-// Helper for Status ID/Class
 function getStatusClass($status) {
     return match($status) {
         'published' => 'approved',
@@ -51,115 +51,99 @@ function getStatusClass($status) {
     };
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Manage Listings</title>
-    <!-- CSS is handled by dashboard inclusion usually, but if standalone: -->
-    <?php if (!defined('APP_ROOT')): ?>
-    <link rel="stylesheet" href="../../../public/css/panel.css">
-    <?php endif; ?>
+
+<div class="panel-box" style="background:#fff; padding:20px; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h1 style="margin:0; font-size:1.5rem; color:#2c3e50;">Manage Listings</h1>
+    </div>
+
     <style>
-        /* Inline styles for quick consistency if css missing */
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #f8f9fa; font-weight: 600; }
-        .approved { background-color: #d4edda; color: #155724; padding: 5px 10px; border-radius: 4px; font-size: 0.85em; }
-        .pending { background-color: #fff3cd; color: #856404; padding: 5px 10px; border-radius: 4px; font-size: 0.85em; }
-        .rejected { background-color: #f8d7da; color: #721c24; padding: 5px 10px; border-radius: 4px; font-size: 0.85em; }
-        .view-btn { background-color: #3498db; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
-        .approve-btn { background-color: #2ecc71; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
-        .pause-btn { background-color: #f39c12; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
-        .delete-btn { background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
-    </style>
-</head>
-<body>
-
-    <div class="header-nav" style="margin: 20px;">
-        <?php 
-            $dashboardLink = defined('APP_ROOT') ? 'dashboard' : 'dashboard.php';
-        ?>
-        <a href="<?= $dashboardLink ?>" style="text-decoration: none; color: #333;">&larr; Back to Dashboard</a>
-    </div>
-
-    <div style="padding: 20px;">
-        <h2 style="text-align: center; color: #333;">Manage Listings</h2>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #eee; text-align: left; }
+        th { background: #f8f9fa; font-weight: 600; color: #555; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; }
+        .badge-approved { background: #d4edda; color: #155724; }
+        .badge-pending { background: #fff3cd; color: #856404; }
+        .badge-rejected { background: #f8d7da; color: #721c24; }
         
-        <table>
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Host</th>
-                    <th>Price/Room</th>
-                    <th>Created</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (empty($listings)): ?>
-                <tr>
-                    <td colspan="6" style="text-align:center;">No listings found.</td>
-                </tr>
-                <?php else: ?>
-                    <?php foreach ($listings as $list): ?>
-                    <tr>
-                        <td>
-                            <strong><?= htmlspecialchars($list['title']) ?></strong><br>
-                            <small><?= htmlspecialchars($list['city'] . ', ' . $list['country']) ?></small>
-                        </td>
-                        <td>
-                            <?= htmlspecialchars(($list['first_name'] ?? 'Unknown') . ' ' . ($list['last_name'] ?? '')) ?><br>
-                            <small><?= htmlspecialchars($list['host_email'] ?? '') ?></small>
-                        </td>
-                        <td>
-                            <?= isset($list['price']) ? '$' . htmlspecialchars($list['price']) : 'N/A' ?> <br>
-                            <small><?= htmlspecialchars($list['room_type']) ?></small>
-                        </td>
-                        <td><?= date('d M Y', strtotime($list['created_at'])) ?></td>
-                        <td>
-                            <span class="<?= getStatusClass($list['status']) ?>">
-                                <?= ucfirst(htmlspecialchars($list['status'])) ?>
-                            </span>
-                        </td>
-                        <td class="actions" style="display:flex; gap:5px;">
-                            <!-- View Public Listing -->
-                            <a href="<?= $baseUrl ?>/listings/<?= $list['id'] ?>" target="_blank" style="text-decoration:none;">
-                                <button type="button" class="view-btn">View</button>
-                            </a>
-                            
-                            <!-- Approve (if not published) -->
-                            <?php if ($list['status'] !== 'published'): ?>
-                                <form method="POST" style="display:inline;" onsubmit="return confirm('Publish this listing?');">
-                                    <input type="hidden" name="listing_id" value="<?= $list['id'] ?>">
-                                    <input type="hidden" name="action" value="approve">
-                                    <button type="submit" class="approve-btn">Publish</button>
-                                </form>
-                            <?php endif; ?>
-                            
-                            <!-- Pause (if published) -->
-                            <?php if ($list['status'] === 'published'): ?>
-                                <form method="POST" style="display:inline;" onsubmit="return confirm('Pause this listing?');">
-                                    <input type="hidden" name="listing_id" value="<?= $list['id'] ?>">
-                                    <input type="hidden" name="action" value="pause">
-                                    <button type="submit" class="pause-btn">Pause</button>
-                                </form>
-                            <?php endif; ?>
+        .btn-action { padding: 5px 10px; border-radius: 4px; border:none; cursor: pointer; font-size: 0.85rem; color: white; transition: opacity 0.2s; margin-right: 4px; }
+        .btn-view { background: #3498db; }
+        .btn-approve { background: #27ae60; }
+        .btn-pause { background: #f39c12; }
+        .btn-delete { background: #e74c3c; }
+    </style>
 
-                            <!-- Delete -->
-                            <form method="POST" style="display:inline;" onsubmit="return confirm('Permanently delete this listing?');">
+    <table>
+        <thead>
+            <tr>
+                <th>Title & Location</th>
+                <th>Host</th>
+                <th>Price / Type</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (empty($listings)): ?>
+                <tr><td colspan="5" style="text-align:center; padding:30px; color:#777;">No listings found.</td></tr>
+            <?php else: ?>
+                <?php foreach ($listings as $list): ?>
+                <tr>
+                    <td>
+                        <div style="font-weight:bold"><?= htmlspecialchars($list['title']) ?></div>
+                        <div style="font-size:0.85rem; color:#888;">
+                            <i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($list['city'] . ', ' . $list['country']) ?>
+                            <div style="color:#aaa; font-size:0.8em;"><?= date('M d, Y', strtotime($list['created_at'])) ?></div>
+                        </div>
+                    </td>
+                    <td>
+                        <?= htmlspecialchars(($list['first_name'] ?? 'Unknown') . ' ' . ($list['last_name'] ?? '')) ?><br>
+                        <small style="color:#888;"><?= htmlspecialchars($list['host_email'] ?? '') ?></small>
+                    </td>
+                    <td>
+                        <?= isset($list['price']) ? '$' . htmlspecialchars($list['price']) : 'N/A' ?> <br>
+                        <small style="color:#666;"><?= htmlspecialchars($list['room_type']) ?></small>
+                    </td>
+                    <td>
+                        <span class="badge badge-<?= getStatusClass($list['status']) ?>">
+                            <?= ucfirst(htmlspecialchars($list['status'])) ?>
+                        </span>
+                    </td>
+                    <td style="white-space:nowrap;">
+                         <a href="<?= $baseUrl ?>/listings/<?= $list['id'] ?>" target="_blank" style="text-decoration:none;">
+                            <button type="button" class="btn-action btn-view" title="View Listing"><i class="fas fa-eye"></i></button>
+                        </a>
+                        
+                        <?php if ($list['status'] !== 'published'): ?>
+                            <form method="POST" style="display:inline;" onsubmit="return confirm('Publish this listing?');">
                                 <input type="hidden" name="listing_id" value="<?= $list['id'] ?>">
-                                <input type="hidden" name="action" value="delete">
-                                <button type="submit" class="delete-btn">Delete</button>
+                                <input type="hidden" name="action" value="approve">
+                                <button type="submit" class="btn-action btn-approve" title="Publish"><i class="fas fa-check"></i></button>
                             </form>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
+                        <?php endif; ?>
+                        
+                        <?php if ($list['status'] === 'published'): ?>
+                            <form method="POST" style="display:inline;" onsubmit="return confirm('Pause this listing?');">
+                                <input type="hidden" name="listing_id" value="<?= $list['id'] ?>">
+                                <input type="hidden" name="action" value="pause">
+                                <button type="submit" class="btn-action btn-pause" title="Pause"><i class="fas fa-pause"></i></button>
+                            </form>
+                        <?php endif; ?>
 
+                        <form method="POST" style="display:inline;" onsubmit="return confirm('Permanently delete this listing?');">
+                            <input type="hidden" name="listing_id" value="<?= $list['id'] ?>">
+                            <input type="hidden" name="action" value="delete">
+                            <button type="submit" class="btn-action btn-delete" title="Delete"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+
+</main>
+</div>
 </body>
 </html>
