@@ -6,11 +6,13 @@ require_once dirname(__DIR__) . '/helpers/Validator.php';
 class ProfileController extends Controller
 {
     private User $userModel;
+    private Listing $listingModel;
 
     public function __construct()
     {
         parent::__construct();
         $this->userModel = $this->model('User');
+        $this->listingModel = $this->model('Listing');
     }
 
     public function index(): void
@@ -32,6 +34,28 @@ class ProfileController extends Controller
         $this->data['documents'] = $documents;
 
         $this->view('profile/profile', $this->data);
+    }
+
+    public function show(string $profileId): void
+    {
+        $profile = $this->userModel->getPublicProfile($profileId);
+
+        if (!$profile) {
+            $this->flash('error', 'Profile not found.');
+            $this->redirect(BASE_URL . '/listings');
+        }
+
+        $listings = $this->listingModel->getByHostProfile($profileId);
+        $stats = [
+            'total_listings' => count($listings),
+            'published_listings' => count(array_filter($listings, fn($listing) => ($listing['status'] ?? '') === 'published')),
+        ];
+
+        $this->data['profile'] = $profile;
+        $this->data['listings'] = $listings;
+        $this->data['stats'] = $stats;
+
+        $this->view('profile/public_profile', $this->data);
     }
 
     public function edit(): void
@@ -101,9 +125,6 @@ class ProfileController extends Controller
         if ($this->userModel->updateProfile($user['id'], $updateData)) {
             $msg = 'Profile updated successfully.';
             if ($idDocPath) {
-                // We are strictly told: "Store uploads temporarily in temp/uploads/ so we avoid touching real storage."
-                // So we do NOT save this specific doc path to the DB for now, or maybe we do but it points to temp.
-                // I'll assume we just notify the user.
                 $msg .= ' Document uploaded to temporary storage.';
             }
             $this->flash('success', $msg);

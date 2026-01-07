@@ -275,7 +275,12 @@ ob_start();
                             <?php else: ?>
                                 <img src="/assets/listing.jpg" alt="<?php echo htmlspecialchars($listing['title']); ?>">
                             <?php endif; ?>
-                            <button class="btn-favorite" onclick="event.stopPropagation(); toggleFavorite(this, '<?php echo $listing['id']; ?>')">♡</button>
+                            <button class="btn-favorite <?php echo !empty($listing['is_favorited']) ? 'favorited' : ''; ?>" 
+                                    onclick="event.stopPropagation(); toggleFavorite(this, '<?php echo $listing['id']; ?>')"
+                                    data-listing-id="<?php echo $listing['id']; ?>"
+                                    title="<?php echo !empty($listing['is_favorited']) ? 'Remove from favorites' : 'Add to favorites'; ?>">
+                                <?php echo !empty($listing['is_favorited']) ? '❤️' : '♡'; ?>
+                            </button>
                         </div>
                         <div class="result-details">
                             <div class="result-header">
@@ -368,6 +373,7 @@ echo json_encode([
 ?>
 </script>
 <script src="/js/listings-filters.js"></script>
+<script src="/js/favorites.js"></script>
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/main.php';

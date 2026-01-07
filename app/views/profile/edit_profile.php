@@ -80,20 +80,7 @@ ob_start();
     </div>
 </section>
 
-<script>
-    document.getElementById('photoUpload').onchange = function (evt) {
-        var tgt = evt.target || window.event.srcElement,
-            files = tgt.files;
-
-        if (FileReader && files && files.length) {
-            var fr = new FileReader();
-            fr.onload = function () {
-                document.getElementById('previewImg').src = fr.result;
-            }
-            fr.readAsDataURL(files[0]);
-        }
-    }
-</script>
+<script src="/js/profile-edit.js" defer></script>
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/main.php';

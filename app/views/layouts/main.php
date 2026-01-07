@@ -36,7 +36,7 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                     <!-- Chat link visible only if logged in or allow access to login via it -->
                     <a href="/chat"
                         class="nav-link<?php echo $activeNav === 'chat' ? ' nav-link-active' : ''; ?>">Chat</a>
-                    <a href="#" class="nav-link">Pricing</a>
+                    <a href="/favorites" class="nav-link">Favorites</a>
                     <a href="#" class="nav-link">Contact</a>
                 </nav>
             </div>
@@ -45,7 +45,7 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                     <div class="user-dropdown" tabindex="0">
                         <div class="user-avatar-btn">
                             <?php if ($navContext['avatar']): ?>
-                                <img src="/<?= htmlspecialchars($navContext['avatar']) ?>" alt="Avatar" class="user-avatar-img">
+                                <img src="<?= htmlspecialchars($navContext['avatar']) ?>" alt="Avatar" class="user-avatar-img">
                             <?php else: ?>
                                 <?= htmlspecialchars($navContext['initials']) ?>
                             <?php endif; ?>
@@ -61,7 +61,7 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                             </div>
                             <a href="/profile" class="dropdown-item">My Profile</a>
                             <a href="/profile/edit" class="dropdown-item">Settings</a>
-                            <a href="#" class="dropdown-item">
+                            <a href="/notifications" class="dropdown-item">
                                 Notifications
                                 <?php if ($navContext['notification_count'] > 0): ?>
                                     <span class="notification-badge"><?= $navContext['notification_count'] ?></span>

@@ -96,6 +96,75 @@ class User extends Model
     }
 
 
+    public function getPublicProfile(string $profileId): array|false
+    {
+        $sql = "SELECT p.*, a.email, a.status, a.role, a.created_at
+                FROM user_profile p
+                JOIN account a ON p.account_id = a.id
+                WHERE p.id = ?";
+
+        return $this->db->fetchOne($sql, [$profileId]);
+    }
+
+    /**
+     * Create or update the user's profile row.
+     *
+     * @param int|string $accountId The owning account id
+     * @param array $data Profile fields to persist
+     * @return bool
+     */
+    public function updateProfile(int|string $accountId, array $data): bool
+    {
+        // Only allow known columns to be persisted
+        $allowed = [
+            'first_name',
+            'last_name',
+            'bio',
+            'city',
+            'country',
+            'profile_picture',
+            'languages',
+            'accessibility_needs',
+        ];
+
+        $filtered = array_intersect_key($data, array_flip($allowed));
+
+        // No valid data to write
+        if (empty($filtered)) {
+            return false;
+        }
+
+        try {
+            $existing = $this->db->fetchOne(
+                "SELECT id FROM user_profile WHERE account_id = ? LIMIT 1",
+                [$accountId]
+            );
+
+            if ($existing) {
+                return $this->db->update(
+                    'user_profile',
+                    $filtered,
+                    'account_id = ?',
+                    [$accountId]
+                ) > 0;
+            }
+
+            $this->db->insert('user_profile', array_merge([
+                'id' => $this->generateUuid(),
+                'account_id' => $accountId,
+            ], $filtered));
+
+            return true;
+        } catch (Exception $e) {
+            // Keep controller flow alive; surface details only in debug mode
+            if (defined('APP_DEBUG') && APP_DEBUG) {
+                throw $e;
+            }
+            return false;
+        }
+    }
+
+
     public function findByStatus(string $status): array
     {
         return $this->findBy('status', $status);
@@ -179,5 +248,13 @@ class User extends Model
         $sql = "SELECT COUNT(*) as count FROM user_document WHERE account_id = ? AND status = 'pending'";
         $result = $this->db->fetchOne($sql, [$userId]);
         return (int)($result['count'] ?? 0);
+    }
+
+    private function generateUuid(): string
+    {
+        $data = random_bytes(16);
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 }

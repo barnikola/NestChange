@@ -71,6 +71,11 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
     $router->get('/my-listings', ['ListingController', 'myListings']);
     $router->post('/listings/{listingId}/images/{imageId}/delete', ['ListingController', 'deleteImage']);
 
+    // ====== Favorites Routes ======
+    $router->get('/favorites', ['FavoriteController', 'index']);
+    $router->post('/listings/{id}/favorite', ['FavoriteController', 'favorite']);
+    $router->post('/listings/{id}/unfavorite', ['FavoriteController', 'unfavorite']);
+
     // ====== Profile Routes ======
     $router->get('/profile', ['ProfileController', 'index']);
     $router->get('/profile/edit', ['ProfileController', 'edit']);
@@ -193,6 +198,11 @@ $router->post('/listings/{id}/publish', ['ListingController', 'publish']);
 $router->post('/listings/{id}/pause', ['ListingController', 'pause']);
 $router->post('/listings/{id}/unpause', ['ListingController', 'unpause']);
 $router->post('/listings/{listingId}/images/{imageId}/delete', ['ListingController', 'deleteImage']);
+
+// ====== Favorites Routes ======
+$router->get('/favorites', ['FavoriteController', 'index']);
+$router->post('/listings/{id}/favorite', ['FavoriteController', 'favorite']);
+$router->post('/listings/{id}/unfavorite', ['FavoriteController', 'unfavorite']);
 
 // ====== Exchange Routes ======
 $router->get('/listings/my-exchanges', ['ExchangeController', 'myExchanges']);

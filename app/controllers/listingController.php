@@ -52,6 +52,23 @@ class ListingController extends Controller
         $totalListings = $this->listingModel->countSearch($filters);
         $totalPages = ceil($totalListings / $limit);
         
+        // Add favorite status for logged-in users
+        $favoriteIds = [];
+        if (Session::isLoggedIn()) {
+            $profileId = $this->getUserProfileId();
+            if ($profileId) {
+                require_once dirname(__DIR__) . '/models/Favorite.php';
+                $favoriteModel = new Favorite();
+                $favoriteIds = $favoriteModel->getFavoriteIds($profileId);
+            }
+        }
+        
+        // Mark listings with favorite status
+        foreach ($listings as &$listing) {
+            $listing['is_favorited'] = in_array($listing['id'], $favoriteIds);
+        }
+        unset($listing);
+        
         $this->data['listings'] = $listings;
         $this->data['filters'] = $filters;
         $this->data['pagination'] = [
@@ -120,9 +137,12 @@ class ListingController extends Controller
         AuthMiddleware::requireAuth();
         AuthMiddleware::requireApproved();
 
+        require_once dirname(__DIR__) . '/helpers/countries.php';
+        
         $this->data['csrf_token'] = $this->getCsrfToken();
         $this->data['attributes'] = $this->attributeModel->getAllGroupedByCategory();
         $this->data['services'] = $this->serviceModel->findAll('name');
+        $this->data['countries'] = getCountries();
         
         $this->view('listings/addListing', $this->data);
     }
@@ -132,6 +152,8 @@ class ListingController extends Controller
     {
         AuthMiddleware::requireAuth();
         AuthMiddleware::requireApproved();
+        
+        require_once dirname(__DIR__) . '/helpers/countries.php';
         
         if (!$this->isPost()) {
             $this->redirect(BASE_URL . '/listings/create');
@@ -143,6 +165,7 @@ class ListingController extends Controller
         }
         
         $data = $this->allPost();
+        error_log("Attempting to store listing with data: " . print_r($data, true));
         
         // Validate input
         $validator = Validator::make($data)
@@ -192,34 +215,42 @@ class ListingController extends Controller
         }
         
         if ($validator->fails()) {
+            error_log("Validation failed: " . print_r($validator->errors(), true));
+            require_once dirname(__DIR__) . '/helpers/countries.php';
             $this->flash('error', $validator->firstError());
             $this->data['old'] = $data;
             $this->data['errors'] = $validator->errors();
             $this->data['csrf_token'] = $this->getCsrfToken();
             $this->data['attributes'] = $this->attributeModel->getAllGroupedByCategory();
             $this->data['services'] = $this->serviceModel->findAll('name');
+            $this->data['countries'] = getCountries();
             $this->view('listings/addListing', $this->data);
             return;
         }
         
         try {
+            error_log("Validation passed. Starting transaction.");
             $this->listingModel->beginTransaction();
             
             // Get user's profile ID
             $profileId = $this->getUserProfileId();
+            error_log("Got profile ID: " . ($profileId ?: 'null'));
             
             if (!$profileId) {
                 throw new Exception('User profile not found. Please complete your profile first.');
             }
             
             // Geocode address
+            error_log("Geocoding address: {$data['city']}, {$data['country']}");
             $coords = $this->geocodeAddress(
                 $data['address_line'] ?? '',
                 $data['city'],
                 $data['country']
             );
+            error_log("Geocode result: " . print_r($coords, true));
 
             // Create listing
+            error_log("Creating listing in DB...");
             $listingId = $this->listingModel->createListing([
                 'host_profile_id' => $profileId,
                 'title' => $data['title'],
@@ -234,40 +265,49 @@ class ListingController extends Controller
                 'host_role' => $data['host_role'],
                 'status' => 'draft',
             ]);
+            error_log("Listing created with ID: " . $listingId);
             
-            // Handle image uploads
-            $this->handleImageUploads($listingId);
-
-            // Handle verification document upload
-            if (isset($_FILES['verification_document']) && !empty($_FILES['verification_document']['name'])) {
-                $this->handleVerificationUpload($listingId);
-            }
-            
-            // Set attributes
-            if (!empty($data['attributes']) && is_array($data['attributes'])) {
-                $this->listingModel->setAttributes($listingId, $data['attributes']);
-            }
-            
-            // Set services
-            if (!empty($data['services']) && is_array($data['services'])) {
-                $this->listingModel->setServices($listingId, $data['services']);
-            }
-            
-            // Add availability if provided
+            // Handle availability
             if (!empty($data['available_from'])) {
-                $this->listingModel->addAvailability(
+                error_log("Setting availability...");
+                $this->listingModel->setAvailability(
                     $listingId, 
                     $data['available_from'], 
                     $data['available_until'] ?? null
                 );
             }
+
+            // Handle image uploads
+            error_log("Handling image uploads...");
+            $this->handleImageUploads($listingId);
+
+            // Handle verification document upload
+            if (isset($_FILES['verification_document']) && !empty($_FILES['verification_document']['name'])) {
+                error_log("Handling verification document...");
+                $this->handleVerificationUpload($listingId);
+            }
+            
+            // Set attributes
+            if (!empty($data['attributes']) && is_array($data['attributes'])) {
+                error_log("Setting attributes...");
+                $this->listingModel->setAttributes($listingId, $data['attributes']);
+            }
+            
+            // Set services
+            if (!empty($data['services']) && is_array($data['services'])) {
+                error_log("Setting services...");
+                $this->listingModel->setServices($listingId, $data['services']);
+            }
             
             $this->listingModel->commit();
+            error_log("Transaction committed successfully.");
             
             $this->flash('success', 'Listing created successfully! You can now publish it.');
             $this->redirect(BASE_URL . '/listings/' . $listingId);
             
         } catch (Exception $e) {
+            error_log("Caught exception in store: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
             $this->listingModel->rollback();
             
             if (APP_DEBUG) {
@@ -280,6 +320,7 @@ class ListingController extends Controller
             $this->data['csrf_token'] = $this->getCsrfToken();
             $this->data['attributes'] = $this->attributeModel->getAllGroupedByCategory();
             $this->data['services'] = $this->serviceModel->findAll('name');
+            $this->data['countries'] = getCountries();
             $this->view('listings/addListing', $this->data);
         }
     }
@@ -307,6 +348,9 @@ class ListingController extends Controller
         $this->data['csrf_token'] = $this->getCsrfToken();
         $this->data['attributes'] = $this->attributeModel->getAllGroupedByCategory();
         $this->data['services'] = $this->serviceModel->findAll('name');
+        
+        require_once dirname(__DIR__) . '/helpers/countries.php';
+        $this->data['countries'] = getCountries();
         
         $this->view('listings/edit', $this->data);
     }
@@ -354,6 +398,8 @@ class ListingController extends Controller
             ->required('host_role', 'Host role is required.')
             ->in('host_role', ['owner', 'renter'], 'Invalid host role.');
         
+        require_once dirname(__DIR__) . '/helpers/countries.php';
+
         if ($validator->fails()) {
             $this->flash('error', $validator->firstError());
             $this->data['listing'] = array_merge($listing, $data);
@@ -361,6 +407,7 @@ class ListingController extends Controller
             $this->data['csrf_token'] = $this->getCsrfToken();
             $this->data['attributes'] = $this->attributeModel->getAllGroupedByCategory();
             $this->data['services'] = $this->serviceModel->findAll('name');
+            $this->data['countries'] = getCountries();
             $this->view('listings/edit', $this->data);
             return;
         }
@@ -398,6 +445,15 @@ class ListingController extends Controller
             // Update services
             if (isset($data['services'])) {
                 $this->listingModel->setServices($id, $data['services'] ?: []);
+            }
+            
+            // Update availability
+            if (!empty($data['available_from'])) {
+                $this->listingModel->setAvailability(
+                    $id, 
+                    $data['available_from'], 
+                    $data['available_until'] ?? null
+                );
             }
             
             $this->listingModel->commit();
@@ -598,7 +654,6 @@ class ListingController extends Controller
             // Validate file type
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mimeType = finfo_file($finfo, $files['tmp_name'][$i]);
-            finfo_close($finfo);
             
             if (!in_array($mimeType, ALLOWED_IMAGE_TYPES)) {
                 error_log("Invalid mime type: $mimeType");
