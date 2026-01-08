@@ -14,8 +14,8 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
-    <link rel="stylesheet" href="/css/theme.css">
-    <link rel="stylesheet" href="/css/dropdown.css">
+    <link rel="stylesheet" href="/css/theme.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="/css/dropdown.css?v=<?= time() ?>">
     <?php echo $extraHead; ?>
 </head>
 <body<?php echo $bodyAttr; ?>>
@@ -137,13 +137,10 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                 <div class="footer-nav-column">
                     <h4 class="footer-nav-title">Resources</h4>
                     <ul class="footer-nav-links">
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Best practices</a></li>
-                        <li><a href="#">Colors</a></li>
-                        <li><a href="#">Color wheel</a></li>
+                        <li><a href="/legal/terms">Terms of Service</a></li>
+                        <li><a href="/legal/privacy">Privacy Policy</a></li>
+                        <li><a href="/legal/cookie_policy">Cookie Policy</a></li>
                         <li><a href="#">Support</a></li>
-                        <li><a href="#">Developers</a></li>
-                        <li><a href="#">Resource library</a></li>
                     </ul>
                 </div>
             </div>

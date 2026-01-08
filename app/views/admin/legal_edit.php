@@ -30,7 +30,7 @@ ob_start();
                     <div class="mt-1">
                         <textarea id="content" name="content" rows="20" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" required><?php echo htmlspecialchars($doc['content']); ?></textarea>
                     </div>
-                    <p class="mt-2 text-sm text-gray-500">HTML content is allowed.</p>
+                    <p class="mt-2 text-sm text-gray-500">Enter plain text. New lines will be preserved.</p>
                 </div>
 
                 <div class="flex justify-end">

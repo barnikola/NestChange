@@ -11,7 +11,8 @@ class LegalContent extends Model
 
     public function getByType(string $type): ?array
     {
-        return $this->db->fetchOne("SELECT * FROM legal_content WHERE type = ?", [$type]);
+        $result = $this->db->fetchOne("SELECT * FROM legal_content WHERE type = ?", [$type]);
+        return $result ?: null;
     }
 
     public function updateContent(string $type, string $title, string $content): bool

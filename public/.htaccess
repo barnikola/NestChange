@@ -1,4 +1,15 @@
-<IfModule mod_dir.c>
-    DirectoryIndex index.php
-    FallbackResource /index.php
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Ensure authorization headers are passed to PHP
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    
+    # If the requested filename exists, simply serve it.
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Otherwise, redirect to index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
 </IfModule>
