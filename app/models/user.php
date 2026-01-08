@@ -229,7 +229,7 @@ class User extends Model
     public function getAllDocuments(): array
     {
         // Fetch document status as well
-        $sql = "SELECT d.*, p.first_name, p.last_name, a.email, a.status as user_status, a.id as account_id
+        $sql = "SELECT d.*, d.status as document_status, p.first_name, p.last_name, a.email, a.status as user_status, a.id as account_id
                 FROM user_document d
                 JOIN account a ON d.account_id = a.id
                 LEFT JOIN user_profile p ON a.id = p.account_id
@@ -240,7 +240,11 @@ class User extends Model
 
     public function updateDocumentStatus(string $documentId, string $status): bool
     {
-        return $this->db->update('user_document', ['status' => $status], 'id = ?', [$documentId]) > 0;
+        $data = ['status' => $status];
+        if ($status === 'approved') {
+            $data['verified_at'] = date('Y-m-d H:i:s');
+        }
+        return $this->db->update('user_document', $data, 'id = ?', [$documentId]) > 0;
     }
 
     public function countPendingDocuments(int|string $userId): int
@@ -256,5 +260,12 @@ class User extends Model
         $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
         $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+    }
+
+    public function countAllPendingDocuments(): int
+    {
+        $sql = "SELECT COUNT(*) as count FROM user_document WHERE status = 'pending'";
+        $result = $this->db->fetchOne($sql);
+        return (int)($result['count'] ?? 0);
     }
 }

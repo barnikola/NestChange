@@ -22,8 +22,10 @@ class Session
 
         if (session_status() === PHP_SESSION_NONE) {
             // Configure session settings
-            $sessionPath = sys_get_temp_dir() . '/nestchange_sessions';
-            if (!is_dir($sessionPath)) {
+            // Use project-local storage for sessions to avoid permission issues
+            $sessionPath = dirname(dirname(__DIR__)) . '/app/storage/sessions';
+            
+            if (!file_exists($sessionPath)) {
                 mkdir($sessionPath, 0777, true);
             }
             session_save_path($sessionPath);
@@ -37,13 +39,7 @@ class Session
                 ini_set('session.cookie_secure', 1);
             }
             
-            // Set writable save path to avoid permission issues
-            $sessionPath = sys_get_temp_dir() . '/nestchange_sessions';
-            if (!file_exists($sessionPath)) {
-                mkdir($sessionPath, 0777, true);
-            }
-            session_save_path($sessionPath);
-            
+            // Set session parameter settings
             session_name(SESSION_NAME);
             session_set_cookie_params([
                 'lifetime' => SESSION_LIFETIME,

@@ -95,6 +95,7 @@
                     </span>
                 </td>
                 <td class="actions">
+                    <a href="/listings/<?= $listing['id'] ?>/edit" style="text-decoration:none; display:inline-block; padding: 7px 15px; margin-right: 5px; background: #2196F3; color: white; border-radius: 4px; font-size: 0.9em; vertical-align: middle;">Edit</a>
                     <?php if ($listing['status'] !== 'published'): ?>
                     <form action="/admin/listings/publish" method="POST" style="display:inline;" onsubmit="return confirm('Publish this listing?');">
                         <input type="hidden" name="listing_id" value="<?= $listing['id'] ?>">

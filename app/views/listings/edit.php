@@ -255,7 +255,7 @@ ob_start();
             $isModerator = $user && in_array($user['role'], ['moderator', 'admin']);
             ?>
             <div class="details-buttons" style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #e5e5e5; gap: 20px;">
-                <?php if ($isModerator && ($listing['status'] === 'draft' || $listing['status'] === 'paused')): ?>
+                <?php if ($isModerator && $listing['status'] === 'draft'): ?>
                     <form action="<?= BASE_URL ?>/listings/<?= htmlspecialchars($listing['id']) ?>/publish" method="POST" style="flex: 1;">
                         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
                         <button type="submit" class="details-btn" style="width: 100%; background: #1f8a4c; color: #fff; border-color: #1f8a4c;">

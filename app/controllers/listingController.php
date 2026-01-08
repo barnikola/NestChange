@@ -339,7 +339,7 @@ class ListingController extends Controller
         
         // Check ownership
         $profileId = $this->getUserProfileId();
-        if ($listing['host_profile_id'] !== $profileId && !AuthMiddleware::hasRole('admin')) {
+        if ($listing['host_profile_id'] !== $profileId && !AuthMiddleware::hasAnyRole(['admin', 'moderator'])) {
             $this->flash('error', 'You do not have permission to edit this listing.');
             $this->redirect(BASE_URL . '/listings/' . $id);
         }
@@ -378,7 +378,7 @@ class ListingController extends Controller
         
         // Check ownership
         $profileId = $this->getUserProfileId();
-        if ($listing['host_profile_id'] !== $profileId && !AuthMiddleware::hasRole('admin')) {
+        if ($listing['host_profile_id'] !== $profileId && !AuthMiddleware::hasAnyRole(['admin', 'moderator'])) {
             $this->flash('error', 'You do not have permission to edit this listing.');
             $this->redirect(BASE_URL . '/listings/' . $id);
         }
@@ -497,7 +497,7 @@ class ListingController extends Controller
         
         // Check ownership
         $profileId = $this->getUserProfileId();
-        if ($listing['host_profile_id'] !== $profileId && !AuthMiddleware::hasRole('admin')) {
+        if ($listing['host_profile_id'] !== $profileId && !AuthMiddleware::hasAnyRole(['admin', 'moderator'])) {
             $this->flash('error', 'You do not have permission to delete this listing.');
             $this->redirect(BASE_URL . '/listings/' . $id);
         }
@@ -556,8 +556,10 @@ class ListingController extends Controller
         $profileId = $this->getUserProfileId();
         
         if (!$listing || $listing['host_profile_id'] !== $profileId) {
-            $this->flash('error', 'Access denied.');
-            $this->redirect(BASE_URL . '/listings');
+            if (!AuthMiddleware::hasAnyRole(['admin', 'moderator'])) {
+                $this->flash('error', 'Access denied.');
+                $this->redirect(BASE_URL . '/listings');
+            }
         }
         
         $this->listingModel->pause($id);
@@ -579,14 +581,16 @@ class ListingController extends Controller
         $profileId = $this->getUserProfileId();
         
         if (!$listing || $listing['host_profile_id'] !== $profileId) {
-            $this->flash('error', 'Access denied.');
-            $this->redirect(BASE_URL . '/listings');
+             if (!AuthMiddleware::hasAnyRole(['admin', 'moderator'])) {
+                $this->flash('error', 'Access denied.');
+                $this->redirect(BASE_URL . '/listings');
+            }
         }
         
-        // Unpause sets status back to draft so user can edit it
-        $this->listingModel->updateStatus($id, 'draft');
+        // Unpause restores status to published directly
+        $this->listingModel->updateStatus($id, 'published');
         
-        $this->flash('success', 'Listing unpaused. Status set to draft.');
+        $this->flash('success', 'Listing unpaused and published.');
         $this->redirect(BASE_URL . '/listings/' . $id);
     }
 
@@ -618,7 +622,9 @@ class ListingController extends Controller
         $profileId = $this->getUserProfileId();
         
         if (!$listing || $listing['host_profile_id'] !== $profileId) {
-            $this->json(['success' => false, 'error' => 'Access denied.'], 403);
+            if (!AuthMiddleware::hasAnyRole(['admin', 'moderator'])) {
+                $this->json(['success' => false, 'error' => 'Access denied.'], 403);
+            }
         }
         
         $this->listingModel->deleteImage($imageId);
