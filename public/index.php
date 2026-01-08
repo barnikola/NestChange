@@ -57,6 +57,9 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
     $router->get('/', ['HomeController', 'index']);
     $router->get('/home', ['HomeController', 'index']);
 
+    // ====== Legal Routes ======
+    $router->get('/legal/{type}', ['LegalController', 'show']);
+
     // ====== Listing Routes ======
     $router->get('/listings', ['ListingController', 'index']);
     $router->get('/listings/search', ['ListingController', 'search']);
