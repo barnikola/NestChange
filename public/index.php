@@ -72,6 +72,11 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
     $router->get('/my-listings', ['ListingController', 'myListings']);
     $router->post('/listings/{listingId}/images/{imageId}/delete', ['ListingController', 'deleteImage']);
 
+    // ====== Favorites Routes ======
+    $router->get('/favorites', ['FavoriteController', 'index']);
+    $router->post('/listings/{id}/favorite', ['FavoriteController', 'favorite']);
+    $router->post('/listings/{id}/unfavorite', ['FavoriteController', 'unfavorite']);
+
     // ====== Profile Routes ======
     $router->get('/profile', ['ProfileController', 'index']);
     $router->get('/profile/edit', ['ProfileController', 'edit']);
@@ -150,6 +155,100 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
 }
 
 
+// ====== Authentication Routes ======
+$router->get('/login', ['AuthController', 'showLogin']);
+$router->get('/signin', ['AuthController', 'showLogin']);
+$router->get('/auth/signin', ['AuthController', 'showLogin']);
+$router->get('/auth/login', ['AuthController', 'showLogin']);
+$router->post('/login', ['AuthController', 'login']);
+$router->post('/signin', ['AuthController', 'login']);
+$router->post('/auth/login', ['AuthController', 'login']);
+
+$router->get('/register', ['AuthController', 'showRegister']);
+$router->get('/auth/register', ['AuthController', 'showRegister']);
+$router->post('/register', ['AuthController', 'register']);
+$router->post('/auth/register', ['AuthController', 'register']);
+
+$router->get('/logout', ['AuthController', 'logout']);
+$router->post('/logout', ['AuthController', 'logout']);
+$router->get('/auth/logout', ['AuthController', 'logout']);
+
+$router->get('/forgot-password', ['AuthController', 'showForgotPassword']);
+$router->get('/auth/forgot-password', ['AuthController', 'showForgotPassword']);
+$router->post('/forgot-password', ['AuthController', 'forgotPassword']);
+$router->post('/auth/forgot-password', ['AuthController', 'forgotPassword']);
+
+$router->get('/reset-password', ['AuthController', 'showResetPassword']);
+$router->get('/auth/reset-password', ['AuthController', 'showResetPassword']);
+$router->post('/reset-password', ['AuthController', 'resetPassword']);
+$router->post('/auth/reset-password', ['AuthController', 'resetPassword']);
+
+// ====== Home Routes ======
+$router->get('/', ['HomeController', 'index']);
+$router->get('/home', ['HomeController', 'index']);
+
+// ====== Listing Routes ======
+$router->get('/listings', ['ListingController', 'index']);
+$router->get('/listings/search', ['ListingController', 'search']);
+$router->get('/listings/create', ['ListingController', 'create']);
+$router->post('/listings/create', ['ListingController', 'store']);
+// Specific routes must come before parameterized routes
+$router->get('/listings/my-listings', ['ListingController', 'myListings']);
+$router->get('/my-listings', ['ListingController', 'myListings']);
+// Parameterized routes
+$router->get('/listings/{id}', ['ListingController', 'show']);
+$router->get('/listings/{id}/edit', ['ListingController', 'edit']);
+$router->post('/listings/{id}/edit', ['ListingController', 'update']);
+$router->post('/listings/{id}/delete', ['ListingController', 'destroy']);
+$router->post('/listings/{id}/publish', ['ListingController', 'publish']);
+$router->post('/listings/{id}/pause', ['ListingController', 'pause']);
+$router->post('/listings/{id}/unpause', ['ListingController', 'unpause']);
+$router->post('/listings/{listingId}/images/{imageId}/delete', ['ListingController', 'deleteImage']);
+
+// ====== Favorites Routes ======
+$router->get('/favorites', ['FavoriteController', 'index']);
+$router->post('/listings/{id}/favorite', ['FavoriteController', 'favorite']);
+$router->post('/listings/{id}/unfavorite', ['FavoriteController', 'unfavorite']);
+
+// ====== Exchange Routes ======
+$router->get('/listings/my-exchanges', ['ExchangeController', 'myExchanges']);
+$router->get('/listings/exchange-details', ['ExchangeController', 'exchangeDetails']);
+
+// ====== Profile Routes ======
+$router->get('/profile', ['ProfileController', 'index']);
+$router->get('/profile/edit', ['ProfileController', 'edit']);
+$router->post('/profile/edit', ['ProfileController', 'update']);
+$router->post('/profile/update', ['ProfileController', 'update']);
+$router->get('/profile/{id}', ['ProfileController', 'show']);
+$router->post('/profile/upload-document', ['ProfileController', 'uploadDocument']);
+
+// ====== Application Routes ======
+$router->get('/my-applications', ['ApplicationController', 'myApplications']);
+$router->get('/received-applications', ['ApplicationController', 'receivedApplications']);
+$router->get('/applications/{id}', ['ApplicationController', 'show']);
+$router->get('/listings/{listingId}/apply', ['ApplicationController', 'create']);
+$router->post('/listings/{listingId}/apply', ['ApplicationController', 'store']);
+$router->post('/applications/{id}/accept', ['ApplicationController', 'accept']);
+$router->post('/applications/{id}/reject', ['ApplicationController', 'reject']);
+$router->post('/applications/{id}/withdraw', ['ApplicationController', 'withdraw']);
+$router->get('/applications/list.json', ['ApplicationController', 'listJson']);
+
+// ====== API/AJAX Routes ======
+$router->get('/api/listings/search', ['ListingController', 'search']);
+
+// ====== Chat Routes ======
+$router->get('/chat', ['ChatController', 'index']);
+$router->get('/chat/{profileId}', ['ChatController', 'startChat']);
+$router->post('/chat/send', ['ChatController', 'sendMessage']);
+$router->get('/chat/messages', ['ChatController', 'getMessages']);
+$router->get('/chat/search', ['ChatController', 'search']);
+$router->get('/chat/details', ['ChatController', 'getChatDetails']);
+
+// ====== Admin/Moderator Routes ======
+$router->get('/admin', 'admin/dashboard');
+$router->get('/admin/dashboard', 'admin/dashboard');
+$router->get('/moderator', 'moderator/dashboard');
+$router->get('/moderator/dashboard', 'moderator/dashboard');
 
 // Dispatch the request
 $router->dispatch();

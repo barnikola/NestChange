@@ -310,6 +310,22 @@ class Listing extends Model
         return $id;
     }
 
+    /**
+     * Set availability for a listing (replaces existing)
+     * 
+     * @param string $listingId Listing ID
+     * @param string $from Start date
+     * @param string|null $until End date
+     */
+    public function setAvailability(string $listingId, string $from, ?string $until = null): void
+    {
+        // Delete existing availability
+        $this->db->delete('listing_availability', 'listing_id = ?', [$listingId]);
+        
+        // Add new availability
+        $this->addAvailability($listingId, $from, $until);
+    }
+
 
     public function getHost(string $profileId): array|false
     {

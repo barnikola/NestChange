@@ -558,11 +558,48 @@ a {
     .result-card {
         flex-direction: column;
     }
-    
+
     .result-image {
         width: 100%;
         height: 200px;
     }
+}
+
+/* Favorite Button */
+.result-image {
+    position: relative;
+}
+
+.btn-favorite {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.btn-favorite:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-favorite.favorited {
+    background: #fff;
+}
+
+.btn-favorite:active {
+    transform: scale(0.95);
 }
 
 /* Listing Form Section */
@@ -685,4 +722,22 @@ a {
 .pagination-info {
     font-size: 14px;
     color: #666;
+}
+/* Address form grid layout */
+.address-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.address-grid > div:first-child {
+    grid-column: 1 / -1; /* Country takes full width */
+}
+
+.address-grid select,
+.address-grid input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
 }

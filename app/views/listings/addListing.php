@@ -65,7 +65,7 @@ ob_start();
                 <div class="new-form-group <?= hasError('host_role', $errors ?? []) ?>">
                     <label>Do you own or rent?</label>
                     <div class="radio-row">
-                        <label><input type="radio" name="host_role" value="renter" <?= isChecked('host_role', 'renter', $old ?? []) ?>> Rent</label>
+                        <label><input type="radio" name="host_role" value="renter" <?= isChecked('host_role', 'renter', $old ?? []) ?: (empty($old) ? 'checked' : '') ?>> Rent</label>
                         <label><input type="radio" name="host_role" value="owner" <?= isChecked('host_role', 'owner', $old ?? []) ?>> Own</label>
                     </div>
                     <?= getError('host_role', $errors ?? []) ?>
@@ -84,7 +84,7 @@ ob_start();
                     <label>Room Type</label>
                     <div class="radio-row">
                         <label><input type="radio" name="room_type" value="whole_apartment" <?= isChecked('room_type', 'whole_apartment', $old ?? []) ?>> Whole apartment</label>
-                        <label><input type="radio" name="room_type" value="room" <?= isChecked('room_type', 'room', $old ?? []) ?>> Single room</label>
+                        <label><input type="radio" name="room_type" value="room" <?= isChecked('room_type', 'room', $old ?? []) ?: (empty($old) ? 'checked' : '') ?>> Single room</label>
                     </div>
                      <?= getError('room_type', $errors ?? []) ?>
                 </div>
@@ -94,19 +94,26 @@ ob_start();
                      <input type="number" name="max_guests" min="1" value="<?= old('max_guests', '1', $old ?? []) ?>">
                 </div>
 
-                <div class="new-form-group">
+                <div class="new-form-group address-group">
                     <label>Address</label>
-                    <div class="<?= hasError('country', $errors ?? []) ?>">
-                        <input type="text" name="country" placeholder="Country" value="<?= old('country', '', $old ?? []) ?>" required style="margin-bottom: 5px;">
-                        <?= getError('country', $errors ?? []) ?>
-                    </div>
-                    <div class="<?= hasError('address_line', $errors ?? []) ?>">
-                         <input type="text" name="address_line" placeholder="Address" value="<?= old('address_line', '', $old ?? []) ?>" style="margin-bottom: 5px;">
-                         <?= getError('address_line', $errors ?? []) ?>
-                    </div>
-                    <div class="<?= hasError('city', $errors ?? []) ?>">
-                         <input type="text" name="city" placeholder="City" value="<?= old('city', '', $old ?? []) ?>" required style="margin-bottom: 5px;">
-                         <?= getError('city', $errors ?? []) ?>
+                    <div class="address-grid">
+                        <div class="<?= hasError('country', $errors ?? []) ?>">
+                            <select name="country" required style="margin-bottom: 5px;">
+                                <option value="">Select Country</option>
+                                <?php foreach ($countries as $code => $name): ?>
+                                    <option value="<?= $code ?>" <?= old('country', '', $old ?? []) === $code ? 'selected' : '' ?>><?= htmlspecialchars($name) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <?= getError('country', $errors ?? []) ?>
+                        </div>
+                        <div class="<?= hasError('address_line', $errors ?? []) ?>">
+                             <input type="text" name="address_line" placeholder="Address" value="<?= old('address_line', '', $old ?? []) ?>" style="margin-bottom: 5px;">
+                             <?= getError('address_line', $errors ?? []) ?>
+                        </div>
+                        <div class="<?= hasError('city', $errors ?? []) ?>">
+                             <input type="text" name="city" placeholder="City" value="<?= old('city', '', $old ?? []) ?>" required style="margin-bottom: 5px;">
+                             <?= getError('city', $errors ?? []) ?>
+                        </div>
                     </div>
                     <!-- Coordinates optional -->
                     <!-- Coordinates automatically fetched -->
@@ -118,9 +125,15 @@ ob_start();
                     <?= getError('images', $errors ?? []) ?>
                 </div>
 
-                <div class="new-form-group">
-                    <label>Date Available From</label>
-                    <input type="date" name="available_from" value="<?= old('available_from', '', $old ?? []) ?>">
+                <div class="date-row" style="display: flex; gap: 15px;">
+                    <div class="new-form-group" style="flex: 1;">
+                        <label>Date Available From</label>
+                        <input type="date" name="available_from" value="<?= old('available_from', '', $old ?? []) ?>">
+                    </div>
+                    <div class="new-form-group" style="flex: 1;">
+                        <label>Date Available Until (Optional)</label>
+                        <input type="date" name="available_until" value="<?= old('available_until', '', $old ?? []) ?>">
+                    </div>
                 </div>
 
                 <h3 class="step-header">Step 3</h3>

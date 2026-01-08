@@ -217,8 +217,18 @@ class AuthController extends Controller
             );
         }
 
+        // Redirect based on user role
+        $role = $sessionUser['role'] ?? 'student';
+        $redirectUrl = '/home';
+        
+        if ($role === 'admin') {
+            $redirectUrl = '/admin';
+        } elseif ($role === 'moderator') {
+            $redirectUrl = '/moderator';
+        }
+
         $this->flash('success', 'Welcome back!');
-        $this->redirect('/home');
+        $this->redirect($redirectUrl);
     }
 
 

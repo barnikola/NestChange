@@ -141,89 +141,15 @@ ob_start();
   </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Filter functionality
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const tableRows = document.querySelectorAll('#listings-table tbody tr');
-  
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      
-      // Update active state
-      filterBtns.forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-      this.style.background = '#000';
-      this.style.color = '#fff';
-      filterBtns.forEach(b => {
-        if (b !== this) {
-          b.style.background = '#f2f2f2';
-          b.style.color = '#000';
-        }
-      });
-      
-      const status = this.dataset.status;
-      
-      tableRows.forEach(row => {
-        if (status === 'all' || row.dataset.status === status) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
-    });
-  });
-  
-  // Search functionality
-  const searchInput = document.getElementById('listing-search');
-  searchInput.addEventListener('input', function() {
-    const query = this.value.toLowerCase().trim();
-    
-    tableRows.forEach(row => {
-      const title = row.dataset.title || '';
-      const location = row.dataset.location || '';
-      
-      if (title.includes(query) || location.includes(query)) {
-        row.style.display = '';
-      } else {
-        row.style.display = 'none';
-      }
-    });
-  });
-  
-  // Delete modal functionality
-  const deleteModal = document.getElementById('delete-modal');
-  const deleteForm = document.getElementById('delete-form');
-  const deleteTitleSpan = document.getElementById('delete-listing-title');
-  const cancelBtn = document.getElementById('cancel-delete');
-  
-  document.querySelectorAll('.delete-listing-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const listingId = this.dataset.listingId;
-      const listingTitle = this.dataset.listingTitle;
-      
-      deleteTitleSpan.textContent = listingTitle;
-      deleteForm.action = '<?= BASE_URL ?>/listings/' + listingId + '/delete';
-      deleteModal.style.display = 'flex';
-    });
-  });
-  
-  cancelBtn.addEventListener('click', function() {
-    deleteModal.style.display = 'none';
-  });
-  
-  deleteModal.addEventListener('click', function(e) {
-    if (e.target === deleteModal) {
-      deleteModal.style.display = 'none';
-    }
-  });
-  
-  // Set initial active filter style
-  document.querySelector('.filter-btn.active').style.background = '#000';
-  document.querySelector('.filter-btn.active').style.color = '#fff';
-});
+<?php
+$myListingsConfig = [
+  'baseUrl' => BASE_URL,
+];
+?>
+<script id="my-listings-config" type="application/json">
+<?php echo json_encode($myListingsConfig, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>
 </script>
+<script src="/js/my-listings.js" defer></script>
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/main.php';

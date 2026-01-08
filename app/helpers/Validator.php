@@ -287,7 +287,6 @@ class Validator
             if (isset($options['mimeTypes'])) {
                 $finfo = finfo_open(FILEINFO_MIME_TYPE);
                 $mimeType = finfo_file($finfo, $tmpName);
-                finfo_close($finfo);
                 
                 if (!in_array($mimeType, $options['mimeTypes'])) {
                     $this->addError($field, $message ?: "Invalid file type.");

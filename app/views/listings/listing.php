@@ -257,6 +257,7 @@ ob_start();
         $currentUser = Session::getUser();
         $userProfileId = $currentUser['profile_id'] ?? null;
         $isOwner = $userProfileId && $userProfileId === $listing['host_profile_id'];
+        $applyUrl = BASE_URL . '/listings/' . $listing['id'] . '/apply';
         ?>
 
         <?php if (!$isOwner): ?>
@@ -270,6 +271,16 @@ ob_start();
         <?php endif; ?>
     </div>
 </section>
+
+<?php
+$listingConfig = [
+    'availability' => $listing['availability'] ?? [],
+    'applyUrl' => $applyUrl,
+];
+?>
+<script id="listing-config" type="application/json">
+<?php echo json_encode($listingConfig, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>
+
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -576,6 +587,7 @@ function formatDateDMY(dateStr) {
     return `${parts[2]}-${parts[1]}-${parts[0]}`;
 }
 </script>
+<script src="/js/listing.js" defer></script>
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/main.php';

@@ -125,19 +125,26 @@ ob_start();
                     <input type="number" name="max_guests" min="1" value="<?= old('max_guests', '1', $listing) ?>">
                 </div>
 
-                <div class="new-form-group">
+                <div class="new-form-group address-group">
                     <label>Address</label>
-                    <div class="<?= hasError('country', $errors ?? []) ?>">
-                        <input type="text" name="country" placeholder="Country" value="<?= old('country', '', $listing) ?>" required style="margin-bottom: 8px;">
-                        <?= getError('country', $errors ?? []) ?>
-                    </div>
-                    <div class="<?= hasError('address_line', $errors ?? []) ?>">
-                        <input type="text" name="address_line" placeholder="Address" value="<?= old('address_line', '', $listing) ?>" style="margin-bottom: 8px;">
-                        <?= getError('address_line', $errors ?? []) ?>
-                    </div>
-                    <div class="<?= hasError('city', $errors ?? []) ?>">
-                        <input type="text" name="city" placeholder="City" value="<?= old('city', '', $listing) ?>" required>
-                        <?= getError('city', $errors ?? []) ?>
+                    <div class="address-grid">
+                        <div class="<?= hasError('country', $errors ?? []) ?>">
+                            <select name="country" required style="margin-bottom: 8px;">
+                                <option value="">Select Country</option>
+                                <?php foreach ($countries as $code => $name): ?>
+                                    <option value="<?= $code ?>" <?= old('country', '', $listing) === $code ? 'selected' : '' ?>><?= htmlspecialchars($name) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <?= getError('country', $errors ?? []) ?>
+                        </div>
+                        <div class="<?= hasError('address_line', $errors ?? []) ?>">
+                            <input type="text" name="address_line" placeholder="Address" value="<?= old('address_line', '', $listing) ?>" style="margin-bottom: 8px;">
+                            <?= getError('address_line', $errors ?? []) ?>
+                        </div>
+                        <div class="<?= hasError('city', $errors ?? []) ?>">
+                            <input type="text" name="city" placeholder="City" value="<?= old('city', '', $listing) ?>" required>
+                            <?= getError('city', $errors ?? []) ?>
+                        </div>
                     </div>
                 </div>
 
@@ -167,6 +174,26 @@ ob_start();
                     <label>Add More Images</label>
                     <input type="file" name="images[]" multiple accept="image/*">
                     <?= getError('images', $errors ?? []) ?>
+                </div>
+
+                <?php 
+                // Get existing availability
+                $fromVal = '';
+                $untilVal = '';
+                if (!empty($listing['availability']) && isset($listing['availability'][0])) {
+                    $fromVal = $listing['availability'][0]['available_from'];
+                    $untilVal = $listing['availability'][0]['available_until'];
+                }
+                ?>
+                <div class="date-row" style="display: flex; gap: 15px;">
+                    <div class="new-form-group" style="flex: 1;">
+                        <label>Date Available From</label>
+                        <input type="date" name="available_from" value="<?= old('available_from', $fromVal, $listing) ?>">
+                    </div>
+                    <div class="new-form-group" style="flex: 1;">
+                        <label>Date Available Until (Optional)</label>
+                        <input type="date" name="available_until" value="<?= old('available_until', $untilVal, $listing) ?>">
+                    </div>
                 </div>
 
                 <h3 class="step-header">Description & Features</h3>
@@ -268,43 +295,17 @@ ob_start();
     </div>
 </section>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Delete image functionality
-    const deleteImageBtns = document.querySelectorAll('.delete-image-btn');
-    const csrfToken = '<?= $csrf_token ?>';
-    const listingId = '<?= htmlspecialchars($listing['id']) ?>';
-    
-    deleteImageBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            if (!confirm('Delete this image?')) return;
-            
-            const imageId = this.dataset.imageId;
-            const imageItem = this.closest('.listing-image-item');
-            
-            fetch(`<?= BASE_URL ?>/listings/${listingId}/images/${imageId}/delete`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `csrf_token=${encodeURIComponent(csrfToken)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    imageItem.remove();
-                } else {
-                    alert(data.error || 'Failed to delete image');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while deleting the image');
-            });
-        });
-    });
-});
+<?php
+$listingEditConfig = [
+    'baseUrl' => BASE_URL,
+    'csrfToken' => $csrf_token,
+    'listingId' => $listing['id'],
+];
+?>
+<script id="listing-edit-config" type="application/json">
+<?php echo json_encode($listingEditConfig, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>
 </script>
+<script src="/js/listings-edit.js" defer></script>
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/main.php';
