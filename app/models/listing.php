@@ -631,18 +631,7 @@ class Listing extends Model
     }
 
 
-    public function getAllListings(): array
-    {
-        $sql = "SELECT l.*, 
-                       p.first_name, p.last_name, 
-                       a.email as host_email
-                FROM listing l
-                LEFT JOIN user_profile p ON l.host_profile_id = p.id
-                LEFT JOIN account a ON p.account_id = a.id
-                ORDER BY l.created_at DESC";
-        
-        return $this->db->fetchAll($sql);
-    }
+
 
     public function getRecent(int $limit = 10): array
     {
