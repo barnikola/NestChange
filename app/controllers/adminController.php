@@ -20,7 +20,17 @@ class AdminController extends Controller
     public function index(): void
     {
         $this->requireAdmin();
-        $this->view('admin/dashboard');
+        $userModel = $this->model('User');
+        $listingModel = $this->model('Listing');
+        
+        // Dashboard Stats
+        $data = [
+            'totalUsers' => $userModel->count(),
+            'pendingDocuments' => $userModel->countAllPendingDocuments(),
+            'pendingListings' => $listingModel->countSearch(['status' => 'pending-approval'])
+        ];
+
+        $this->view('admin/dashboard', $data);
     }
 
     public function users(): void
@@ -180,6 +190,49 @@ class AdminController extends Controller
         }
         header('Location: /admin/listings');
          exit;
+    }
+
+    // --- Legal Content ---
+
+    public function legal(): void
+    {
+        $this->requireAdmin();
+        $docs = $this->model('LegalContent')->getAll();
+        $this->view('admin/legal_list', ['docs' => $docs]);
+    }
+
+
+    public function editLegal(string $type): void
+    {
+        $this->requireAdmin();
+        $doc = $this->model('LegalContent')->getByType($type);
+        
+        if (!$doc) {
+             $this->setFlash('error', 'Legal content type not found.');
+             header('Location: /admin/legal');
+             exit;
+        }
+        
+        $this->view('admin/legal_edit', ['doc' => $doc]);
+    }
+
+    public function updateLegal(): void
+    {
+        $this->requireAdmin();
+        if ($this->isPost()) {
+            $type = $_POST['type'];
+            $title = $_POST['title'];
+            $content = $_POST['content'];
+            
+            if ($this->model('LegalContent')->updateContent($type, $title, $content)) {
+                $this->setFlash('success', 'Content updated successfully.');
+            } else {
+                $this->setFlash('error', 'Failed to update content.');
+            }
+            
+            header('Location: /admin/legal');
+            exit;
+        }
     }
 
     // Helper for flash messages

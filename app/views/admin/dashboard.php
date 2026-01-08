@@ -19,7 +19,7 @@ ob_start();
             <!-- Manage Users -->
             <div class="card">
                 <a href="/admin/users" style="text-decoration:none; color:inherit; display:block; height:100%;">
-                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">👥 Manage Users</h3>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">👥 Manage Users <span style="font-size: 0.8em; background: #eee; padding: 2px 6px; border-radius: 10px;"><?php echo $totalUsers ?? 0; ?></span></h3>
                     <p>Approve new accounts, block users, or delete spam.</p>
                 </a>
             </div>
@@ -27,7 +27,12 @@ ob_start();
             <!-- Manage Listings -->
             <div class="card">
                 <a href="/admin/listings" style="text-decoration:none; color:inherit; display:block; height:100%;">
-                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">🏘 Manage Listings</h3>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">
+                        🏘 Manage Listings
+                        <span style="font-size: 0.8em; background: <?php echo $pendingListings > 0 ? '#ffcccc' : '#eee'; ?>; color: <?php echo $pendingListings > 0 ? '#cc0000' : '#666'; ?>; padding: 2px 6px; border-radius: 10px;">
+                            <?php echo $pendingListings ?? 0; ?> Pending
+                        </span>
+                    </h3>
                     <p>Review new listings, pause ads, or remove content.</p>
                 </a>
             </div>
@@ -35,8 +40,21 @@ ob_start();
             <!-- Verify Documents -->
             <div class="card">
                 <a href="/admin/documents" style="text-decoration:none; color:inherit; display:block; height:100%;">
-                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">📄 Verify Documents</h3>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">
+                        📄 Verify Documents
+                        <?php if (isset($pendingDocuments) && $pendingDocuments > 0): ?>
+                            <span style="font-size: 0.8em; background: #ffcccc; color: #cc0000; padding: 2px 6px; border-radius: 10px;"><?php echo $pendingDocuments; ?> Pending</span>
+                        <?php endif; ?>
+                    </h3>
                     <p>Check uploaded IDs and documents for verification.</p>
+                </a>
+            </div>
+            
+            <!-- Legal Content -->
+            <div class="card">
+                <a href="/admin/legal" style="text-decoration:none; color:inherit; display:block; height:100%;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">⚖️ Legal Content</h3>
+                    <p>Edit Terms of Service, Privacy Policy, etc.</p>
                 </a>
             </div>
         </div>

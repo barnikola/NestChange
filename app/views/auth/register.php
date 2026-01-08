@@ -129,6 +129,7 @@ ob_start();
                             name="id-document" 
                             class="form-input file-input" 
                             placeholder="Value"
+                            accept=".pdf, .jpg, .jpeg, image/jpeg, application/pdf"
                         >
                         <span class="file-icon">📎</span>
                     </div>
@@ -143,6 +144,7 @@ ob_start();
                             name="student-id" 
                             class="form-input file-input" 
                             placeholder="Value"
+                            accept=".pdf, .jpg, .jpeg, image/jpeg, application/pdf"
                         >
                         <span class="file-icon">📎</span>
                     </div>
