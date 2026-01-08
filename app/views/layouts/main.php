@@ -14,8 +14,8 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
-    <link rel="stylesheet" href="/css/theme.css?v=<?= time() ?>">
-    <link rel="stylesheet" href="/css/dropdown.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/theme.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/dropdown.css?v=<?= time() ?>">
     <?php echo $extraHead; ?>
 </head>
 <body<?php echo $bodyAttr; ?>>
@@ -26,17 +26,15 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
     <header class="header">
         <div class="header-container">
             <div class="header-left">
-                <a href="/">
-                    <img src="/assets/logo.png" alt="NestChange Logo" class="logo-icon">
+                <a href="<?php echo rtrim(BASE_URL, '/'); ?>">
+                    <img src="<?php echo rtrim(BASE_URL, '/'); ?>/assets/logo.png" alt="NestChange Logo" class="logo-icon">
                 </a>
                 <nav class="nav-links">
-                    <a href="/" class="nav-link<?php echo $activeNav === 'home' ? ' nav-link-active' : ''; ?>">Home</a>
-                    <a href="/listings"
-                        class="nav-link<?php echo $activeNav === 'listings' ? ' nav-link-active' : ''; ?>">Listings</a>
+                    <a href="<?php echo rtrim(BASE_URL, '/'); ?>" class="nav-link<?php echo $activeNav === 'home' ? ' nav-link-active' : ''; ?>">Home</a>
+                    <a href="<?php echo rtrim(BASE_URL, '/'); ?>/listings" class="nav-link<?php echo $activeNav === 'listings' ? ' nav-link-active' : ''; ?>">Listings</a>
                     <!-- Chat link visible only if logged in or allow access to login via it -->
-                    <a href="/chat"
-                        class="nav-link<?php echo $activeNav === 'chat' ? ' nav-link-active' : ''; ?>">Chat</a>
-                    <a href="/favorites" class="nav-link">Favorites</a>
+                    <a href="<?php echo rtrim(BASE_URL, '/'); ?>/chat" class="nav-link<?php echo $activeNav === 'chat' ? ' nav-link-active' : ''; ?>">Chat</a>
+                    <a href="<?php echo rtrim(BASE_URL, '/'); ?>/favorites" class="nav-link">Favorites</a>
                     <a href="#" class="nav-link">Contact</a>
                 </nav>
             </div>
@@ -59,20 +57,20 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                                 <p>Signed in as</p>
                                 <span><?= htmlspecialchars($navContext['user_name']) ?></span>
                             </div>
-                            <a href="/profile" class="dropdown-item">My Profile</a>
-                            <a href="/profile/edit" class="dropdown-item">Settings</a>
-                            <a href="/notifications" class="dropdown-item">
+                            <a href="<?php echo rtrim(BASE_URL, '/'); ?>/profile" class="dropdown-item">My Profile</a>
+                            <a href="<?php echo rtrim(BASE_URL, '/'); ?>/profile/edit" class="dropdown-item">Settings</a>
+                            <a href="<?php echo rtrim(BASE_URL, '/'); ?>/notifications" class="dropdown-item">
                                 Notifications
                                 <?php if ($navContext['notification_count'] > 0): ?>
                                     <span class="notification-badge"><?= $navContext['notification_count'] ?></span>
                                 <?php endif; ?>
                             </a>
-                            <a href="/auth/logout" class="dropdown-item">Sign Out</a>
+                            <a href="<?php echo rtrim(BASE_URL, '/'); ?>/auth/logout" class="dropdown-item">Sign Out</a>
                         </div>
                     </div>
                 <?php else: ?>
-                    <a href="/auth/signin" class="btn-signin">Sign in</a>
-                    <a href="/auth/register" class="btn-register">Register</a>
+                    <a href="<?php echo rtrim(BASE_URL, '/'); ?>/auth/signin" class="btn-signin">Sign in</a>
+                    <a href="<?php echo rtrim(BASE_URL, '/'); ?>/auth/register" class="btn-register">Register</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -105,8 +103,8 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-left">
-                <a href="/">
-                    <img src="/assets/logo.png" alt="NestChange Logo" class="footer-logo">
+                <a href="<?php echo rtrim(BASE_URL, '/'); ?>">
+                    <img src="<?php echo rtrim(BASE_URL, '/'); ?>/assets/logo.png" alt="NestChange Logo" class="footer-logo">
                 </a>
             </div>
             <div class="footer-nav">

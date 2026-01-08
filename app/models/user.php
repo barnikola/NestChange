@@ -185,10 +185,10 @@ class User extends Model
                 WHERE a.email LIKE ? 
                    OR p.first_name LIKE ? 
                    OR p.last_name LIKE ?
-                LIMIT ?";
+                LIMIT {$limit}";
         
         $searchTerm = "%{$query}%";
-        return $this->db->fetchAll($sql, [$searchTerm, $searchTerm, $searchTerm, $limit]);
+        return $this->db->fetchAll($sql, [$searchTerm, $searchTerm, $searchTerm]);
     }
 
 

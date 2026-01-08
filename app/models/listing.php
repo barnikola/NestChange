@@ -631,6 +631,8 @@ class Listing extends Model
     }
 
 
+
+
     public function getRecent(int $limit = 10): array
     {
         $sql = "SELECT l.*, 
