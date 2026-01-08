@@ -1,122 +1,118 @@
-<?php
-require_once __DIR__ . '/../../models/user.php';
-
-$pageTitle = 'Verify Documents';
-$breadcrumbs = [
-    'Home' => '/NestChange/public/home',
-    'Admin' => '/NestChange/public/admin',
-    'Documents' => '/NestChange/public/admin/documents'
-];
-
-require __DIR__ . '/admin_layout.php';
-
-try {
-    $userModel = new User();
-} catch (Exception $e) {
-    die("Database Connection Error: " . $e->getMessage());
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['user_id'])) {
-    $action = $_POST['action'];
-    $userId = $_POST['user_id'];
-    
-    if ($action === 'approve') {
-        $userModel->updateStatus($userId, 'approved');
-    } elseif ($action === 'reject') {
-        $userModel->updateStatus($userId, 'rejected');
-    }
-    echo "<script>location.replace(location.href);</script>";
-    exit;
-}
-
-$documents = $userModel->getAllDocuments();
-
-function getDocType($typeId) {
-    return match($typeId) {
-        1 => 'ID Proof',
-        2 => 'Student ID',
-        default => 'Document'
-    };
-}
-?>
-
-<div class="panel-box" style="background:#fff; padding:20px; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h1 style="margin:0; font-size:1.5rem; color:#2c3e50;">Document Verification</h1>
-    </div>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document Verification</title>
+    <link rel="stylesheet" href="/css/theme.css">
     <style>
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px 15px; border-bottom: 1px solid #eee; text-align: left; }
-        th { background: #f8f9fa; font-weight: 600; color: #555; }
-        
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; }
-        .badge-pending { background: #fff3cd; color: #856404; }
-        .badge-approved { background: #d4edda; color: #155724; }
-        .badge-rejected { background: #f8d7da; color: #721c24; }
-        
-        .btn-action { padding: 5px 10px; border-radius: 4px; border:none; cursor: pointer; font-size: 0.85rem; color: white; transition: opacity 0.2s; margin-right: 4px; }
-        .btn-view { background: #2196F3; }
-        .btn-approve { background: #27ae60; }
-        .btn-reject { background: #e74c3c; }
+        table { width: 90%; margin: 40px auto; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        th, td { padding: 15px; border-bottom: 1px solid #ddd; text-align: left; }
+        th { background: #f5f5f5; font-weight: 600; }
+        .actions button { padding: 6px 14px; margin-right: 5px; cursor: pointer; border: none; border-radius: 4px; font-size: 0.9em; transition: all 0.3s ease; }
+        .view-btn { background: #2196F3; color: white; }
+        .approve { background: #4CAF50; color: white; }
+        .reject { background: #f44336; color: white; }
+        .actions button:hover { opacity: 0.9; transform: translateY(-1px); }
+        .status { padding: 4px 8px; border-radius: 4px; font-size: 0.85em; }
+        .status.active { background: #d4edda; color: #155724; }
+        .status.approved { background: #d4edda; color: #155724; }
+        .status.pending { background: #fff3cd; color: #856404; }
+        .status.rejected { background: #f8d7da; color: #721c24; }
+        h1 { color: #333; margin-bottom: 30px; }
+        .back-link { display: inline-block; margin: 20px 0 0 5%; text-decoration: none; color: #666; }
     </style>
+</head>
+<body>
 
-    <table>
-        <thead>
+<a href="/admin/dashboard" class="back-link">← Back to Dashboard</a>
+
+<h1 style="text-align:center;">Document Verification</h1>
+
+<?php if (isset($_SESSION['flash_message'])): ?>
+    <div style="width: 90%; margin: 20px auto; padding: 15px; border-radius: 4px; 
+        background: <?= $_SESSION['flash_type'] === 'success' ? '#d4edda' : ($_SESSION['flash_type'] === 'warning' ? '#fff3cd' : '#f8d7da') ?>; 
+        color: <?= $_SESSION['flash_type'] === 'success' ? '#155724' : ($_SESSION['flash_type'] === 'warning' ? '#856404' : '#721c24') ?>; 
+        border: 1px solid <?= $_SESSION['flash_type'] === 'success' ? '#c3e6cb' : ($_SESSION['flash_type'] === 'warning' ? '#ffeeba' : '#f5c6cb') ?>;">
+        <?= htmlspecialchars($_SESSION['flash_message']) ?>
+        <?php unset($_SESSION['flash_message'], $_SESSION['flash_type']); ?>
+    </div>
+<?php endif; ?>
+
+<table>
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Document Type</th>
+            <th>Uploaded Date</th>
+            <th>Document Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php if (empty($documents)): ?>
+        <tr>
+            <td colspan="6" style="text-align:center; padding: 30px;">No documents found.</td>
+        </tr>
+        <?php else: ?>
+            <?php foreach ($documents as $doc): ?>
             <tr>
-                <th>User Info</th>
-                <th>Document Type</th>
-                <th>Uploaded</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <td><?= htmlspecialchars(($doc['first_name'] ?? '') . ' ' . ($doc['last_name'] ?? '')) ?></td>
+                <td><?= htmlspecialchars($doc['email']) ?></td>
+                <td>
+                    <?php
+                    echo match($doc['document_type_id']) {
+                        1 => 'ID Proof',
+                        2 => 'Student ID',
+                        3 => 'Deed',
+                        4 => 'Utility Bill',
+                        5 => 'Lease Agreement',
+                        default => 'Document'
+                    };
+                    ?>
+                </td>
+                <td><?= date('d M Y', strtotime($doc['created_at'] ?? 'now')) ?></td>
+                <td>
+                    <?php 
+                        $status = $doc['document_status'] ?? 'pending'; 
+                        $statusClass = match($status) {
+                            'approved' => 'approved',
+                            'rejected' => 'rejected',
+                            default => 'pending'
+                        };
+                    ?>
+                    <span class="status <?= $statusClass ?>">
+                        <?= ucfirst(htmlspecialchars($status)) ?>
+                    </span>
+                </td>
+                <td class="actions" style="display:flex; gap:5px;">
+                    <a href="/<?= ltrim($doc['document_path'] ?? '#', '/') ?>" target="_blank" style="text-decoration:none;">
+                        <button type="button" class="view-btn">View</button>
+                    </a>
+                    
+                    <?php if (($doc['document_status'] ?? 'pending') !== 'approved'): ?>
+                    <form action="/admin/documents/approve" method="POST" style="display:inline;" onsubmit="return confirm('Approve this document?');">
+                        <input type="hidden" name="document_id" value="<?= $doc['id'] ?>">
+                        <input type="hidden" name="user_id" value="<?= $doc['account_id'] ?>">
+                        <input type="hidden" name="action" value="approve">
+                        <button type="submit" class="approve">Approve</button>
+                    </form>
+                    <?php endif; ?>
+                    
+                    <?php if (($doc['document_status'] ?? 'pending') !== 'rejected'): ?>
+                    <form action="/admin/documents/approve" method="POST" style="display:inline;" onsubmit="return confirm('Reject this document?');">
+                        <input type="hidden" name="document_id" value="<?= $doc['id'] ?>">
+                        <input type="hidden" name="user_id" value="<?= $doc['account_id'] ?>">
+                        <input type="hidden" name="action" value="reject">
+                        <button type="submit" class="reject">Reject</button>
+                    </form>
+                    <?php endif; ?>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            <?php if (empty($documents)): ?>
-            <tr><td colspan="5" style="text-align:center; padding:30px; color:#777;">No documents pending verification.</td></tr>
-            <?php else: ?>
-                <?php foreach ($documents as $doc): ?>
-                <tr>
-                    <td>
-                        <div style="font-weight:bold"><?= htmlspecialchars(($doc['first_name'] ?? '') . ' ' . ($doc['last_name'] ?? '')) ?></div>
-                        <div style="font-size:0.85rem; color:#888;"><?= htmlspecialchars($doc['email']) ?></div>
-                    </td>
-                    <td><?= getDocType($doc['document_type_id']) ?></td>
-                    <td><?= date('M d, Y', strtotime($doc['created_at'] ?? 'now')) ?></td>
-                    <td>
-                        <span class="badge badge-<?= htmlspecialchars($doc['user_status']) ?>">
-                            <?= ucfirst(htmlspecialchars($doc['user_status'])) ?>
-                        </span>
-                    </td>
-                    <td style="white-space:nowrap;">
-                        <a href="<?= $baseUrl . '/' . ltrim($doc['document_path'], '/') ?>" target="_blank" style="text-decoration:none;">
-                            <button type="button" class="btn-action btn-view" title="View Document"><i class="fas fa-eye"></i></button>
-                        </a>
-                        
-                        <?php if ($doc['user_status'] !== 'approved'): ?>
-                            <form method="POST" style="display:inline;" onsubmit="return confirm('Approve this user?');">
-                                <input type="hidden" name="user_id" value="<?= $doc['account_id'] ?>">
-                                <input type="hidden" name="action" value="approve">
-                                <button type="submit" class="btn-action btn-approve" title="Approve"><i class="fas fa-check"></i></button>
-                            </form>
-                        <?php endif; ?>
-                        
-                        <?php if ($doc['user_status'] !== 'rejected'): ?>
-                            <form method="POST" style="display:inline;" onsubmit="return confirm('Reject this user?');">
-                                <input type="hidden" name="user_id" value="<?= $doc['account_id'] ?>">
-                                <input type="hidden" name="action" value="reject">
-                                <button type="submit" class="btn-action btn-reject" title="Reject"><i class="fas fa-times"></i></button>
-                            </form>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </tbody>
-    </table>
-</div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </tbody>
+</table>
 
-</main>
-</div>
 </body>
 </html>

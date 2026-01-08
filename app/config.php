@@ -24,6 +24,10 @@ if (file_exists($envPath)) {
 define('APP_ENV', getenv('APP_ENV') ?: 'development');
 define('APP_DEBUG', APP_ENV === 'development');
 
+// Timezone (used for formatting/display)
+define('APP_TIMEZONE', getenv('APP_TIMEZONE') ?: 'Europe/Paris');
+date_default_timezone_set(APP_TIMEZONE);
+
 // Database Configuration
 define('DB_HOST', getenv('DB_HOST') ?: '127.0.0.1');
 define('DB_PORT', getenv('DB_PORT') ?: '3306');
@@ -36,7 +40,7 @@ define('DB_CHARSET', 'utf8mb4');
 // If running via web server, prefer to detect the base URL from the request
 $envBase = getenv('BASE_URL') ?: '';
 if (php_sapi_name() === 'cli' || empty($_SERVER['HTTP_HOST'])) {
-    define('BASE_URL', $envBase ?: 'http://localhost');
+    define('BASE_URL', $envBase ?: 'http://localhost:8080');
 } else {
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'];

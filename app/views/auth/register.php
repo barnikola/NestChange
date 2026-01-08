@@ -107,6 +107,20 @@ ob_start();
                 </div>
                 
                 <div class="form-group">
+                    <label for="profile-picture" class="form-label">Profile Picture (Optional)</label>
+                    <div class="file-input-wrapper">
+                        <input 
+                            type="file" 
+                            id="profile-picture" 
+                            name="profile_picture" 
+                            class="form-input file-input" 
+                            accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                        >
+                        <span class="file-icon">📎</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
                     <label for="id-document" class="form-label">Identification document</label>
                     <div class="file-input-wrapper">
                         <input 
@@ -115,6 +129,7 @@ ob_start();
                             name="id-document" 
                             class="form-input file-input" 
                             placeholder="Value"
+                            accept=".pdf, .jpg, .jpeg, image/jpeg, application/pdf"
                         >
                         <span class="file-icon">📎</span>
                     </div>
@@ -129,6 +144,7 @@ ob_start();
                             name="student-id" 
                             class="form-input file-input" 
                             placeholder="Value"
+                            accept=".pdf, .jpg, .jpeg, image/jpeg, application/pdf"
                         >
                         <span class="file-icon">📎</span>
                     </div>

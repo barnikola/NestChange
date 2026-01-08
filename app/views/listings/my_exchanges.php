@@ -5,6 +5,7 @@ $breadcrumbs = [
     ['label' => 'Home', 'url' => '/'],
     ['label' => 'My Exchanges'],
 ];
+$exchanges = $exchanges ?? [];
 
 ob_start();
 ?>
@@ -25,64 +26,47 @@ ob_start();
 
   <div class="exc-box">
     <h4>EXCHANGES LIST</h4>
-    <div class="exc-images">
-      <img src="/assets/listing.jpg" alt="Listing preview">
-      <img src="/assets/listing.jpg" alt="Listing preview">
-      <img src="/assets/listing.jpg" alt="Listing preview">
-      <img src="/assets/listing.jpg" alt="Listing preview">
-      <img src="/assets/listing.jpg" alt="Listing preview">
-      <img src="/assets/listing.jpg" alt="Listing preview">
-      <img src="/assets/listing.jpg" alt="Listing preview">
-      <img src="/assets/listing.jpg" alt="Listing preview">
-    </div>
+    <?php if (empty($exchanges)): ?>
+      <p class="exc-empty">No exchanges yet. Confirmed bookings will appear here once their start date passes.</p>
+    <?php else: ?>
+      <table class="exc-table">
+          <tr>
+            <th>Exchange ID</th>
+            <th>Accommodation</th>
+            <th>Dates</th>
+            <th>Status</th>
+            <th>View</th>
+          </tr>
 
-    <table class="exc-table">
-        <tr>
-          <th>Exchange ID</th>
-          <th>Accommodation</th>
-          <th>Dates</th>
-          <th>Status</th>
-          <th>View</th>
-        </tr>
-
-        <tr>
-          <td>12345</td>
-          <td>Beach House</td>
-          <td>July 10 - 23</td>
-          <td class="done">Finalized</td>
-          <td><a href="/listings/exchange-details">View Details</a></td>
-        </tr>
-        <tr>
-          <td>22341</td>
-          <td>Beach House</td>
-          <td>July 10 - 23</td>
-          <td class="done">Finalized</td>
-          <td><a href="/listings/exchange-details">View Details</a></td>
-        </tr>
-        <tr>
-          <td>99911</td>
-          <td>Beach House</td>
-          <td>July 10 - 23</td>
-          <td class="active">Confirmed</td>
-          <td><a href="/listings/exchange-details">View Details</a></td>
-        </tr>
-        <tr>
-          <td>77882</td>
-          <td>Beach House</td>
-          <td>July 10 - 23</td>
-          <td class="active">Confirmed</td>
-          <td><a href="/listings/exchange-details">View Details</a></td>
-        </tr>
-        <tr>
-          <td>33221</td>
-          <td>Beach House</td>
-          <td>July 10 - 23</td>
-          <td class="active">Confirmed</td>
-          <td><a href="/listings/exchange-details">View Details</a></td>
-        </tr>
-    </table>
+          <?php foreach ($exchanges as $exchange): ?>
+            <tr>
+              <td><?= htmlspecialchars($exchange['booking_id'] ?? $exchange['application_id']) ?></td>
+              <td>
+                <div class="exc-accommodation"><?= htmlspecialchars($exchange['listing_title'] ?? 'Listing') ?></div>
+                <div class="exc-location">
+                  <?= htmlspecialchars(trim(($exchange['listing_city'] ?? '') . (empty($exchange['listing_country']) ? '' : ', ' . $exchange['listing_country']))) ?>
+                </div>
+                <?php if (!empty($exchange['other_name'])): ?>
+                  <div class="exc-role">
+                    <?= $exchange['role'] === 'host' ? 'Hosting ' : 'Staying with ' ?>
+                    <?= htmlspecialchars($exchange['other_name']) ?>
+                  </div>
+                <?php endif; ?>
+              </td>
+              <td><?= htmlspecialchars($exchange['date_range'] ?? 'Dates not set') ?></td>
+              <td class="<?= htmlspecialchars($exchange['status_class'] ?? '') ?>">
+                <?= htmlspecialchars(ucfirst($exchange['status'] ?? '')) ?>
+              </td>
+              <td>
+                <a href="<?= BASE_URL ?>/applications/<?= htmlspecialchars($exchange['application_id']) ?>">View Details</a>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+      </table>
+    <?php endif; ?>
   </div>
 </section>
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/main.php';
+?>

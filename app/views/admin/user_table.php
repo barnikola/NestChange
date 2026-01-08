@@ -1,123 +1,106 @@
-<?php
-require_once __DIR__ . '/../../models/user.php';
-
-$pageTitle = 'Manage Users';
-$breadcrumbs = [
-    'Home' => '/NestChange/public/home',
-    'Admin' => '/NestChange/public/admin',
-    'Users' => '/NestChange/public/admin/users'
-];
-
-require __DIR__ . '/admin_layout.php';
-?>
-
-<div class="panel-box" style="background:#fff; padding:20px; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h1 style="margin:0; font-size:1.5rem; color:#2c3e50;">User Management</h1>
-        <!-- Search or Filter could go here -->
-    </div>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management</title>
+    <link rel="stylesheet" href="/css/theme.css">
     <style>
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px 15px; border-bottom: 1px solid #eee; text-align: left; }
-        th { background: #f8f9fa; font-weight: 600; color: #555; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; }
-        .badge-approved { background: #d4edda; color: #155724; }
-        .badge-pending { background: #fff3cd; color: #856404; }
-        .badge-suspended { background: #f8d7da; color: #721c24; }
-        
-        .btn-action { padding: 5px 10px; border-radius: 4px; border:none; cursor: pointer; font-size: 0.85rem; color: white; transition: opacity 0.2s; }
-        .btn-action:hover { opacity: 0.9; }
-        .btn-approve { background: #27ae60; }
-        .btn-suspend { background: #f39c12; }
-        .btn-delete { background: #e74c3c; }
+        /* Standalone styles for the table view */
+        table { width: 90%; margin: 40px auto; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        th, td { padding: 15px; border-bottom: 1px solid #ddd; text-align: left; }
+        th { background: #f5f5f5; font-weight: 600; }
+        .actions button { padding: 6px 14px; margin-right: 5px; cursor: pointer; border: none; border-radius: 4px; font-size: 0.9em; transition: all 0.3s ease; }
+        .edit { background: #FFC107; color: #333; }
+        .delete { background: #F44336; color: white; }
+        .status { padding: 4px 8px; border-radius: 4px; font-size: 0.85em; }
+        .status.active { background: #d4edda; color: #155724; }
+        .status.approved { background: #d4edda; color: #155724; }
+        .status.pending { background: #fff3cd; color: #856404; }
+        .status.suspended { background: #f8d7da; color: #721c24; }
+        h1 { color: #333; margin-bottom: 30px; }
+        .back-link { display: inline-block; margin: 20px 0 0 5%; text-decoration: none; color: #666; }
+        .search-container { width: 90%; margin: 20px auto; display: flex; justify-content: flex-end; }
+        .search-form { display: flex; gap: 10px; align-items: center; }
+        .search-input { padding: 8px; width: 200px; border: 1px solid #ddd; border-radius: 4px; height: 36px; box-sizing: border-box; }
+        .search-btn { padding: 0 20px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; height: 36px; box-sizing: border-box; font-size: 0.9em; }
     </style>
+</head>
+<body>
 
-    <table>
-        <thead>
+<a href="/admin/dashboard" class="back-link">← Back to Dashboard</a>
+
+<div class="search-container">
+    <form action="/admin/users" method="GET" class="search-form">
+        <input type="text" name="search" placeholder="Search users..." class="search-input" value="<?= htmlspecialchars($search ?? '') ?>">
+        <button type="submit" class="search-btn">Search</button>
+    </form>
+</div>
+
+<h1 style="text-align:center;">User Management</h1>
+
+<?php if (isset($_SESSION['flash_message'])): ?>
+    <div style="width: 90%; margin: 20px auto; padding: 15px; border-radius: 4px; 
+        background: <?= $_SESSION['flash_type'] === 'success' ? '#d4edda' : ($_SESSION['flash_type'] === 'warning' ? '#fff3cd' : '#f8d7da') ?>; 
+        color: <?= $_SESSION['flash_type'] === 'success' ? '#155724' : ($_SESSION['flash_type'] === 'warning' ? '#856404' : '#721c24') ?>; 
+        border: 1px solid <?= $_SESSION['flash_type'] === 'success' ? '#c3e6cb' : ($_SESSION['flash_type'] === 'warning' ? '#ffeeba' : '#f5c6cb') ?>;">
+        <?= htmlspecialchars($_SESSION['flash_message']) ?>
+        <?php unset($_SESSION['flash_message'], $_SESSION['flash_type']); ?>
+    </div>
+<?php endif; ?>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php if (empty($users)): ?>
+        <tr>
+            <td colspan="6" style="text-align:center; padding: 30px;">No users found.</td>
+        </tr>
+        <?php else: ?>
+            <?php foreach ($users as $user): ?>
             <tr>
-                <th>ID</th>
-                <th>User</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <td><?= htmlspecialchars($user['id']) ?></td>
+                <td><?= htmlspecialchars(($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? '')) ?></td>
+                <td><?= htmlspecialchars($user['email']) ?></td>
+                <td><?= ucfirst(htmlspecialchars($user['role'])) ?></td>
+                <td>
+                    <span class="status <?= htmlspecialchars($user['status']) ?>">
+                        <?= ucfirst(htmlspecialchars($user['status'])) ?>
+                    </span>
+                </td>
+                <td class="actions">
+                    <?php if ($user['status'] !== 'approved'): ?>
+                    <form action="/admin/users/approve" method="POST" style="display:inline;" onsubmit="return confirm('Approve this user?');">
+                        <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                        <button type="submit" style="background:#4CAF50; color:white;">Approve</button>
+                    </form>
+                    <?php endif; ?>
+
+                    <?php if ($user['status'] !== 'suspended'): ?>
+                    <form action="/admin/users/suspend" method="POST" style="display:inline;" onsubmit="return confirm('Suspend this user?');">
+                        <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                        <button type="submit" style="background:#FF9800; color:white;">Suspend</button>
+                    </form>
+                    <?php endif; ?>
+
+                    <form action="/admin/users/delete" method="POST" style="display:inline;" onsubmit="return confirm('Delete this user? This cannot be undone.');">
+                        <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                        <button type="submit" class="delete">Delete</button>
+                    </form>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            <?php
-            $userModel = new User();
-            $users = $userModel->search('', 100); 
-            ?>
-            
-            <?php if (empty($users)): ?>
-                <tr><td colspan="5" style="text-align:center; padding:30px; color:#777;">No users found.</td></tr>
-            <?php else: ?>
-                <?php foreach ($users as $u): ?>
-                <tr>
-                    <td>#<?= $u['id'] ?></td>
-                    <td>
-                        <div style="font-weight:bold"><?= htmlspecialchars(($u['first_name'] ?? 'Unknown') . " " . ($u['last_name'] ?? '')) ?></div>
-                        <div style="font-size:0.85rem; color:#888;"><?= htmlspecialchars($u['email']) ?></div>
-                    </td>
-                    <td style="text-transform: capitalize;"><?= htmlspecialchars($u['role']) ?></td>
-                    <td>
-                        <span class="badge badge-<?= $u['status'] ?>">
-                            <?= ucfirst($u['status']) ?>
-                        </span>
-                    </td>
-                    <td style="white-space:nowrap;">
-                        <?php if($u['status'] !== 'approved'): ?>
-                            <button class="btn-action btn-approve" onclick="updateStatus(<?= $u['id'] ?>, 'approved')">Approve</button>
-                        <?php endif; ?>
-                        
-                        <?php if($u['status'] !== 'suspended'): ?>
-                            <button class="btn-action btn-suspend" onclick="updateStatus(<?= $u['id'] ?>, 'suspended')">Suspend</button>
-                        <?php endif; ?>
-                        
-                        <button class="btn-action btn-delete" onclick="deleteUser(<?= $u['id'] ?>)">Delete</button>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </tbody>
-    </table>
-</div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </tbody>
+</table>
 
-<script>
-    const baseUrl = '/NestChange/public/admin/users';
-
-    function updateStatus(userId, status) {
-        let action = status === 'approved' ? 'approve' : 'suspend';
-        if(confirm(`Are you sure you want to ${action} this user?`)) {
-            fetch(`${baseUrl}/${action}`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: `id=${userId}&status=${status}`
-            })
-            .then(res => {
-                // For demo/simplified usage without backend API implemented completely:
-                alert('Action simulated. Reloading...'); 
-                location.reload(); 
-            });
-        }
-    }
-
-    function deleteUser(userId) {
-        if(confirm('Are you sure you want to PERMANENTLY delete this user? This cannot be undone.')) {
-            fetch(`${baseUrl}/delete`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: `id=${userId}`
-            })
-            .then(res => {
-                alert('Action simulated. Reloading...'); 
-                location.reload();
-            });
-        }
-    }
-</script>
-
-</main>
-</div>
 </body>
 </html>

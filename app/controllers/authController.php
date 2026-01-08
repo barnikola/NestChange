@@ -70,6 +70,9 @@ class AuthController extends Controller
             // Handle file uploads for documents
             $idDocumentPath = $this->handleFileUpload('id-document', 'documents/id/');
             $studentIdPath = $this->handleFileUpload('student-id', 'documents/student/');
+            
+            // Handle profile picture upload (optional)
+            $profilePicturePath = $this->handleProfilePictureUpload('profile_picture');
 
             // Create user account (id is auto_increment, returns the new ID)
             $accountId = $this->userModel->createUser([
@@ -81,11 +84,19 @@ class AuthController extends Controller
                 'student_status_until' => $data['student_status_until'] ?? null,
             ]);
 
-            // Create user profile with names (account_id is bigint)
-            $this->createUserProfile((int)$accountId, [
+            // Prepare profile data
+            $profileData = [
                 'first_name' => $data['name'],
                 'last_name' => $data['surname'],
-            ]);
+            ];
+            
+            // Add profile picture if uploaded
+            if ($profilePicturePath) {
+                $profileData['profile_picture'] = $profilePicturePath;
+            }
+
+            // Create user profile with names (account_id is bigint)
+            $this->createUserProfile((int)$accountId, $profileData);
 
             // Store document paths if uploaded
             if ($idDocumentPath || $studentIdPath) {
@@ -184,7 +195,11 @@ class AuthController extends Controller
         }
 
         // Login successful
-        $safeUser = $this->userModel->getSafeUserData($user);
+        $userWithProfile = $this->userModel->getUserWithProfile($user['id']);
+        // If for some reason profile doesn't exist (shouldn't happen for approved users normally but safe check)
+        $sessionUser = $userWithProfile ?: $user;
+        
+        $safeUser = $this->userModel->getSafeUserData($sessionUser);
         Session::login($safeUser);
 
         // Handle remember me
@@ -202,8 +217,18 @@ class AuthController extends Controller
             );
         }
 
+        // Redirect based on user role
+        $role = $sessionUser['role'] ?? 'student';
+        $redirectUrl = '/home';
+        
+        if ($role === 'admin') {
+            $redirectUrl = '/admin';
+        } elseif ($role === 'moderator') {
+            $redirectUrl = '/moderator';
+        }
+
         $this->flash('success', 'Welcome back!');
-        $this->redirect('/home');
+        $this->redirect($redirectUrl);
     }
 
 
@@ -439,6 +464,59 @@ class AuthController extends Controller
         // Move uploaded file
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
             return '/uploads/' . $subDir . $filename;
+        }
+
+        return null;
+    }
+
+
+    private function handleProfilePictureUpload(string $fieldName): ?string
+    {
+        if (!isset($_FILES[$fieldName]) || $_FILES[$fieldName]['error'] === UPLOAD_ERR_NO_FILE) {
+            return null;
+        }
+
+        $file = $_FILES[$fieldName];
+
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            return null;
+        }
+
+        // Validate file type - only images allowed
+        if (!in_array($file['type'], ALLOWED_IMAGE_TYPES)) {
+            return null;
+        }
+
+        // Validate file size
+        if ($file['size'] > UPLOAD_MAX_SIZE) {
+            return null;
+        }
+
+        // Create upload directory if it doesn't exist
+        $uploadDir = dirname(__DIR__, 2) . '/public/uploads/profile_pictures/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        // Generate unique filename
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        if (!$extension) {
+            // Determine extension from mime type if not provided
+            $extensions = [
+                'image/jpeg' => 'jpg',
+                'image/png' => 'png',
+                'image/gif' => 'gif',
+                'image/webp' => 'webp'
+            ];
+            $extension = $extensions[$file['type']] ?? 'jpg';
+        }
+        
+        $filename = $this->generateUuid() . '.' . $extension;
+        $filepath = $uploadDir . $filename;
+
+        // Move uploaded file
+        if (move_uploaded_file($file['tmp_name'], $filepath)) {
+            return '/uploads/profile_pictures/' . $filename;
         }
 
         return null;

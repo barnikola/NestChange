@@ -123,15 +123,18 @@ body {
 
 /* Panel Box (Dashboard Cards) */
 .container {
-    /* Legacy support container, centering for dashboard */
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
     width: 100%;
 }
 
 .panel-box {
-    background: none;
-    padding: 0;
-    width: 100%;
-    box-shadow: none;
+    background: white;
+    padding: 30px;
+    width: 70%;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .options {

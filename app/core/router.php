@@ -15,6 +15,14 @@ class Router
         $this->basePath = rtrim($basePath, '/');
     }
 
+    function getRoutes(): array{
+        return $this->routes;
+    }
+
+    function setRoutes($routes): void{
+        $this->routes = $routes;
+    }
+
     /**
      * Add a GET route
      */

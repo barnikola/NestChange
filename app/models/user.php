@@ -48,7 +48,7 @@ class User extends Model
     }
 
 
-    public function updatePassword(int|string $userId, string $newPassword): bool
+    public function updatePassword(int|string $table, $userId, string $newPassword): bool
     {
         $hash = password_hash($newPassword, PASSWORD_ALGO, ['cost' => PASSWORD_COST]);
         return $this->update($userId, ['password_hash' => $hash]) > 0;
@@ -87,12 +87,81 @@ class User extends Model
 
     public function getUserWithProfile(int|string $userId): array|false
     {
-        $sql = "SELECT a.*, p.first_name, p.last_name, p.phone, p.bio, p.city, p.country, p.profile_picture
+        $sql = "SELECT a.*, p.id as profile_id, p.first_name, p.last_name, p.phone, p.bio, p.city, p.country, p.profile_picture
                 FROM account a
                 LEFT JOIN user_profile p ON a.id = p.account_id
                 WHERE a.id = ?";
         
         return $this->db->fetchOne($sql, [$userId]);
+    }
+
+
+    public function getPublicProfile(string $profileId): array|false
+    {
+        $sql = "SELECT p.*, a.email, a.status, a.role, a.created_at
+                FROM user_profile p
+                JOIN account a ON p.account_id = a.id
+                WHERE p.id = ?";
+
+        return $this->db->fetchOne($sql, [$profileId]);
+    }
+
+    /**
+     * Create or update the user's profile row.
+     *
+     * @param int|string $accountId The owning account id
+     * @param array $data Profile fields to persist
+     * @return bool
+     */
+    public function updateProfile(int|string $accountId, array $data): bool
+    {
+        // Only allow known columns to be persisted
+        $allowed = [
+            'first_name',
+            'last_name',
+            'bio',
+            'city',
+            'country',
+            'profile_picture',
+            'languages',
+            'accessibility_needs',
+        ];
+
+        $filtered = array_intersect_key($data, array_flip($allowed));
+
+        // No valid data to write
+        if (empty($filtered)) {
+            return false;
+        }
+
+        try {
+            $existing = $this->db->fetchOne(
+                "SELECT id FROM user_profile WHERE account_id = ? LIMIT 1",
+                [$accountId]
+            );
+
+            if ($existing) {
+                return $this->db->update(
+                    'user_profile',
+                    $filtered,
+                    'account_id = ?',
+                    [$accountId]
+                ) > 0;
+            }
+
+            $this->db->insert('user_profile', array_merge([
+                'id' => $this->generateUuid(),
+                'account_id' => $accountId,
+            ], $filtered));
+
+            return true;
+        } catch (Exception $e) {
+            // Keep controller flow alive; surface details only in debug mode
+            if (defined('APP_DEBUG') && APP_DEBUG) {
+                throw $e;
+            }
+            return false;
+        }
     }
 
 
@@ -156,16 +225,47 @@ class User extends Model
         unset($user['password_hash']);
         return $user;
     }
+
     public function getAllDocuments(): array
     {
-        $sql = "SELECT ud.*, 
-                       p.first_name, p.last_name, 
-                       a.email, a.status as user_status
-                FROM user_document ud
-                JOIN account a ON ud.account_id = a.id
-                JOIN user_profile p ON a.id = p.account_id
-                ORDER BY a.created_at DESC";
-        
+        // Fetch document status as well
+        $sql = "SELECT d.*, d.status as document_status, p.first_name, p.last_name, a.email, a.status as user_status, a.id as account_id
+                FROM user_document d
+                JOIN account a ON d.account_id = a.id
+                LEFT JOIN user_profile p ON a.id = p.account_id
+                ORDER BY d.created_at DESC";
+                
         return $this->db->fetchAll($sql);
+    }
+
+    public function updateDocumentStatus(string $documentId, string $status): bool
+    {
+        $data = ['status' => $status];
+        if ($status === 'approved') {
+            $data['verified_at'] = date('Y-m-d H:i:s');
+        }
+        return $this->db->update('user_document', $data, 'id = ?', [$documentId]) > 0;
+    }
+
+    public function countPendingDocuments(int|string $userId): int
+    {
+        $sql = "SELECT COUNT(*) as count FROM user_document WHERE account_id = ? AND status = 'pending'";
+        $result = $this->db->fetchOne($sql, [$userId]);
+        return (int)($result['count'] ?? 0);
+    }
+
+    private function generateUuid(): string
+    {
+        $data = random_bytes(16);
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+    }
+
+    public function countAllPendingDocuments(): int
+    {
+        $sql = "SELECT COUNT(*) as count FROM user_document WHERE status = 'pending'";
+        $result = $this->db->fetchOne($sql);
+        return (int)($result['count'] ?? 0);
     }
 }

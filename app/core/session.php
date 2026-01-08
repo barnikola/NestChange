@@ -22,6 +22,14 @@ class Session
 
         if (session_status() === PHP_SESSION_NONE) {
             // Configure session settings
+            // Use project-local storage for sessions to avoid permission issues
+            $sessionPath = dirname(dirname(__DIR__)) . '/app/storage/sessions';
+            
+            if (!file_exists($sessionPath)) {
+                mkdir($sessionPath, 0777, true);
+            }
+            session_save_path($sessionPath);
+
             ini_set('session.use_strict_mode', 1);
             ini_set('session.use_cookies', 1);
             ini_set('session.use_only_cookies', 1);
@@ -31,6 +39,7 @@ class Session
                 ini_set('session.cookie_secure', 1);
             }
             
+            // Set session parameter settings
             session_name(SESSION_NAME);
             session_set_cookie_params([
                 'lifetime' => SESSION_LIFETIME,

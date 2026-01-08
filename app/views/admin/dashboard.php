@@ -1,36 +1,69 @@
 <?php
-$pageTitle = 'Admin Dashboard';
+$pageTitle = 'NestChange - Admin Dashboard';
+$activeNav = '';
+// Add breadcrumbs if the layout supports them
 $breadcrumbs = [
-    'Home' => '/NestChange/public/home',
-    'Admin' => '/NestChange/public/admin'
+    ['label' => 'Home', 'url' => '/'],
+    ['label' => 'Admin Dashboard'],
 ];
 
-require __DIR__ . '/admin_layout.php';
+ob_start();
 ?>
 
-<div class="panel-box">
-    <h1>Welcome back, Admin</h1>
-    <p>Overview of platform activity and quick actions.</p>
+<section class="listings-section" style="background-color: #f7f7f7; min-height: 80vh;">
+    <div class="listings-container">
+        <h2 class="listings-title" style="text-align: center; margin-bottom: 10px;">Admin Dashboard</h2>
+        <p class="listings-subtitle" style="text-align: center; margin-bottom: 40px;">Manage usage, users and content.</p>
+        
+        <div class="options">
+            <!-- Manage Users -->
+            <div class="card">
+                <a href="/admin/users" style="text-decoration:none; color:inherit; display:block; height:100%;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">👥 Manage Users <span style="font-size: 0.8em; background: #eee; padding: 2px 6px; border-radius: 10px;"><?php echo $totalUsers ?? 0; ?></span></h3>
+                    <p>Approve new accounts, block users, or delete spam.</p>
+                </a>
+            </div>
 
-    <div class="options">
-        <div class="card" onclick="location.href='<?= $baseUrl ?>/admin/users'">
-            <h3><i class="fas fa-users" style="color:#3498db"></i> Manage Users</h3>
-            <p>Approve pending accounts, suspend users, or view details.</p>
-        </div>
+            <!-- Manage Listings -->
+            <div class="card">
+                <a href="/admin/listings" style="text-decoration:none; color:inherit; display:block; height:100%;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">
+                        🏘 Manage Listings
+                        <span style="font-size: 0.8em; background: <?php echo $pendingListings > 0 ? '#ffcccc' : '#eee'; ?>; color: <?php echo $pendingListings > 0 ? '#cc0000' : '#666'; ?>; padding: 2px 6px; border-radius: 10px;">
+                            <?php echo $pendingListings ?? 0; ?> Pending
+                        </span>
+                    </h3>
+                    <p>Review new listings, pause ads, or remove content.</p>
+                </a>
+            </div>
 
-        <div class="card" onclick="location.href='<?= $baseUrl ?>/admin/listings'">
-            <h3><i class="fas fa-home" style="color:#2ecc71"></i> Manage Listings</h3>
-            <p>Review new listings, remove spam, or manage visibility.</p>
+            <!-- Verify Documents -->
+            <div class="card">
+                <a href="/admin/documents" style="text-decoration:none; color:inherit; display:block; height:100%;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">
+                        📄 Verify Documents
+                        <?php if (isset($pendingDocuments) && $pendingDocuments > 0): ?>
+                            <span style="font-size: 0.8em; background: #ffcccc; color: #cc0000; padding: 2px 6px; border-radius: 10px;"><?php echo $pendingDocuments; ?> Pending</span>
+                        <?php endif; ?>
+                    </h3>
+                    <p>Check uploaded IDs and documents for verification.</p>
+                </a>
+            </div>
+            
+            <!-- Legal Content -->
+            <div class="card">
+                <a href="/admin/legal" style="text-decoration:none; color:inherit; display:block; height:100%;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">⚖️ Legal Content</h3>
+                    <p>Edit Terms of Service, Privacy Policy, etc.</p>
+                </a>
+            </div>
         </div>
-
-        <div class="card" onclick="location.href='<?= $baseUrl ?>/admin/documents'">
-            <h3><i class="fas fa-file-contract" style="color:#f1c40f"></i> Verify Documents</h3>
-            <p>Review uploaded ID proofs and enrollment documents.</p>
-        </div>
+        
     </div>
-</div>
+</section>
 
-</main>
-</div> <!-- End admin-wrapper -->
-</body>
-</html>
+<?php
+$content = ob_get_clean();
+// Include the main layout so navigation remains
+include __DIR__ . '/../layouts/main.php';
+?>

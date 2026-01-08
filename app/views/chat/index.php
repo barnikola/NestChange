@@ -7,6 +7,39 @@ $breadcrumbs = [
     ['label' => 'Chat'],
 ];
 
+function buildActionCard($selectedChat, $otherName) {
+    if (!$selectedChat || empty($selectedChat['application_id'])) {
+        return null;
+    }
+    
+    $applicationStatus = $selectedChat['application_status'] ?? null;
+    $currentUserRole = $selectedChat['current_user_role'] ?? null;
+    $applicationId = $selectedChat['application_id'];
+    
+    if ($applicationStatus === 'pending' && $currentUserRole === 'host') {
+        return [
+            'type' => 'host_pending',
+            'eyebrow' => 'Action required',
+            'title' => 'Respond to exchange request?',
+            'text' => "Review and respond to the exchange request from {$otherName}.",
+            'other_name' => $otherName,
+            'application_id' => $applicationId,
+            'primary_action' => [
+                'label' => 'Accept',
+                'url' => BASE_URL . '/applications/' . $applicationId . '/accept',
+                'action' => ''
+            ],
+            'secondary_action' => [
+                'label' => 'Decline',
+                'url' => BASE_URL . '/applications/' . $applicationId . '/reject',
+                'action' => ''
+            ]
+        ];
+    }
+    
+    return null;
+}
+
 ob_start();
 ?>
 <main class="chat-content-wrapper">
@@ -21,139 +54,197 @@ ob_start();
 
             <label class="chat-search">
                 <span class="chat-search-icon">🔍</span>
-                <input type="text" placeholder="Search by user or listing">
+                <input type="text" id="chat-search-input" placeholder="Search by user or listing" autocomplete="off">
             </label>
 
-            <div class="chat-thread-list">
-                <div class="chat-thread active">
-                    <div class="chat-thread-avatar">LA</div>
-                    <div class="chat-thread-body">
-                        <div class="chat-thread-row">
-                            <p class="chat-thread-name">Lena Antoniou</p>
-                            <span class="chat-thread-time">9:14 AM</span>
-                        </div>
-                        <p class="chat-thread-subtitle">House exchange in Athens</p>
+            <div class="chat-thread-list" id="chat-thread-list">
+                <?php if (empty($chats)): ?>
+                    <div class="chat-empty-state">
+                        <p>No conversations yet.</p>
+                        <p class="chat-empty-hint">Start by applying to a listing or receiving applications on your listings.</p>
                     </div>
-                </div>
-
-                <div class="chat-thread">
-                    <div class="chat-thread-avatar">JL</div>
-                    <div class="chat-thread-body">
-                        <div class="chat-thread-row">
-                            <p class="chat-thread-name">Julien Lefèvre</p>
-                            <span class="chat-thread-time">Yesterday</span>
+                <?php else: ?>
+                    <?php foreach ($chats as $chat): ?>
+                        <?php 
+                            $initials = Chat::getInitials($chat['other_first_name'] ?? null, $chat['other_last_name'] ?? null);
+                            $isActive = ($chat['chat_id'] === $selectedChatId);
+                            $formattedTime = Chat::formatTime($chat['last_message_at'] ?? null);
+                            $otherName = trim(($chat['other_first_name'] ?? '') . ' ' . ($chat['other_last_name'] ?? ''));
+                            if (empty($otherName)) $otherName = 'Unknown User';
+                        ?>
+                        <div class="chat-thread <?= $isActive ? 'active' : '' ?>" 
+                             data-chat-id="<?= htmlspecialchars($chat['chat_id']) ?>"
+                             onclick="selectChat('<?= htmlspecialchars($chat['chat_id']) ?>')">
+                            <div class="chat-thread-avatar"><?= htmlspecialchars($initials) ?></div>
+                            <div class="chat-thread-body">
+                                <div class="chat-thread-row">
+                                    <p class="chat-thread-name"><?= htmlspecialchars($otherName) ?></p>
+                                    <span class="chat-thread-time"><?= htmlspecialchars($formattedTime) ?></span>
+                                </div>
+                                <p class="chat-thread-subtitle"><?= htmlspecialchars($chat['listing_title'] ?? 'Exchange') ?></p>
+                            </div>
                         </div>
-                        <p class="chat-thread-subtitle">Sunny Lisbon Loft</p>
-                    </div>
-                </div>
-
-                <div class="chat-thread">
-                    <div class="chat-thread-avatar">MC</div>
-                    <div class="chat-thread-body">
-                        <div class="chat-thread-row">
-                            <p class="chat-thread-name">Mei Chen</p>
-                            <span class="chat-thread-time">Tue</span>
-                        </div>
-                        <p class="chat-thread-subtitle">Montreal Townhouse</p>
-                    </div>
-                </div>
-
-                <div class="chat-thread">
-                    <div class="chat-thread-avatar">SR</div>
-                    <div class="chat-thread-body">
-                        <div class="chat-thread-row">
-                            <p class="chat-thread-name">Sven Richter</p>
-                            <span class="chat-thread-time">Sep 24</span>
-                        </div>
-                        <p class="chat-thread-subtitle">Berlin Studio Retreat</p>
-                    </div>
-                </div>
-
-                <div class="chat-thread">
-                    <div class="chat-thread-avatar">AP</div>
-                    <div class="chat-thread-body">
-                        <div class="chat-thread-row">
-                            <p class="chat-thread-name">Amelia Park</p>
-                            <span class="chat-thread-time">Sep 19</span>
-                        </div>
-                        <p class="chat-thread-subtitle">Canal view stay</p>
-                    </div>
-                </div>
-
-                <div class="chat-thread">
-                    <div class="chat-thread-avatar support">S</div>
-                    <div class="chat-thread-body">
-                        <div class="chat-thread-row">
-                            <p class="chat-thread-name">Support</p>
-                            <span class="chat-thread-time">Sep 19</span>
-                        </div>
-                        <p class="chat-thread-subtitle">Onboarding team</p>
-                    </div>
-                </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </aside>
 
-        <section class="chat-panel">
-            <header class="chat-panel-header">
-                <div class="chat-panel-participant">
-                    <div class="chat-thread-avatar large">LA</div>
-                    <div>
-                        <h3 class="chat-panel-name">Lena Antoniou</h3>
-                        <p class="chat-panel-meta">House exchange in Athens · 12–18 Aug 2025</p>
+        <section class="chat-panel" id="chat-panel">
+            <?php if ($selectedChat): ?>
+                <?php 
+                    $otherName = trim(($selectedChat['other_first_name'] ?? '') . ' ' . ($selectedChat['other_last_name'] ?? ''));
+                    if (empty($otherName)) $otherName = 'Unknown User';
+                    $initials = Chat::getInitials($selectedChat['other_first_name'] ?? null, $selectedChat['other_last_name'] ?? null);
+                    
+                    $dateRange = '';
+                    if (!empty($selectedChat['start_date']) && !empty($selectedChat['end_date'])) {
+                        $startDate = date('j M', strtotime($selectedChat['start_date']));
+                        $endDate = date('j M Y', strtotime($selectedChat['end_date']));
+                        $dateRange = " · {$startDate} – {$endDate}";
+                    }
+                    
+                    // Build action card configuration
+                    $actionCard = buildActionCard($selectedChat, $otherName);
+                ?>
+                <header class="chat-panel-header">
+                    <div class="chat-panel-participant">
+                        <div class="chat-thread-avatar large"><?= htmlspecialchars($initials) ?></div>
+                        <div>
+                            <h3 class="chat-panel-name"><?= htmlspecialchars($otherName) ?></h3>
+                            <p class="chat-panel-meta"><?= htmlspecialchars($selectedChat['listing_title'] ?? 'Exchange') ?><?= htmlspecialchars($dateRange) ?></p>
+                        </div>
+                    </div>
+                    <div class="chat-panel-actions">
+                        <?php if (!empty($selectedChat['listing_id'])): ?>
+                            <button class="chat-panel-btn" onclick="window.location.href='<?= BASE_URL ?>/listings/<?= htmlspecialchars($selectedChat['listing_id']) ?>'">View listing</button>
+                        <?php else: ?>
+                            <button class="chat-panel-btn">View listing</button>
+                        <?php endif; ?>
+                        <?php if (!empty($selectedChat['application_id'])): ?>
+                            <button class="chat-panel-btn" onclick="window.location.href='<?= BASE_URL ?>/applications/<?= htmlspecialchars($selectedChat['application_id']) ?>'">View exchange details</button>
+                        <?php else: ?>
+                            <button class="chat-panel-btn">View exchange details</button>
+                        <?php endif; ?>
+                    </div>
+                </header>
+
+                <?php 
+                    $statusLabels = [
+                        'pending' => 'Exchange request pending',
+                        'accepted' => 'Host accepted the exchange',
+                        'rejected' => 'Exchange request declined',
+                        'withdrawn' => 'Application withdrawn',
+                        'cancelled' => 'Exchange cancelled'
+                    ];
+                    $statusLabel = $statusLabels[$selectedChat['application_status'] ?? ''] ?? 'No active request';
+                ?>
+                <div class="chat-status-pill"><?= htmlspecialchars($statusLabel) ?></div>
+
+                <div class="chat-messages" id="chat-messages">
+                    <?php if (empty($messages)): ?>
+                        <div class="chat-message outgoing">
+                            <p>Start the conversation!</p>
+                            <span class="chat-message-time">Now</span>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($messages as $message): ?>
+                            <?php 
+                                $isOutgoing = ($message['sender_profile_id'] === $currentProfileId);
+                                $messageTime = !empty($message['created_at']) ? date('H:i', strtotime($message['created_at'])) : '';
+                            ?>
+                            <div class="chat-message <?= $isOutgoing ? 'outgoing' : 'incoming' ?>">
+                                <p><?= htmlspecialchars($message['content']) ?></p>
+                                <span class="chat-message-time"><?= htmlspecialchars($messageTime) ?></span>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Action Card: Conditionally included based on application status -->
+                <div id="chat-action-container">
+                    <?php if ($actionCard): ?>
+                        <?php include __DIR__ . '/partials/_action_card.php'; ?>
+                    <?php endif; ?>
+                </div>
+
+                <div class="chat-composer">
+                    <div class="chat-composer-actions">
+                        <button class="chat-icon-btn" aria-label="Add attachment">📎</button>
+                        <button class="chat-icon-btn" aria-label="Insert media">🖼️</button>
+                    </div>
+                    <input type="text" id="message-input" placeholder="Write a message..." class="chat-composer-input" autocomplete="off">
+                    <button class="chat-send-btn" onclick="sendMessage()">Send</button>
+                </div>
+            <?php else: ?>
+                <!-- Default view when no chats exist -->
+                <header class="chat-panel-header">
+                    <div class="chat-panel-participant">
+                        <div class="chat-thread-avatar large">?</div>
+                        <div>
+                            <h3 class="chat-panel-name">No conversation selected</h3>
+                            <p class="chat-panel-meta">Select a chat or apply to a listing to start</p>
+                        </div>
+                    </div>
+                    <div class="chat-panel-actions">
+                        <button class="chat-panel-btn">View listing</button>
+                        <button class="chat-panel-btn">View exchange details</button>
+                    </div>
+                </header>
+
+                <div class="chat-status-pill">No active exchange</div>
+
+                <div class="chat-messages">
+                    <div class="chat-message outgoing">
+                        <p>Apply to a listing to start a conversation.</p>
+                        <span class="chat-message-time">Now</span>
                     </div>
                 </div>
-                <div class="chat-panel-actions">
-                    <button class="chat-panel-btn">View listing</button>
-                    <button class="chat-panel-btn">View exchange details</button>
-                </div>
-            </header>
 
-            <div class="chat-status-pill">Host accepted the exchange</div>
+                <!-- Get Started Action Card -->
+                <div id="chat-action-container">
+                    <?php 
+                        $actionCard = [
+                            'type' => 'get_started',
+                            'eyebrow' => 'Get started',
+                            'title' => 'Find your next exchange',
+                            'text' => 'Browse listings and apply to start a conversation with hosts.',
+                            'primary_action' => [
+                                'label' => 'Browse listings',
+                                'url' => BASE_URL . '/listings'
+                            ],
+                            'secondary_action' => [
+                                'label' => 'My listings',
+                                'url' => BASE_URL . '/my-listings'
+                            ]
+                        ];
+                        include __DIR__ . '/partials/_action_card.php';
+                    ?>
+                </div>
 
-            <div class="chat-messages">
-                <div class="chat-message outgoing">
-                    <p>Vestibulum facilisis quam sed nulla faucibus, quis fringilla orci aliquet.</p>
-                    <span class="chat-message-time">9:12 AM</span>
+                <div class="chat-composer">
+                    <div class="chat-composer-actions">
+                        <button class="chat-icon-btn" aria-label="Add attachment">📎</button>
+                        <button class="chat-icon-btn" aria-label="Insert media">🖼️</button>
+                    </div>
+                    <input type="text" placeholder="Write a message..." class="chat-composer-input" disabled>
+                    <button class="chat-send-btn" disabled>Send</button>
                 </div>
-                <div class="chat-message incoming">
-                    <p>Curabitur vulputate sapien id erat imperdiet, eu egestas ex pulvinar.</p>
-                    <span class="chat-message-time">9:20 AM</span>
-                </div>
-                <div class="chat-message outgoing">
-                    <p>Etiam ornare tellus eget felis ultricies, vel dictum eros ullamcorper.</p>
-                    <span class="chat-message-time">9:23 AM</span>
-                </div>
-                <div class="chat-message outgoing">
-                    <p>Donec laoreet risus non sem gravida, sit amet consequat nisi vestibulum.</p>
-                    <span class="chat-message-time">9:24 AM</span>
-                </div>
-            </div>
-
-            <div class="chat-action-card">
-                <div class="chat-action-content">
-                    <p class="chat-action-eyebrow">Action required</p>
-                    <h4 class="chat-action-title">Agree to exchange?</h4>
-                    <p class="chat-action-text">
-                        Confirm you're ready to finalize the exchange with Lena's family.
-                    </p>
-                </div>
-                <div class="chat-action-buttons">
-                    <button class="chat-action-btn primary">Agree</button>
-                    <button class="chat-action-btn ghost">Decline</button>
-                </div>
-            </div>
-
-            <div class="chat-composer">
-                <div class="chat-composer-actions">
-                    <button class="chat-icon-btn" aria-label="Add attachment">📎</button>
-                    <button class="chat-icon-btn" aria-label="Insert media">🖼️</button>
-                </div>
-                <input type="text" placeholder="Write a message..." class="chat-composer-input">
-                <button class="chat-send-btn">Send</button>
-            </div>
+            <?php endif; ?>
         </section>
     </div>
 </main>
+
+<script id="chat-config" type="application/json">
+<?php
+echo json_encode([
+    'baseUrl' => BASE_URL,
+    'currentProfileId' => $currentProfileId ?? '',
+    'currentChatId' => $selectedChatId ?? ''
+]);
+?>
+</script>
+<script src="/js/chat.js"></script>
+
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/main.php';
