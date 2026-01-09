@@ -89,6 +89,11 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
     $router->get('/listings/my-exchanges', ['ExchangeController', 'myExchanges']);
     $router->get('/listings/exchange-details', ['ExchangeController', 'exchangeDetails']);
 
+    // ====== Review Routes ======
+    $router->get('/listings/{listingId}/reviews', ['ReviewController', 'index']);
+    $router->get('/bookings/{bookingId}/review', ['ReviewController', 'show']);
+    $router->post('/bookings/{bookingId}/reviews', ['ReviewController', 'create']);
+
     // ====== Profile Routes ======
     $router->get('/profile', ['ProfileController', 'index']);
     $router->get('/profile/edit', ['ProfileController', 'edit']);
@@ -175,4 +180,3 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
 
 // Dispatch the request
 $router->dispatch();
-

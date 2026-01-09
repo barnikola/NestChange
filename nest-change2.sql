@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Generation Time: Dec 31, 2025 at 03:58 PM
+-- Generation Time: Jan 09, 2026 at 10:26 PM
 -- Server version: 8.0.44
 -- PHP Version: 8.3.28
 
@@ -204,8 +204,24 @@ CREATE TABLE `booking` (
   `listing_rating` int DEFAULT NULL,
   `guest_review` text COLLATE utf8mb4_unicode_ci,
   `guest_rating` int DEFAULT NULL,
+  `listing_reviewed_at` datetime DEFAULT NULL,
+  `guest_reviewed_at` datetime DEFAULT NULL,
   `application_id` char(36) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL
 ) ;
+
+--
+-- Dumping data for table `booking`
+--
+
+INSERT INTO `booking` (`id`, `contract`, `listing_review`, `listing_rating`, `guest_review`, `guest_rating`, `listing_reviewed_at`, `guest_reviewed_at`, `application_id`) VALUES
+('1693de61-38ce-474b-9af1-19a9cebf804a', NULL, 'Perfect base in Paris; kitchenette is small but cleverly organized.', 4, 'Guest brought local treats and followed every house rule to the letter.', 5, '2022-05-19 15:00:00', '2022-05-19 15:10:00', '62109c20-fd5a-455f-951c-9e30dcee1f87'),
+('37fd4b96-d6d0-4502-989c-9a90320dc7f8', NULL, 'Loved the sunlit workspace and the quiet courtyard view.', 4, 'Respectful guest who treated the Haussmann building like their own home.', 4, '2022-07-26 09:00:00', '2022-07-26 09:10:00', 'db4707e2-0f13-4cca-bde0-4d8afd99efae'),
+('785bbd4b-80ee-43a4-a3cd-680a906dc30a', NULL, NULL, NULL, 'Host praised the guest for flexibility during minor maintenance.', 5, NULL, '2023-03-15 09:00:00', NULL),
+('a7c4d1a1-1dcb-4d6f-8a7d-aaaaaaaaaaaa', NULL, 'Sunny Issy-les-Moulineaux stay with perfect transit links. Kitchen was spotless and the host responded instantly.', 5, 'Left the flat immaculate and even watered the plants. Would gladly host again.', 5, '2023-06-15 11:00:00', '2023-06-15 11:00:00', 'f1b0e510-0d6f-4f6b-9f87-111111111111'),
+('a7c4d1a1-1dcb-4d6f-8a7d-bbbbbbbbbbbb', NULL, 'Large Haussmann apartment, great Wi-Fi and quiet for remote work. Pillows could be firmer but overall lovely.', 4, 'Communicative guest who respected the building rules and left a handwritten thank-you note.', 5, '2023-05-23 09:30:00', '2023-05-23 09:45:00', 'f1b0e510-0d6f-4f6b-9f87-222222222222'),
+('a7c4d1a1-1dcb-4d6f-8a7d-cccccccccccc', NULL, 'Good value for an extended research stay. Kitchen was compact yet functional and the metro is 2 minutes away.', 4, 'Arrived early but coordinated politely, and kept neighbors happy. Would recommend as a future guest.', 4, '2023-04-19 12:05:00', '2023-04-19 12:10:00', 'f1b0e510-0d6f-4f6b-9f87-333333333333'),
+('f03e0db3-eee5-4577-b4be-99132e58b519', NULL, 'radi jet', 1, 'Host noted the guest was courteous and communicated check-in changes promptly.', 5, '2026-01-09 23:23:58', '2022-03-25 10:00:00', 'fb88f76a-1e61-41b4-887e-ba7350b1333d'),
+('fc6b63e2-13ec-40d7-9af5-074c7c047e6e', NULL, 'Host provided metro passes and a city guide—fantastic hospitality in Issy!', 5, 'Guest was punctual, tidy, and communicated clearly throughout their stay.', 5, '2022-09-18 14:30:00', '2022-09-18 14:35:00', '56ec927a-4651-456c-a07a-4b98f50c2ee7');
 
 -- --------------------------------------------------------
 
@@ -226,12 +242,12 @@ CREATE TABLE `chat` (
 
 INSERT INTO `chat` (`id`, `application_id`, `created_at`, `last_message_at`) VALUES
 ('096c83b6-86cc-4863-a5a4-3f5470b480e0', '0ac0ff2a-cd21-488d-a09b-2f1b1caad9ba', '2025-12-14 21:31:19', '2025-12-14 22:31:49'),
-('098e1333-8b32-418e-a05f-ebc11078512a', '8f8ca210-9bb0-40e6-a000-a1f9b5df3ddb', '2025-12-14 21:34:25', '2025-12-14 22:47:17'),
-('124b8855-a1f1-4405-b7b9-810c66685543', '3a609410-1e97-42a6-9151-2543bcf5ba15', '2025-12-17 12:50:08', '2025-12-17 12:50:45'),
+('098e1333-8b32-418e-a05f-ebc11078512a', '8f8ca210-9bb0-40e6-a000-a1f9b5df3ddb', '2025-12-14 21:34:25', '2026-01-06 09:57:00'),
 ('1b552a4d-b7b6-4f96-9e12-2a86eda8b4e3', '60e25bda-ae54-4dea-a6f5-2a73567be3ba', '2025-12-13 20:41:36', '2025-12-14 13:12:58'),
 ('2dd6d054-bfc5-11f0-a648-52f5d85831eb', '2dd478f4-bfc5-11f0-a648-52f5d85831eb', '2025-11-12 11:43:24', '2025-11-12 11:43:24'),
 ('3335ebc5-e87f-4262-b35c-a307220eb124', '65a47cb9-ecd5-4246-8a23-4ab3ac8c8f5a', '2025-12-17 15:57:24', '2025-12-17 15:57:24'),
 ('38dd2e23-20c9-4360-8010-e074f623cc05', '0e63eeff-4b6f-43c1-8681-f782b333a2a3', '2025-12-14 22:40:07', '2025-12-14 22:47:15'),
+('3d8b77e5-8326-4883-a754-52fd6205a6ce', 'cf6e6bb1-2c9f-42fb-800d-569efe65d887', '2026-01-08 21:18:32', '2026-01-08 21:18:34'),
 ('445bd3ec-f634-4393-9269-7bc9cce35eeb', 'e27d0360-3701-4c68-a56e-4289290dd462', '2025-12-14 21:26:49', '2025-12-14 22:31:43'),
 ('5eedcd03-0730-4b2b-b4b3-0b52b5b4a23b', '5dff6b09-d333-43c4-8ba5-f92deba53344', '2025-12-13 20:39:53', NULL),
 ('730f4d8b-cdcf-4922-a45b-b8384c828901', '30183f03-2a04-481c-bd52-86629adbbcbe', '2025-12-17 16:22:25', NULL),
@@ -265,9 +281,9 @@ CREATE TABLE `chat_message` (
 
 INSERT INTO `chat_message` (`id`, `chat_id`, `sender_id`, `sender_profile_id`, `content`, `status`, `created_at`) VALUES
 ('00cf6d04-bdd6-4290-b9c0-e33dae59d46e', '38dd2e23-20c9-4360-8010-e074f623cc05', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'aaaa', 'ok', '2025-12-14 22:40:11'),
+('0677178b-64fb-4643-9d8a-ebf893ec5982', '098e1333-8b32-418e-a05f-ebc11078512a', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'a', 'ok', '2026-01-06 09:57:00'),
 ('13db5f7e-724c-4462-92d0-abcaa54b0c54', '38dd2e23-20c9-4360-8010-e074f623cc05', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'aaaaaa', 'ok', '2025-12-14 22:40:07'),
 ('186a5daa-08a1-40b1-b4fb-24337115505d', '8208c83b-2a10-464c-8b79-8043272b7f66', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'e', 'ok', '2025-12-13 16:17:13'),
-('2a2cbd7f-9a27-462f-b486-778438bd8858', '124b8855-a1f1-4405-b7b9-810c66685543', 120, 'b1208357-c1d3-4529-a803-bbc06cf08035', 'demo inttro message', 'ok', '2025-12-17 12:50:08'),
 ('2dd9031a-bfc5-11f0-a648-52f5d85831eb', '2dd6d054-bfc5-11f0-a648-52f5d85831eb', 3, '236a8940-1475-48c4-a793-2e67c005bba8', 'Hello, is this still available?', 'ok', '2025-11-12 11:43:24'),
 ('429b11b8-6adf-42c0-8c7d-e740576dc33f', '098e1333-8b32-418e-a05f-ebc11078512a', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'a', 'ok', '2025-12-14 22:34:35'),
 ('46352ba5-46f1-4eaf-8958-58f22df7cb05', '8208c83b-2a10-464c-8b79-8043272b7f66', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'a', 'ok', '2025-12-13 19:30:26'),
@@ -278,16 +294,15 @@ INSERT INTO `chat_message` (`id`, `chat_id`, `sender_id`, `sender_profile_id`, `
 ('7a516ea2-6448-452c-ae86-159eef4d31a9', 'ef1faf9d-9413-45dc-9f1d-003373b424c5', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'adada', 'ok', '2025-12-14 22:36:25'),
 ('82e733b3-89eb-43e8-a9d1-1dfeb81c5eda', '89fddc6d-ac9a-4ee6-a616-8fe348280919', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'dfghjktzui', 'ok', '2025-12-17 15:49:23'),
 ('8e470300-3a54-45e7-8fbd-cb15005bd460', '1b552a4d-b7b6-4f96-9e12-2a86eda8b4e3', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'e', 'ok', '2025-12-13 20:41:39'),
+('93ae3489-501c-41dd-9d15-d3adbe52ca37', '3d8b77e5-8326-4883-a754-52fd6205a6ce', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'hej', 'ok', '2026-01-08 21:18:34'),
 ('9b49e2d9-a9fa-4ac3-8cee-48eb1fccbb01', '096c83b6-86cc-4863-a5a4-3f5470b480e0', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'asdfdsads', 'ok', '2025-12-14 21:31:19'),
 ('9d13a46a-200a-4fd7-9c19-81273c6d5cda', '098e1333-8b32-418e-a05f-ebc11078512a', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'aaaaaaa', 'ok', '2025-12-14 21:34:25'),
 ('a616223a-1eef-4fff-b4a6-beb4aeedfbc8', '9d0c53ee-b15b-41a2-a385-97554df5382c', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'eee top', NULL, '2025-12-14 21:27:54'),
-('b1b78121-2178-44d7-a62d-e981ae794180', '124b8855-a1f1-4405-b7b9-810c66685543', 120, 'b1208357-c1d3-4529-a803-bbc06cf08035', 'hello', 'ok', '2025-12-17 12:50:45'),
 ('b8325771-62b8-4669-ab66-0d8acfa0431a', '8208c83b-2a10-464c-8b79-8043272b7f66', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'ey', 'ok', '2025-12-13 16:17:00'),
 ('bbe00757-6836-4c24-9870-84ab99b424b2', 'f51699b6-cc98-4d46-a7a7-2e3e4d22d874', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'e', 'ok', '2025-12-13 19:37:25'),
 ('c4673c7e-e239-4576-9d10-cf2a41424d3f', '098e1333-8b32-418e-a05f-ebc11078512a', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'e', 'ok', '2025-12-14 22:47:17'),
 ('c51ac47c-a1ed-45be-b642-5e4ab8389124', '3335ebc5-e87f-4262-b35c-a307220eb124', 123, '09b5e3c3-2f67-4450-8240-fac09d522536', 'dfgtzbzbuh. uhbzbuh', 'ok', '2025-12-17 15:57:24'),
 ('c53851d7-736f-42e6-aff7-1f0c669ce20a', '445bd3ec-f634-4393-9269-7bc9cce35eeb', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'a', 'ok', '2025-12-14 22:31:43'),
-('c85966fe-92e3-496a-b2e6-996cca61d40b', '124b8855-a1f1-4405-b7b9-810c66685543', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'hello', 'ok', '2025-12-17 12:50:39'),
 ('d1481a0d-78e7-4f77-a801-786f525e7efa', 'f51699b6-cc98-4d46-a7a7-2e3e4d22d874', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'asadas', 'ok', '2025-12-13 19:37:27'),
 ('d7037566-69f9-429e-9c34-08e08c3c701f', 'f51699b6-cc98-4d46-a7a7-2e3e4d22d874', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'e', 'ok', '2025-12-13 19:37:25'),
 ('d907d1fc-f39a-49e1-b82e-53f8aaa93d67', '38dd2e23-20c9-4360-8010-e074f623cc05', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'e', 'ok', '2025-12-14 22:47:15'),
@@ -331,6 +346,22 @@ CREATE TABLE `favorite` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `favorite`
+--
+
+INSERT INTO `favorite` (`id`, `profile_id`, `listing_id`, `created_at`) VALUES
+('1eb82b20-265c-49d4-ba29-c330bd6bcecf', '357e760a-d08c-4078-be80-b6d8c819f56a', '942722bb-028d-49fe-8799-a2671dd05761', '2026-01-06 09:07:30'),
+('4162dd95-f38e-41fa-838e-cdc4a50687a6', '357e760a-d08c-4078-be80-b6d8c819f56a', '5e1230ac-bfd8-11f0-9b66-3c11a3fd0c43', '2026-01-06 09:12:03'),
+('4883d1f1-7a6d-4af0-b44b-f63a8e67f6f5', '357e760a-d08c-4078-be80-b6d8c819f56a', '5e128caa-bfd8-11f0-9b66-3c11a3fd0c43', '2026-01-08 21:33:22'),
+('8368af48-0b68-4c4a-8097-ee89117bdbfd', '357e760a-d08c-4078-be80-b6d8c819f56a', '5e128d72-bfd8-11f0-9b66-3c11a3fd0c43', '2026-01-06 09:42:02'),
+('a928cd30-27c3-49a7-bc3e-ae6c21a97138', '3284455a-e9db-4e02-8f41-c6995838d53f', '942722bb-028d-49fe-8799-a2671dd05761', '2026-01-08 22:19:22'),
+('d38b2a91-0a42-4381-93a0-a71b6bfac432', '357e760a-d08c-4078-be80-b6d8c819f56a', '5e122d82-bfd8-11f0-9b66-3c11a3fd0c43', '2026-01-06 09:12:02'),
+('eb4b5ba0-8244-4cc0-aaf6-98c53b3db6d5', '357e760a-d08c-4078-be80-b6d8c819f56a', '5e1288b8-bfd8-11f0-9b66-3c11a3fd0c43', '2026-01-06 09:42:03'),
+('eddd6dc4-a471-43af-8bb1-ef6e2bcd3b95', '3284455a-e9db-4e02-8f41-c6995838d53f', '5e128b1a-bfd8-11f0-9b66-3c11a3fd0c43', '2026-01-08 22:21:01'),
+('fcccd58c-75e2-4d33-970f-49e985dbd286', '357e760a-d08c-4078-be80-b6d8c819f56a', 'ecc326f4-8b34-445d-9c17-765d76bdfaa5', '2026-01-08 21:29:56'),
+('fef31355-33d4-45e8-af8a-ae94851e25f5', '3284455a-e9db-4e02-8f41-c6995838d53f', 'ecc326f4-8b34-445d-9c17-765d76bdfaa5', '2026-01-08 22:19:21');
+
 -- --------------------------------------------------------
 
 --
@@ -339,11 +370,20 @@ CREATE TABLE `favorite` (
 
 CREATE TABLE `legal_content` (
   `id` int NOT NULL,
-  `type` enum('terms','privacy','cookies','disclaimer','faq') NOT NULL,
+  `type` enum('terms','privacy','cookies','disclaimer','faq','cookie_policy') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `title` varchar(255) NOT NULL,
   `content` longtext NOT NULL,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `legal_content`
+--
+
+INSERT INTO `legal_content` (`id`, `type`, `title`, `content`, `updated_at`) VALUES
+(1, 'terms', 'Terms of Service', 'Terms of Service\r\n\r\nWelcome to NestChange. These Terms of Service govern your use of our website and services.\r\n\r\n1. Acceptance of Terms\r\nBy accessing our services, you agree to be bound by these terms.', '2026-01-08 20:41:23'),
+(2, 'privacy', 'Privacy Policy', 'Privacy Policy\r\n\r\nYour privacy is important to us. This policy explains how we collect and use your data.\r\n\r\n1. Information Collection\r\nWe collect information you provide directly to us.', '2026-01-08 20:41:23'),
+(3, 'cookie_policy', 'Cookie Policy', 'Cookie Policy\r\n\r\nWe use cookies to improve your experience.\r\n\r\n1. What are cookies?\r\nCookies are small text files stored on your device.\r\ntesttest', '2026-01-08 22:31:06');
 
 -- --------------------------------------------------------
 
@@ -588,6 +628,7 @@ INSERT INTO `listing` (`id`, `host_profile_id`, `title`, `description`, `country
 ('5e128e3a-bfd8-11f0-9b66-3c11a3fd0c43', '2f760c60-0317-4585-995c-e6f8a7d35530', 'TED FOWLER • Student Stay', 'Comfortable room hosted by Ted Fowler in BARCELONA. Host account status: APPROVED.', 'SPAIN', 'BARCELONA', '204 AVINGUDA DIAGONAL', 41.4194, 2.1978, 'room', 1, 'owner', 'published', 'moderate', '2025-11-12 14:00:46', '2025-11-12 14:00:46'),
 ('5e128f0c-bfd8-11f0-9b66-3c11a3fd0c43', '83710363-2633-4264-8987-5600e20c1254', 'ALINA CRAIG • Student Stay', 'Comfortable apartment hosted by Alina Craig in PARIS. Host account status: APPROVED.', 'FRANCE', 'PARIS', '205 RUE DES ECOLES', 48.85, 2.35, 'whole_apartment', 2, 'renter', 'published', 'moderate', '2025-11-12 14:00:46', '2025-11-12 14:00:46'),
 ('942722bb-028d-49fe-8799-a2671dd05761', '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'Demo 2', 'demo demo demo demo demo', 'Paris', 'Issy-les-Moulinoux', '10 Rue de Vanves', NULL, NULL, 'whole_apartment', 4, 'renter', 'published', 'moderate', '2025-12-17 12:48:58', '2025-12-17 12:49:31'),
+('c3a8e969-00f7-4f30-b019-25491a931870', '357e760a-d08c-4078-be80-b6d8c819f56a', 'daj vise brt', 'daj vise brtdaj vise brtdaj vise brt', 'FR', 'Paris', '23 Rue Labrouste', 48.8348135, 2.3089142, 'whole_apartment', 5, 'renter', 'draft', 'moderate', '2026-01-06 10:00:42', '2026-01-06 10:00:42'),
 ('ecc326f4-8b34-445d-9c17-765d76bdfaa5', '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'Demo listing', 'Demo demo demo demo demo demo demo', 'France', 'Paris', '28 Rue Notre Dame des Champs', NULL, NULL, 'whole_apartment', 6, 'owner', 'published', 'moderate', '2025-12-17 10:47:48', '2025-12-17 12:49:28');
 
 -- --------------------------------------------------------
@@ -620,9 +661,10 @@ INSERT INTO `listing_application` (`id`, `listing_id`, `applicant_id`, `applican
 ('2dd478f4-bfc5-11f0-a648-52f5d85831eb', '2dcaeb54-bfc5-11f0-a648-52f5d85831eb', 3, '236a8940-1475-48c4-a793-2e67c005bba8', '2025-09-01', '2026-06-30', 'withdrawn', '2025-11-12 11:43:24', '2025-11-12 12:00:41'),
 ('30183f03-2a04-481c-bd52-86629adbbcbe', '5e1230ac-bfd8-11f0-9b66-3c11a3fd0c43', 119, '8b6e6fe5-0ff8-4fe7-b0ee-1371ec349bbb', NULL, NULL, 'pending', '2025-12-17 16:22:25', '2025-12-17 16:22:25'),
 ('38e01f2f-705f-49af-bb69-15a88198deab', '5e128b1a-bfd8-11f0-9b66-3c11a3fd0c43', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', '2025-12-21', '2025-12-29', 'pending', '2025-12-14 21:27:54', '2025-12-14 22:27:54'),
-('3a609410-1e97-42a6-9151-2543bcf5ba15', 'ecc326f4-8b34-445d-9c17-765d76bdfaa5', 120, 'b1208357-c1d3-4529-a803-bbc06cf08035', '2025-12-23', '2025-12-31', 'pending', '2025-12-17 12:50:08', '2025-12-17 12:50:08'),
+('56ec927a-4651-456c-a07a-4b98f50c2ee7', '942722bb-028d-49fe-8799-a2671dd05761', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', '2022-09-03', '2022-09-17', 'accepted', '2022-08-10 06:45:00', '2022-09-18 10:00:00'),
 ('5dff6b09-d333-43c4-8ba5-f92deba53344', '5e1282fa-bfd8-11f0-9b66-3c11a3fd0c43', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', NULL, NULL, 'pending', '2025-12-13 20:39:53', '2025-12-13 20:39:53'),
 ('60e25bda-ae54-4dea-a6f5-2a73567be3ba', '5e128d72-bfd8-11f0-9b66-3c11a3fd0c43', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', NULL, NULL, 'pending', '2025-12-13 20:41:36', '2025-12-13 20:41:36'),
+('62109c20-fd5a-455f-951c-9e30dcee1f87', '5e128f0c-bfd8-11f0-9b66-3c11a3fd0c43', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', '2022-05-05', '2022-05-18', 'accepted', '2022-04-01 07:40:00', '2022-05-19 12:20:00'),
 ('65a47cb9-ecd5-4246-8a23-4ab3ac8c8f5a', '942722bb-028d-49fe-8799-a2671dd05761', 123, '09b5e3c3-2f67-4450-8240-fac09d522536', '2025-12-22', '2025-12-31', 'accepted', '2025-12-17 15:57:24', '2025-12-17 15:58:50'),
 ('7f5977ee-b7fb-4613-8978-71b47f932a26', '5e12300c-bfd8-11f0-9b66-3c11a3fd0c43', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', '2025-12-23', '2025-12-31', 'pending', '2025-12-17 15:49:23', '2025-12-17 15:49:23'),
 ('8c93be1f-bf9a-4d15-b8c6-fc8a59a07999', '5e127daa-bfd8-11f0-9b66-3c11a3fd0c43', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', '2025-12-21', '2025-12-28', 'pending', '2025-12-14 22:36:18', '2025-12-14 22:36:18'),
@@ -630,7 +672,13 @@ INSERT INTO `listing_application` (`id`, `listing_id`, `applicant_id`, `applican
 ('960ccc9b-f7c4-42b1-87df-799b5043ee03', '5e128e3a-bfd8-11f0-9b66-3c11a3fd0c43', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', NULL, NULL, 'pending', '2025-12-17 15:25:39', '2025-12-17 15:25:39'),
 ('b618cb3c-ed70-47e3-9ae9-74fed37e1f92', '5e1288b8-bfd8-11f0-9b66-3c11a3fd0c43', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', NULL, NULL, 'pending', '2025-12-13 16:17:26', '2025-12-13 16:17:26'),
 ('caff6f8a-1ded-4879-a32e-7cb4dd451b26', '5e128a48-bfd8-11f0-9b66-3c11a3fd0c43', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', NULL, NULL, 'pending', '2025-12-13 20:41:27', '2025-12-13 20:41:27'),
-('e27d0360-3701-4c68-a56e-4289290dd462', '5e128728-bfd8-11f0-9b66-3c11a3fd0c43', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', '2025-12-23', '2025-12-27', 'pending', '2025-12-14 21:26:49', '2025-12-14 22:26:49');
+('cf6e6bb1-2c9f-42fb-800d-569efe65d887', 'ecc326f4-8b34-445d-9c17-765d76bdfaa5', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', NULL, NULL, 'pending', '2026-01-08 21:18:32', '2026-01-08 21:18:32'),
+('db4707e2-0f13-4cca-bde0-4d8afd99efae', 'ecc326f4-8b34-445d-9c17-765d76bdfaa5', 120, 'b1208357-c1d3-4529-a803-bbc06cf08035', '2022-07-12', '2022-07-25', 'accepted', '2022-06-15 08:10:00', '2022-07-26 11:30:00'),
+('e27d0360-3701-4c68-a56e-4289290dd462', '5e128728-bfd8-11f0-9b66-3c11a3fd0c43', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', '2025-12-23', '2025-12-27', 'pending', '2025-12-14 21:26:49', '2025-12-14 22:26:49'),
+('f1b0e510-0d6f-4f6b-9f87-111111111111', '942722bb-028d-49fe-8799-a2671dd05761', 120, 'b1208357-c1d3-4529-a803-bbc06cf08035', '2023-06-01', '2023-06-14', 'accepted', '2023-05-01 07:00:00', '2023-06-15 07:00:00'),
+('f1b0e510-0d6f-4f6b-9f87-222222222222', 'ecc326f4-8b34-445d-9c17-765d76bdfaa5', 122, '00e66855-47ad-41d2-8cf7-7347c1496c81', '2023-05-10', '2023-05-22', 'accepted', '2023-04-20 09:30:00', '2023-05-23 06:00:00'),
+('f1b0e510-0d6f-4f6b-9f87-333333333333', '5e128f0c-bfd8-11f0-9b66-3c11a3fd0c43', 123, '09b5e3c3-2f67-4450-8240-fac09d522536', '2023-04-05', '2023-04-18', 'accepted', '2023-03-10 14:45:00', '2023-04-19 08:15:00'),
+('fb88f76a-1e61-41b4-887e-ba7350b1333d', 'ecc326f4-8b34-445d-9c17-765d76bdfaa5', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', '2022-03-10', '2022-03-24', 'accepted', '2022-02-15 07:00:00', '2022-03-25 08:00:00');
 
 -- --------------------------------------------------------
 
@@ -847,6 +895,7 @@ INSERT INTO `listing_attribute` (`listing_id`, `attribute_id`) VALUES
 ('5e128caa-bfd8-11f0-9b66-3c11a3fd0c43', 3),
 ('5e128f0c-bfd8-11f0-9b66-3c11a3fd0c43', 3),
 ('942722bb-028d-49fe-8799-a2671dd05761', 3),
+('c3a8e969-00f7-4f30-b019-25491a931870', 3),
 ('ecc326f4-8b34-445d-9c17-765d76bdfaa5', 3),
 ('2dcbb778-bfc5-11f0-a648-52f5d85831eb', 4),
 ('5e122d82-bfd8-11f0-9b66-3c11a3fd0c43', 4),
@@ -976,6 +1025,7 @@ INSERT INTO `listing_attribute` (`listing_id`, `attribute_id`) VALUES
 ('5e128d72-bfd8-11f0-9b66-3c11a3fd0c43', 5),
 ('5e128e3a-bfd8-11f0-9b66-3c11a3fd0c43', 5),
 ('942722bb-028d-49fe-8799-a2671dd05761', 5),
+('c3a8e969-00f7-4f30-b019-25491a931870', 5),
 ('ecc326f4-8b34-445d-9c17-765d76bdfaa5', 5),
 ('2dcbb778-bfc5-11f0-a648-52f5d85831eb', 6),
 ('5e122d82-bfd8-11f0-9b66-3c11a3fd0c43', 6),
@@ -1104,6 +1154,7 @@ CREATE TABLE `listing_availability` (
 --
 
 INSERT INTO `listing_availability` (`id`, `listing_id`, `available_from`, `created_at`, `available_until`) VALUES
+('693af09b-ffea-4991-ac50-6a379bea3782', 'c3a8e969-00f7-4f30-b019-25491a931870', '2026-01-01', '2026-01-06 10:00:42', '2026-05-29'),
 ('8cc2f14d-bcd4-4b2d-8d12-b8aff7b6d17a', '942722bb-028d-49fe-8799-a2671dd05761', '2025-12-17', '2025-12-17 12:48:58', NULL),
 ('96e43efd-72eb-4012-a8ee-6cb1d7737ced', 'ecc326f4-8b34-445d-9c17-765d76bdfaa5', '2025-12-17', '2025-12-17 10:47:48', NULL);
 
@@ -1129,6 +1180,7 @@ INSERT INTO `listing_image` (`id`, `listing_id`, `image`, `position`, `created_a
 ('02752886-2233-4048-afb1-b978a29f6e78', 'ecc326f4-8b34-445d-9c17-765d76bdfaa5', 'uploads/images/ecc326f4-8b34-445d-9c17-765d76bdfaa5_69428a547de21.webp', 0, '2025-12-17 10:47:48'),
 ('0e23ac49-08dd-4dab-b6e8-0a8d482b8091', '942722bb-028d-49fe-8799-a2671dd05761', 'uploads/images/942722bb-028d-49fe-8799-a2671dd05761_6942a6ba42542.jpg', 2, '2025-12-17 12:48:58'),
 ('1567de44-b26f-49fb-9f77-b3788db0b7c9', '942722bb-028d-49fe-8799-a2671dd05761', 'uploads/images/942722bb-028d-49fe-8799-a2671dd05761_6942a6ba41195.webp', 0, '2025-12-17 12:48:58'),
+('20cdeed2-0003-4a83-9b4b-10165ee75e07', 'c3a8e969-00f7-4f30-b019-25491a931870', 'uploads/images/c3a8e969-00f7-4f30-b019-25491a931870_695cdd4a1d6e6.jpg', 0, '2026-01-06 10:00:42'),
 ('2dd25a6a-bfc5-11f0-a648-52f5d85831eb', '2dcaeb54-bfc5-11f0-a648-52f5d85831eb', 'https://example.com/img/listing1_1.jpg', 0, '2025-11-12 11:43:24'),
 ('2dd25f38-bfc5-11f0-a648-52f5d85831eb', '2dcaeb54-bfc5-11f0-a648-52f5d85831eb', 'https://example.com/img/listing1_2.jpg', 1, '2025-11-12 11:43:24'),
 ('2dd26050-bfc5-11f0-a648-52f5d85831eb', '2dcbb778-bfc5-11f0-a648-52f5d85831eb', 'https://example.com/img/listing2_1.jpg', 0, '2025-11-12 11:43:24'),
@@ -1531,6 +1583,7 @@ INSERT INTO `listing_service` (`listing_id`, `service_id`) VALUES
 ('5e128caa-bfd8-11f0-9b66-3c11a3fd0c43', 2),
 ('5e128f0c-bfd8-11f0-9b66-3c11a3fd0c43', 2),
 ('942722bb-028d-49fe-8799-a2671dd05761', 2),
+('c3a8e969-00f7-4f30-b019-25491a931870', 2),
 ('ecc326f4-8b34-445d-9c17-765d76bdfaa5', 2),
 ('5e1230ac-bfd8-11f0-9b66-3c11a3fd0c43', 3),
 ('5e12311a-bfd8-11f0-9b66-3c11a3fd0c43', 3),
@@ -1681,6 +1734,7 @@ INSERT INTO `listing_service` (`listing_id`, `service_id`) VALUES
 ('5e128d72-bfd8-11f0-9b66-3c11a3fd0c43', 5),
 ('5e128e3a-bfd8-11f0-9b66-3c11a3fd0c43', 5),
 ('942722bb-028d-49fe-8799-a2671dd05761', 5),
+('c3a8e969-00f7-4f30-b019-25491a931870', 5),
 ('ecc326f4-8b34-445d-9c17-765d76bdfaa5', 5);
 
 -- --------------------------------------------------------
@@ -1704,6 +1758,7 @@ CREATE TABLE `listing_verification_document` (
 
 INSERT INTO `listing_verification_document` (`id`, `listing_id`, `document_type_id`, `document`, `created_at`, `verified_at`) VALUES
 ('10e5172c-a3d2-40d3-aa22-67ad4dff2311', '942722bb-028d-49fe-8799-a2671dd05761', 5, 'uploads/verification_docs/942722bb-028d-49fe-8799-a2671dd05761_verification_6942a6ba42ea7.png', '2025-12-17 12:48:58', NULL),
+('2c6d6e85-a56e-49a1-963c-fac3fc7879fc', 'c3a8e969-00f7-4f30-b019-25491a931870', 5, 'uploads/verification_docs/c3a8e969-00f7-4f30-b019-25491a931870_verification_695cdd4a1e2db.jpg', '2026-01-06 10:00:42', NULL),
 ('2dd364dc-bfc5-11f0-a648-52f5d85831eb', '2dcaeb54-bfc5-11f0-a648-52f5d85831eb', 3, 'https://example.com/docs/listing1_deed.pdf', '2025-11-12 11:43:24', NULL),
 ('33217306-bfd0-11f0-a648-52f5d85831eb', '331d2b70-bfd0-11f0-a648-52f5d85831eb', 4, 'lease.pdf', '2025-11-12 13:02:18', NULL),
 ('3321786a-bfd0-11f0-a648-52f5d85831eb', '331d44fc-bfd0-11f0-a648-52f5d85831eb', 3, 'house_deed.pdf', '2025-11-12 13:02:18', NULL),
@@ -2016,39 +2071,40 @@ CREATE TABLE `user_document` (
   `document_type_id` smallint UNSIGNED NOT NULL,
   `document_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `verified_at` timestamp NULL DEFAULT NULL
+  `verified_at` timestamp NULL DEFAULT NULL,
+  `status` enum('pending','rejected','approved') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `user_document`
 --
 
-INSERT INTO `user_document` (`id`, `account_id`, `document_type_id`, `document_path`, `created_at`, `verified_at`) VALUES
-('02ddbefa-8e34-44d7-90a6-c557ef4ee280', 123, 1, '/uploads/documents/id/ff5d4754-52a5-48c3-997e-c2086f2e9d5f.jpeg', '2025-12-17 15:55:02', NULL),
-('05adc3fc-823c-43e8-b19e-02598a512c37', 113, 1, '/uploads/documents/id/af09866a-1970-45c4-979f-e9f8d5b7f915.png', '2025-12-10 10:15:40', NULL),
-('130ae3e4-9fdf-4bf0-8608-60454b407689', 119, 2, '/uploads/documents/student/54eba0f2-becb-4cf6-b9eb-f367b7841e46.png', '2025-12-17 10:39:05', NULL),
-('264b6cd8-0b75-4a0a-badc-36d443adc037', 122, 2, '/uploads/documents/student/1bd89b5b-aca6-4608-9adf-f2c736a0a09a.png', '2025-12-17 14:20:21', NULL),
-('32641faf-efeb-4689-8b31-2efabf175435', 111, 2, '/uploads/documents/student/65535308-c4cf-48d3-b2b6-71b38ecd4613.png', '2025-12-08 01:03:26', NULL),
-('3b49a2ee-379b-411c-9668-f24dd4d58ccb', 118, 1, '/uploads/documents/id/6e83f23a-18b4-4994-9428-fe996217decc.png', '2025-12-17 10:38:16', NULL),
-('52ccaa3c-1eb5-43b6-b561-bfafaf7f6abf', 2, 2, 'user_docs/101001010101010.pdf', '2025-12-07 17:55:16', NULL),
-('5cc118d1-ec19-476d-a2ad-5a22ff2d24cb', 120, 2, '/uploads/documents/student/fb45031a-5ca8-431f-b816-ac0603c8787c.png', '2025-12-17 10:39:45', NULL),
-('5fd0a4b0-345e-401e-b123-f821d2ebda84', 111, 1, '/uploads/documents/id/97d0202e-7d54-4778-8bc6-043d2dd2ce30.png', '2025-12-08 01:03:26', NULL),
-('694fab7e-9ffd-49db-819f-b24a48de9fb9', 122, 1, '/uploads/documents/id/d27db937-3d6b-4fa8-b68f-bd0c4b59cd4a.png', '2025-12-17 14:20:21', NULL),
-('713acd02-6499-4137-ad11-3afe24d8df43', 112, 1, '/uploads/documents/id/9fcda375-ea85-45a0-ad74-f446d395a7af.png', '2025-12-09 21:57:18', NULL),
-('74dc0d8e-828b-4f7a-8a1a-3c1ebcce3d5e', 119, 1, '/uploads/documents/id/2e783040-b0ac-4cc9-ada4-2166f8967895.png', '2025-12-17 10:39:05', NULL),
-('8efed709-6b6f-42cb-8a26-b13cc6f67561', 121, 2, '/uploads/documents/student/f9adc59a-e4da-4397-806b-48e332e3ccfe.png', '2025-12-17 10:44:52', NULL),
-('99dde6d8-5966-4aa7-9d7c-b00807ecddfb', 117, 2, '/uploads/documents/student/c9b6f8bb-4fe0-4578-8141-9814a5e7bf48.pdf', '2025-12-14 23:08:05', NULL),
-('9c516aef-89bd-4a99-ae25-ff6ebcc2f6be', 121, 1, '/uploads/documents/id/7206ff04-c182-4e0f-8dbe-d77e923fbd80.png', '2025-12-17 10:44:52', NULL),
-('b18f7911-e0c7-49ba-a9a4-2bde740e046b', 112, 2, '/uploads/documents/student/d291f6e9-f442-4452-97e8-3021ea6c238c.png', '2025-12-09 21:57:18', NULL),
-('c55b696d-a7c0-4016-87da-60f3d6c56c15', 120, 1, '/uploads/documents/id/5c6db159-6b24-42a4-9eda-e9c492495d27.png', '2025-12-17 10:39:45', NULL),
-('c7763c06-ebf1-4871-a59b-0498a840b2a1', 118, 2, '/uploads/documents/student/88ba3b51-0f5f-4b82-8339-0ee9c3dd74bc.png', '2025-12-17 10:38:16', NULL),
-('c7b05432-f871-47f1-ba00-04ccc4364f06', 116, 2, '/uploads/documents/student/139fcd16-8bc6-48d8-a053-1b3db36d40d5.png', '2025-12-11 14:12:29', NULL),
-('d396fb13-8232-4a17-86d9-3f8dd8074c8f', 4, 2, 'user_docs/0101010010110.jpg', '2025-12-07 17:55:16', NULL),
-('ebcf9172-dd65-414f-b0e2-1b364f6e4ca7', 3, 1, 'user_docs/110101001.png', '2025-12-07 17:55:16', NULL),
-('ed9a8db8-42b3-4cd9-91d6-c887b96c0c43', 117, 1, '/uploads/documents/id/f9251ea0-3f8f-4b07-bd12-eccb2289fefd.pdf', '2025-12-14 23:08:05', NULL),
-('f79b23f1-80e1-4ad1-8b36-29f21ab6653d', 116, 1, '/uploads/documents/id/fc5f7fa1-8e3e-4cb2-a836-19dd20fe6bf1.png', '2025-12-11 14:12:29', NULL),
-('f9234066-32f5-410e-bfdf-9d4ea1d73c3d', 113, 2, '/uploads/documents/student/89868fa5-b367-42d3-a8e0-63d3f4ad3f3c.png', '2025-12-10 10:15:40', NULL),
-('fd3c9a02-d114-468d-ab41-adaa5decfb8e', 123, 2, '/uploads/documents/student/94c5b13d-2695-47a9-a0b1-dd2d9ec903a5.jpeg', '2025-12-17 15:55:02', NULL);
+INSERT INTO `user_document` (`id`, `account_id`, `document_type_id`, `document_path`, `created_at`, `verified_at`, `status`) VALUES
+('02ddbefa-8e34-44d7-90a6-c557ef4ee280', 123, 1, '/uploads/documents/id/ff5d4754-52a5-48c3-997e-c2086f2e9d5f.jpeg', '2025-12-17 15:55:02', NULL, 'pending'),
+('05adc3fc-823c-43e8-b19e-02598a512c37', 113, 1, '/uploads/documents/id/af09866a-1970-45c4-979f-e9f8d5b7f915.png', '2025-12-10 10:15:40', NULL, 'pending'),
+('130ae3e4-9fdf-4bf0-8608-60454b407689', 119, 2, '/uploads/documents/student/54eba0f2-becb-4cf6-b9eb-f367b7841e46.png', '2025-12-17 10:39:05', NULL, 'pending'),
+('264b6cd8-0b75-4a0a-badc-36d443adc037', 122, 2, '/uploads/documents/student/1bd89b5b-aca6-4608-9adf-f2c736a0a09a.png', '2025-12-17 14:20:21', NULL, 'pending'),
+('32641faf-efeb-4689-8b31-2efabf175435', 111, 2, '/uploads/documents/student/65535308-c4cf-48d3-b2b6-71b38ecd4613.png', '2025-12-08 01:03:26', NULL, 'pending'),
+('3b49a2ee-379b-411c-9668-f24dd4d58ccb', 118, 1, '/uploads/documents/id/6e83f23a-18b4-4994-9428-fe996217decc.png', '2025-12-17 10:38:16', NULL, 'pending'),
+('52ccaa3c-1eb5-43b6-b561-bfafaf7f6abf', 2, 2, 'user_docs/101001010101010.pdf', '2025-12-07 17:55:16', NULL, 'pending'),
+('5cc118d1-ec19-476d-a2ad-5a22ff2d24cb', 120, 2, '/uploads/documents/student/fb45031a-5ca8-431f-b816-ac0603c8787c.png', '2025-12-17 10:39:45', NULL, 'pending'),
+('5fd0a4b0-345e-401e-b123-f821d2ebda84', 111, 1, '/uploads/documents/id/97d0202e-7d54-4778-8bc6-043d2dd2ce30.png', '2025-12-08 01:03:26', NULL, 'pending'),
+('694fab7e-9ffd-49db-819f-b24a48de9fb9', 122, 1, '/uploads/documents/id/d27db937-3d6b-4fa8-b68f-bd0c4b59cd4a.png', '2025-12-17 14:20:21', NULL, 'pending'),
+('713acd02-6499-4137-ad11-3afe24d8df43', 112, 1, '/uploads/documents/id/9fcda375-ea85-45a0-ad74-f446d395a7af.png', '2025-12-09 21:57:18', NULL, 'pending'),
+('74dc0d8e-828b-4f7a-8a1a-3c1ebcce3d5e', 119, 1, '/uploads/documents/id/2e783040-b0ac-4cc9-ada4-2166f8967895.png', '2025-12-17 10:39:05', NULL, 'pending'),
+('8efed709-6b6f-42cb-8a26-b13cc6f67561', 121, 2, '/uploads/documents/student/f9adc59a-e4da-4397-806b-48e332e3ccfe.png', '2025-12-17 10:44:52', NULL, 'pending'),
+('99dde6d8-5966-4aa7-9d7c-b00807ecddfb', 117, 2, '/uploads/documents/student/c9b6f8bb-4fe0-4578-8141-9814a5e7bf48.pdf', '2025-12-14 23:08:05', NULL, 'pending'),
+('9c516aef-89bd-4a99-ae25-ff6ebcc2f6be', 121, 1, '/uploads/documents/id/7206ff04-c182-4e0f-8dbe-d77e923fbd80.png', '2025-12-17 10:44:52', NULL, 'pending'),
+('b18f7911-e0c7-49ba-a9a4-2bde740e046b', 112, 2, '/uploads/documents/student/d291f6e9-f442-4452-97e8-3021ea6c238c.png', '2025-12-09 21:57:18', NULL, 'pending'),
+('c55b696d-a7c0-4016-87da-60f3d6c56c15', 120, 1, '/uploads/documents/id/5c6db159-6b24-42a4-9eda-e9c492495d27.png', '2025-12-17 10:39:45', NULL, 'pending'),
+('c7763c06-ebf1-4871-a59b-0498a840b2a1', 118, 2, '/uploads/documents/student/88ba3b51-0f5f-4b82-8339-0ee9c3dd74bc.png', '2025-12-17 10:38:16', NULL, 'pending'),
+('c7b05432-f871-47f1-ba00-04ccc4364f06', 116, 2, '/uploads/documents/student/139fcd16-8bc6-48d8-a053-1b3db36d40d5.png', '2025-12-11 14:12:29', NULL, 'pending'),
+('d396fb13-8232-4a17-86d9-3f8dd8074c8f', 4, 2, 'user_docs/0101010010110.jpg', '2025-12-07 17:55:16', NULL, 'pending'),
+('ebcf9172-dd65-414f-b0e2-1b364f6e4ca7', 3, 1, 'user_docs/110101001.png', '2025-12-07 17:55:16', NULL, 'pending'),
+('ed9a8db8-42b3-4cd9-91d6-c887b96c0c43', 117, 1, '/uploads/documents/id/f9251ea0-3f8f-4b07-bd12-eccb2289fefd.pdf', '2025-12-14 23:08:05', NULL, 'pending'),
+('f79b23f1-80e1-4ad1-8b36-29f21ab6653d', 116, 1, '/uploads/documents/id/fc5f7fa1-8e3e-4cb2-a836-19dd20fe6bf1.png', '2025-12-11 14:12:29', NULL, 'pending'),
+('f9234066-32f5-410e-bfdf-9d4ea1d73c3d', 113, 2, '/uploads/documents/student/89868fa5-b367-42d3-a8e0-63d3f4ad3f3c.png', '2025-12-10 10:15:40', NULL, 'pending'),
+('fd3c9a02-d114-468d-ab41-adaa5decfb8e', 123, 2, '/uploads/documents/student/94c5b13d-2695-47a9-a0b1-dd2d9ec903a5.jpeg', '2025-12-17 15:55:02', NULL, 'pending');
 
 -- --------------------------------------------------------
 
@@ -2067,134 +2123,136 @@ CREATE TABLE `user_profile` (
   `city` varchar(255) DEFAULT NULL,
   `country` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `languages` text,
+  `accessibility_needs` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `user_profile`
 --
 
-INSERT INTO `user_profile` (`id`, `account_id`, `first_name`, `last_name`, `profile_picture`, `phone`, `bio`, `city`, `country`, `created_at`, `updated_at`) VALUES
-('00e66855-47ad-41d2-8cf7-7347c1496c81', 122, 'Demooo', 'Demoo', '/uploads/profile_pictures/1c3a5166-0ad0-480f-b9e0-bf604bf9bf10.png', NULL, NULL, NULL, NULL, '2025-12-17 14:20:21', '2025-12-17 14:20:21'),
-('04cdf8c2-80fa-4eb5-9c44-d22e8c9d204b', 111, 'Nikola', 'Batre', NULL, NULL, NULL, NULL, NULL, '2025-12-08 01:03:26', '2025-12-08 01:03:26'),
-('09b5e3c3-2f67-4450-8240-fac09d522536', 123, 'Test', 'Twest', '/uploads/profile_pictures/62c71896-bc41-4894-82cc-9c15f0534057.jpeg', NULL, NULL, NULL, NULL, '2025-12-17 15:55:02', '2025-12-17 15:55:02'),
-('0b23e575-89c4-46d0-bb77-91d3d7700365', 28, 'Roman', 'Wright', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('13783aeb-eab3-4feb-8cc4-63088c54af33', 44, 'Marcus', 'Roberts', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('179593fe-5eea-4740-bd77-549fc4a015ed', 14, 'Henry', 'Murray', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('20125d2e-2aa5-4d46-85d8-d0b7e295f270', 10, 'George', 'Holmes', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('2027817b-9eb4-48d3-961a-808631ffc52c', 78, 'Deanna', 'Phillips', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('236a8940-1475-48c4-a793-2e67c005bba8', 3, 'SURESH', 'TESTER', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('280988fa-8f35-48a1-b8f8-16d0c7cf2777', 74, 'Penelope', 'Russell', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('2a6621b7-a0d2-403b-ac83-3c8f3944bfbf', 42, 'Adam', 'Gray', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('2a74da3b-389e-4d79-a1e2-d4d103226cfb', 108, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-07 23:58:20', '2025-12-07 23:58:20'),
-('2ec08256-3c19-4a57-854b-b835880a963e', 69, 'Lucy', 'Chapman', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('2f760c60-0317-4585-995c-e6f8a7d35530', 104, 'Ted', 'Fowler', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('3284455a-e9db-4e02-8f41-c6995838d53f', 117, 'Nik', 'Ola', NULL, NULL, NULL, NULL, NULL, '2025-12-14 23:08:05', '2025-12-14 23:08:05'),
-('32bba3a2-6ecb-4411-9e9d-a56238de5cf4', 5, 'Tony', 'Murray', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('332700ca-7bb8-42db-8894-999cc144375f', 109, 'Nikola', 'Batre', NULL, NULL, NULL, NULL, NULL, '2025-12-08 00:46:23', '2025-12-08 00:46:23'),
-('34b2bb02-8adc-446c-b219-466627542292', 37, 'Miranda', 'Perry', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('357e760a-d08c-4078-be80-b6d8c819f56a', 113, 'Nikola', 'Bare', NULL, NULL, NULL, NULL, NULL, '2025-12-10 10:15:40', '2025-12-10 10:15:40'),
-('36ece217-9ef1-4f6d-9e05-27dfc17e2b15', 91, 'Nicholas', 'Alexander', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('37384438-14ac-4066-9bbe-d15934c64acf', 36, 'Abraham', 'Cole', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('3cd1f40c-dc0f-4955-b473-2d84ab89b73f', 20, 'Miranda', 'Myers', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('3fb74c36-eb37-4d36-8bf7-38118ba0e12a', 79, 'Ryan', 'Ross', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('407b7b25-d201-4e49-8084-52f0a9ab633a', 68, 'Ryan', 'Cunningham', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('40d6c7e2-37cb-437a-90c9-fbb4b2fb1661', 60, 'Edward', 'Moore', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('42c9a0c7-be34-4375-a6ae-5006be89ea8f', 49, 'Jacob', 'Morgan', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('4437f3e7-cfb9-4df0-8704-357504968741', 66, 'Kelsey', 'Craig', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('4454ecc1-cc49-419d-9c3c-75c9257b23ec', 70, 'Daisy', 'Russell', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('4475d178-1506-43bc-9d1f-0b5df1aacab0', 112, 'N', 'B', NULL, NULL, NULL, NULL, NULL, '2025-12-09 21:57:18', '2025-12-09 21:57:18'),
-('45117b65-3d55-4b61-8feb-5ed7f4c654a9', 88, 'Aldus', 'Casey', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('4741084c-90c6-4b0f-a6d5-811f13495825', 25, 'Dainton', 'Tucker', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('49b62029-c9fe-48c0-b81a-760f45372054', 7, 'Nicole', 'Barnes', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('55e0f49d-5bad-4822-abec-00e5eb51c1c8', 118, 'Tester', '1', '/uploads/profile_pictures/2bcd6b2f-ad73-4950-9ada-b64b27c73a95.png', NULL, NULL, NULL, NULL, '2025-12-17 10:38:16', '2025-12-17 10:38:16'),
-('607876cd-dd91-4689-abf2-0a67dbba2915', 16, 'Sophia', 'Holmes', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('627fe270-d240-4f20-a860-7fba390f562c', 34, 'Elise', 'Richardson', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('63eca209-eb5c-4d42-b650-3d7526273b1a', 11, 'Leonardo', 'Clark', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('6701656c-5a89-4d41-9353-66880f3257f0', 93, 'Lyndon', 'Gray', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('6813fc4c-9e78-4bf8-a533-ddbef4846429', 72, 'Miley', 'Warren', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('687dad09-5a5b-475a-922c-21f90f99c50b', 81, 'Reid', 'Turner', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('6a1e0fb7-4c5f-46c5-877a-9e000a32f358', 17, 'Patrick', 'Casey', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('6a8d2833-4280-4d20-9a24-8255123e8cda', 83, 'Miller', 'Fowler', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('6aaa8d59-1799-4cf4-bbe7-9922f536bff5', 38, 'Rafael', 'Clark', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('6b1954e8-0dbf-4c68-b762-4d91e30a6cb9', 65, 'Adrian', 'Wells', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('6c4807cc-f0e1-4aef-aff0-075c7c09b1dd', 22, 'Steven', 'Craig', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('6d94f63d-9913-4752-ab7c-f6743f69ed2e', 121, 'Tester', '3', '/uploads/profile_pictures/cdf245bb-05d3-4294-a0da-d0accc718188.png', NULL, NULL, NULL, NULL, '2025-12-17 10:44:52', '2025-12-17 10:44:52'),
-('71d3fbd3-5b31-42e1-bb87-bbc53459ac48', 63, 'Carlos', 'Richardson', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('76f9b842-0692-40fb-9893-b336803841ec', 30, 'Nicole', 'Parker', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('79927f79-10ca-488a-a34b-34608e3111f9', 31, 'April', 'Clark', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('7b331d60-6522-4a40-acec-940bbee81c89', 82, 'Amelia', 'Parker', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('7b92d17d-f6ea-4b34-bdab-c184fc69cc31', 61, 'Kevin', 'Spencer', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('7f2db7f8-dabd-45c2-93ff-8f86796dc552', 73, 'Sydney', 'Mitchell', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('7f782e61-5f5c-408b-ac05-9ed5c58698d6', 57, 'Alexia', 'Harper', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('7f9b83fe-3ee9-4a1a-977d-f772697511f3', 95, 'Agata', 'Ryan', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('82f55787-20ca-4552-9549-9f9fd4f24243', 100, 'Darcy', 'Phillips', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('832794de-0511-4d24-9aa1-1d20d6c9ff78', 103, 'Michael', 'Myers', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('83290a01-a6c3-4e36-802e-dec89b0a8c43', 99, 'Violet', 'Walker', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('83710363-2633-4264-8987-5600e20c1254', 105, 'Alina', 'Craig', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('8490dc56-8e97-4278-b84a-aac06a4595eb', 50, 'Deanna', 'Fowler', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('8b6e6fe5-0ff8-4fe7-b0ee-1371ec349bbb', 119, 'Admin', 'Demo', NULL, NULL, NULL, NULL, NULL, '2025-12-17 10:39:05', '2025-12-17 10:39:05'),
-('8f4fe2e2-e42b-4bae-9953-6f72a9e6b1ea', 35, 'Stuart', 'Anderson', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('91484a59-2820-4572-94a4-60329b5c898f', 21, 'Justin', 'Morrison', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('9419f24d-9875-4a88-a059-616d5261c67e', 33, 'Alen', 'Foster', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('9463d8c6-fbf8-48d3-aa49-7edf12b531f8', 1, 'ADMIN', 'ADMINSON', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('9a9ba8e0-2ad6-4840-8755-2515765385f0', 86, 'Garry', 'Myers', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('9c876b21-4e7f-4eb0-8f0c-ac2ca8c0bf34', 23, 'Honey', 'Edwards', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('9cde0988-2517-4e85-bf51-e808beb2ee22', 71, 'Kellan', 'Edwards', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('9cec3df4-b8c5-48e5-8b31-a6f15edd152e', 87, 'Rafael', 'Tucker', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('9d6ad805-dabc-487c-b6d4-095f3e7faccb', 53, 'Ellia', 'Martin', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('9ed79eb6-91f0-4279-aa08-34cc7dd4528c', 80, 'Daisy', 'Baker', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('9f189f5a-a1f7-484c-b50f-718f2bf89061', 96, 'Emily', 'Jones', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('a198dd45-7df8-45a3-87c9-9dccdb500f26', 39, 'Alfred', 'Mason', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('a1f7c2d2-ebbe-4bfa-8def-96b0aba7e543', 64, 'Alissa', 'Murray', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('a210715b-ab0c-49ab-b37f-54787f7bc76a', 59, 'Lucy', 'Montgomery', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('a26a1ad6-fabb-491d-91b8-bf42e94ebfd1', 24, 'Alfred', 'Douglas', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('a42443d3-70fe-47e7-a10b-49c3c7272e96', 12, 'Arthur', 'Hall', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('a45b64c2-81d7-4887-afdb-17d88a69c8af', 97, 'Jordan', 'Hamilton', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('a6f27d29-4a13-453c-a281-2e387a736868', 94, 'Elise', 'Murphy', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('a703687c-fc58-4449-a400-0d0ae477ad52', 77, 'Eric', 'Johnston', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('a8803f2c-cec4-49ce-ac84-aa37a14ce458', 89, 'Jared', 'Morrison', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('ac6323d9-893a-4c0a-a733-fb8354a1b623', 67, 'Amber', 'Montgomery', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('b1208357-c1d3-4529-a803-bbc06cf08035', 120, 'Tester', '2', '/uploads/profile_pictures/04a27c19-28d2-44ea-878b-286e8c847868.png', NULL, NULL, NULL, NULL, '2025-12-17 10:39:45', '2025-12-17 10:39:45'),
-('b2ae7561-d56f-498a-9d69-cf194dde8a35', 27, 'Mike', 'Moore', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('b429f253-cee8-45ce-81b7-e5acf8f4eebb', 4, 'ARIF', 'TUPLE', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('b622405e-4ed5-4256-91de-8f3942e778ee', 26, 'Penelope', 'Thomas', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('bdf11e6d-f0df-4c19-940d-67347d395911', 85, 'Adelaide', 'Clark', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('be0267ae-304e-40a7-949a-50bbec15936e', 2, 'ALEKSANDRE', 'TEST', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('be8aefa6-78a6-49af-94b8-e240ad313c81', 107, 'test', 'test', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('bea6d221-5cb6-462f-b14d-66e36a056dbd', 15, 'Victoria', 'Morris', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('bf3f11b4-e104-4c29-a73a-b8139a7afc75', 47, 'Rubie', 'Morrison', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('c2bc6777-4f25-4e2b-bf67-86726508a709', 90, 'Garry', 'Jones', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('c6b62737-c60d-4a17-98d4-2af851a9279c', 18, 'Adison', 'Barnes', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('c8633364-e226-4946-ae0c-2c33b7e4681e', 29, 'Catherine', 'Lloyd', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('cc59fea3-0f51-4734-8912-497ad38c2df1', 13, 'Amy', 'Higgins', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('cdd6f3ec-bb8e-4b29-9741-cd360a352181', 32, 'Spike', 'Farrell', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('cef8637f-5422-4089-9b2f-fb869408720f', 102, 'Michelle', 'Hawkins', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('cfb67e61-3de6-470f-b758-72862fa0cda2', 54, 'Ryan', 'Bailey', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('d1c2de54-53ea-4d93-ad65-1ad338808a8b', 106, 'Nikola', 'Baretic', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('d44b4cdf-91b1-4d13-93db-0aff09c3b3e2', 84, 'Martin', 'Ryan', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('d57dc4f3-cb55-4016-890c-1d42fb397c5f', 76, 'Adele', 'Reed', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('d5ef263d-8c25-4432-984e-9e6cf79836e6', 19, 'Violet', 'Owens', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('dbd65d6b-925f-4c27-a7da-792494ca25c4', 62, 'Vanessa', 'Ferguson', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('dbf85fbd-7a28-4574-bfa7-6517fd3f64b6', 48, 'Jordan', 'Andrews', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('ddb8147f-6323-4be0-b6a3-67e0b16f2a46', 101, 'Alexander', 'Mitchell', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('e01d9e90-261e-4a75-95f9-31a3acd70758', 75, 'Tyler', 'Bennett', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('e0af6061-f210-491b-9205-b20b07520095', 46, 'Dexter', 'Martin', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('e2b4427d-b619-4fea-972d-68996aed4df7', 9, 'Frederick', 'Wilson', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('e8d526f8-1274-4aca-afc6-bb9ecff78fda', 45, 'Steven', 'Crawford', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('eaa50618-cb38-42a3-9ed4-f5f04a6e8c01', 52, 'Stella', 'Bailey', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('eb0a7e62-b629-4510-a91b-38ff24b640ac', 98, 'Maximilian', 'Johnson', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('ec345aad-8c4c-464c-8267-d9ffe8da8990', 58, 'Dale', 'Miller', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('ee637bb3-8f78-4436-8d21-52c6f543070f', 110, 'Nikola', 'Batre', NULL, NULL, NULL, NULL, NULL, '2025-12-08 01:01:52', '2025-12-08 01:01:52'),
-('ee8aa2d6-8f66-456d-a4c4-4285f5b6c3ed', 56, 'Maya', 'Roberts', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('eecde76a-9fd1-4299-a898-f54fe6c2af80', 92, 'Abigail', 'Spencer', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('f25392bf-47c6-4039-91de-4462a2d5edfb', 43, 'Nicholas', 'Scott', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('f4343da9-11c0-40f9-9fe7-ad6efd1f492d', 8, 'Penelope', 'Farrell', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('f5aa2129-f01c-45d5-9709-84c6e66c7bdf', 40, 'Adrian', 'Brown', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('faf42ca6-e476-4990-864f-968ea798484d', 116, 'aaaa', 'aaaaa', NULL, NULL, NULL, NULL, NULL, '2025-12-11 14:12:29', '2025-12-11 14:12:29'),
-('fb594dc6-c736-423d-ad0f-63ff7fefa338', 55, 'Kristian', 'Taylor', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('fd430601-9895-4cc7-90c1-67733be8a5a6', 41, 'Stella', 'Ross', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16'),
-('ffd2e4dd-d3d5-4681-bd6b-bf9f0d44ce15', 51, 'Adrianna', 'Tucker', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16');
+INSERT INTO `user_profile` (`id`, `account_id`, `first_name`, `last_name`, `profile_picture`, `phone`, `bio`, `city`, `country`, `created_at`, `updated_at`, `languages`, `accessibility_needs`) VALUES
+('00e66855-47ad-41d2-8cf7-7347c1496c81', 122, 'Demooo', 'Demoo', '/uploads/profile_pictures/1c3a5166-0ad0-480f-b9e0-bf604bf9bf10.png', NULL, NULL, NULL, NULL, '2025-12-17 14:20:21', '2025-12-17 14:20:21', NULL, NULL),
+('04cdf8c2-80fa-4eb5-9c44-d22e8c9d204b', 111, 'Nikola', 'Batre', NULL, NULL, NULL, NULL, NULL, '2025-12-08 01:03:26', '2025-12-08 01:03:26', NULL, NULL),
+('09b5e3c3-2f67-4450-8240-fac09d522536', 123, 'Test', 'Twest', '/uploads/profile_pictures/62c71896-bc41-4894-82cc-9c15f0534057.jpeg', NULL, NULL, NULL, NULL, '2025-12-17 15:55:02', '2025-12-17 15:55:02', NULL, NULL),
+('0b23e575-89c4-46d0-bb77-91d3d7700365', 28, 'Roman', 'Wright', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('13783aeb-eab3-4feb-8cc4-63088c54af33', 44, 'Marcus', 'Roberts', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('179593fe-5eea-4740-bd77-549fc4a015ed', 14, 'Henry', 'Murray', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('20125d2e-2aa5-4d46-85d8-d0b7e295f270', 10, 'George', 'Holmes', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('2027817b-9eb4-48d3-961a-808631ffc52c', 78, 'Deanna', 'Phillips', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('236a8940-1475-48c4-a793-2e67c005bba8', 3, 'SURESH', 'TESTER', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('280988fa-8f35-48a1-b8f8-16d0c7cf2777', 74, 'Penelope', 'Russell', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('2a6621b7-a0d2-403b-ac83-3c8f3944bfbf', 42, 'Adam', 'Gray', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('2a74da3b-389e-4d79-a1e2-d4d103226cfb', 108, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-12-07 23:58:20', '2025-12-07 23:58:20', NULL, NULL),
+('2ec08256-3c19-4a57-854b-b835880a963e', 69, 'Lucy', 'Chapman', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('2f760c60-0317-4585-995c-e6f8a7d35530', 104, 'Ted', 'Fowler', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('3284455a-e9db-4e02-8f41-c6995838d53f', 117, 'Nik', 'Ola', NULL, NULL, NULL, NULL, NULL, '2025-12-14 23:08:05', '2025-12-14 23:08:05', NULL, NULL),
+('32bba3a2-6ecb-4411-9e9d-a56238de5cf4', 5, 'Tony', 'Murray', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('332700ca-7bb8-42db-8894-999cc144375f', 109, 'Nikola', 'Batre', NULL, NULL, NULL, NULL, NULL, '2025-12-08 00:46:23', '2025-12-08 00:46:23', NULL, NULL),
+('34b2bb02-8adc-446c-b219-466627542292', 37, 'Miranda', 'Perry', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('357e760a-d08c-4078-be80-b6d8c819f56a', 113, 'Nikola', 'Bare', 'avatars/695cda6060fa9.jpg', NULL, 'aaa', 'Paris', 'France', '2025-12-10 10:15:40', '2026-01-06 09:48:16', 'English, Croatian', 'adsjahdjasjdnakjsdnkajã'),
+('36ece217-9ef1-4f6d-9e05-27dfc17e2b15', 91, 'Nicholas', 'Alexander', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('37384438-14ac-4066-9bbe-d15934c64acf', 36, 'Abraham', 'Cole', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('3cd1f40c-dc0f-4955-b473-2d84ab89b73f', 20, 'Miranda', 'Myers', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('3fb74c36-eb37-4d36-8bf7-38118ba0e12a', 79, 'Ryan', 'Ross', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('407b7b25-d201-4e49-8084-52f0a9ab633a', 68, 'Ryan', 'Cunningham', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('40d6c7e2-37cb-437a-90c9-fbb4b2fb1661', 60, 'Edward', 'Moore', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('42c9a0c7-be34-4375-a6ae-5006be89ea8f', 49, 'Jacob', 'Morgan', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('4437f3e7-cfb9-4df0-8704-357504968741', 66, 'Kelsey', 'Craig', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('4454ecc1-cc49-419d-9c3c-75c9257b23ec', 70, 'Daisy', 'Russell', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('4475d178-1506-43bc-9d1f-0b5df1aacab0', 112, 'N', 'B', NULL, NULL, NULL, NULL, NULL, '2025-12-09 21:57:18', '2025-12-09 21:57:18', NULL, NULL),
+('45117b65-3d55-4b61-8feb-5ed7f4c654a9', 88, 'Aldus', 'Casey', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('4741084c-90c6-4b0f-a6d5-811f13495825', 25, 'Dainton', 'Tucker', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('49b62029-c9fe-48c0-b81a-760f45372054', 7, 'Nicole', 'Barnes', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('55e0f49d-5bad-4822-abec-00e5eb51c1c8', 118, 'Tester', '1', '/uploads/profile_pictures/2bcd6b2f-ad73-4950-9ada-b64b27c73a95.png', NULL, NULL, NULL, NULL, '2025-12-17 10:38:16', '2025-12-17 10:38:16', NULL, NULL),
+('607876cd-dd91-4689-abf2-0a67dbba2915', 16, 'Sophia', 'Holmes', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('627fe270-d240-4f20-a860-7fba390f562c', 34, 'Elise', 'Richardson', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('63eca209-eb5c-4d42-b650-3d7526273b1a', 11, 'Leonardo', 'Clark', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('6701656c-5a89-4d41-9353-66880f3257f0', 93, 'Lyndon', 'Gray', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('6813fc4c-9e78-4bf8-a533-ddbef4846429', 72, 'Miley', 'Warren', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('687dad09-5a5b-475a-922c-21f90f99c50b', 81, 'Reid', 'Turner', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('6a1e0fb7-4c5f-46c5-877a-9e000a32f358', 17, 'Patrick', 'Casey', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('6a8d2833-4280-4d20-9a24-8255123e8cda', 83, 'Miller', 'Fowler', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('6aaa8d59-1799-4cf4-bbe7-9922f536bff5', 38, 'Rafael', 'Clark', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('6b1954e8-0dbf-4c68-b762-4d91e30a6cb9', 65, 'Adrian', 'Wells', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('6c4807cc-f0e1-4aef-aff0-075c7c09b1dd', 22, 'Steven', 'Craig', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('6d94f63d-9913-4752-ab7c-f6743f69ed2e', 121, 'Tester', '3', '/uploads/profile_pictures/cdf245bb-05d3-4294-a0da-d0accc718188.png', NULL, NULL, NULL, NULL, '2025-12-17 10:44:52', '2025-12-17 10:44:52', NULL, NULL),
+('71d3fbd3-5b31-42e1-bb87-bbc53459ac48', 63, 'Carlos', 'Richardson', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('76f9b842-0692-40fb-9893-b336803841ec', 30, 'Nicole', 'Parker', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('79927f79-10ca-488a-a34b-34608e3111f9', 31, 'April', 'Clark', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('7b331d60-6522-4a40-acec-940bbee81c89', 82, 'Amelia', 'Parker', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('7b92d17d-f6ea-4b34-bdab-c184fc69cc31', 61, 'Kevin', 'Spencer', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('7f2db7f8-dabd-45c2-93ff-8f86796dc552', 73, 'Sydney', 'Mitchell', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('7f782e61-5f5c-408b-ac05-9ed5c58698d6', 57, 'Alexia', 'Harper', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('7f9b83fe-3ee9-4a1a-977d-f772697511f3', 95, 'Agata', 'Ryan', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('82f55787-20ca-4552-9549-9f9fd4f24243', 100, 'Darcy', 'Phillips', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('832794de-0511-4d24-9aa1-1d20d6c9ff78', 103, 'Michael', 'Myers', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('83290a01-a6c3-4e36-802e-dec89b0a8c43', 99, 'Violet', 'Walker', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('83710363-2633-4264-8987-5600e20c1254', 105, 'Alina', 'Craig', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('8490dc56-8e97-4278-b84a-aac06a4595eb', 50, 'Deanna', 'Fowler', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('8b6e6fe5-0ff8-4fe7-b0ee-1371ec349bbb', 119, 'Admin', 'Demo', NULL, NULL, NULL, NULL, NULL, '2025-12-17 10:39:05', '2025-12-17 10:39:05', NULL, NULL),
+('8f4fe2e2-e42b-4bae-9953-6f72a9e6b1ea', 35, 'Stuart', 'Anderson', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('91484a59-2820-4572-94a4-60329b5c898f', 21, 'Justin', 'Morrison', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('9419f24d-9875-4a88-a059-616d5261c67e', 33, 'Alen', 'Foster', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('9463d8c6-fbf8-48d3-aa49-7edf12b531f8', 1, 'ADMIN', 'ADMINSON', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('9a9ba8e0-2ad6-4840-8755-2515765385f0', 86, 'Garry', 'Myers', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('9c876b21-4e7f-4eb0-8f0c-ac2ca8c0bf34', 23, 'Honey', 'Edwards', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('9cde0988-2517-4e85-bf51-e808beb2ee22', 71, 'Kellan', 'Edwards', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('9cec3df4-b8c5-48e5-8b31-a6f15edd152e', 87, 'Rafael', 'Tucker', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('9d6ad805-dabc-487c-b6d4-095f3e7faccb', 53, 'Ellia', 'Martin', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('9ed79eb6-91f0-4279-aa08-34cc7dd4528c', 80, 'Daisy', 'Baker', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('9f189f5a-a1f7-484c-b50f-718f2bf89061', 96, 'Emily', 'Jones', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('a198dd45-7df8-45a3-87c9-9dccdb500f26', 39, 'Alfred', 'Mason', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('a1f7c2d2-ebbe-4bfa-8def-96b0aba7e543', 64, 'Alissa', 'Murray', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('a210715b-ab0c-49ab-b37f-54787f7bc76a', 59, 'Lucy', 'Montgomery', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('a26a1ad6-fabb-491d-91b8-bf42e94ebfd1', 24, 'Alfred', 'Douglas', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('a42443d3-70fe-47e7-a10b-49c3c7272e96', 12, 'Arthur', 'Hall', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('a45b64c2-81d7-4887-afdb-17d88a69c8af', 97, 'Jordan', 'Hamilton', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('a6f27d29-4a13-453c-a281-2e387a736868', 94, 'Elise', 'Murphy', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('a703687c-fc58-4449-a400-0d0ae477ad52', 77, 'Eric', 'Johnston', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('a8803f2c-cec4-49ce-ac84-aa37a14ce458', 89, 'Jared', 'Morrison', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('ac6323d9-893a-4c0a-a733-fb8354a1b623', 67, 'Amber', 'Montgomery', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('b1208357-c1d3-4529-a803-bbc06cf08035', 120, 'Tester', '2', '/uploads/profile_pictures/04a27c19-28d2-44ea-878b-286e8c847868.png', NULL, NULL, NULL, NULL, '2025-12-17 10:39:45', '2025-12-17 10:39:45', NULL, NULL),
+('b2ae7561-d56f-498a-9d69-cf194dde8a35', 27, 'Mike', 'Moore', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('b429f253-cee8-45ce-81b7-e5acf8f4eebb', 4, 'ARIF', 'TUPLE', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('b622405e-4ed5-4256-91de-8f3942e778ee', 26, 'Penelope', 'Thomas', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('bdf11e6d-f0df-4c19-940d-67347d395911', 85, 'Adelaide', 'Clark', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('be0267ae-304e-40a7-949a-50bbec15936e', 2, 'ALEKSANDRE', 'TEST', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('be8aefa6-78a6-49af-94b8-e240ad313c81', 107, 'test', 'test', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('bea6d221-5cb6-462f-b14d-66e36a056dbd', 15, 'Victoria', 'Morris', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('bf3f11b4-e104-4c29-a73a-b8139a7afc75', 47, 'Rubie', 'Morrison', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('c2bc6777-4f25-4e2b-bf67-86726508a709', 90, 'Garry', 'Jones', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('c6b62737-c60d-4a17-98d4-2af851a9279c', 18, 'Adison', 'Barnes', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('c8633364-e226-4946-ae0c-2c33b7e4681e', 29, 'Catherine', 'Lloyd', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('cc59fea3-0f51-4734-8912-497ad38c2df1', 13, 'Amy', 'Higgins', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('cdd6f3ec-bb8e-4b29-9741-cd360a352181', 32, 'Spike', 'Farrell', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('cef8637f-5422-4089-9b2f-fb869408720f', 102, 'Michelle', 'Hawkins', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('cfb67e61-3de6-470f-b758-72862fa0cda2', 54, 'Ryan', 'Bailey', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('d1c2de54-53ea-4d93-ad65-1ad338808a8b', 106, 'Nikola', 'Baretic', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('d44b4cdf-91b1-4d13-93db-0aff09c3b3e2', 84, 'Martin', 'Ryan', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('d57dc4f3-cb55-4016-890c-1d42fb397c5f', 76, 'Adele', 'Reed', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('d5ef263d-8c25-4432-984e-9e6cf79836e6', 19, 'Violet', 'Owens', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('dbd65d6b-925f-4c27-a7da-792494ca25c4', 62, 'Vanessa', 'Ferguson', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('dbf85fbd-7a28-4574-bfa7-6517fd3f64b6', 48, 'Jordan', 'Andrews', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('ddb8147f-6323-4be0-b6a3-67e0b16f2a46', 101, 'Alexander', 'Mitchell', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('e01d9e90-261e-4a75-95f9-31a3acd70758', 75, 'Tyler', 'Bennett', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('e0af6061-f210-491b-9205-b20b07520095', 46, 'Dexter', 'Martin', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('e2b4427d-b619-4fea-972d-68996aed4df7', 9, 'Frederick', 'Wilson', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('e8d526f8-1274-4aca-afc6-bb9ecff78fda', 45, 'Steven', 'Crawford', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('eaa50618-cb38-42a3-9ed4-f5f04a6e8c01', 52, 'Stella', 'Bailey', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('eb0a7e62-b629-4510-a91b-38ff24b640ac', 98, 'Maximilian', 'Johnson', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('ec345aad-8c4c-464c-8267-d9ffe8da8990', 58, 'Dale', 'Miller', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('ee637bb3-8f78-4436-8d21-52c6f543070f', 110, 'Nikola', 'Batre', NULL, NULL, NULL, NULL, NULL, '2025-12-08 01:01:52', '2025-12-08 01:01:52', NULL, NULL),
+('ee8aa2d6-8f66-456d-a4c4-4285f5b6c3ed', 56, 'Maya', 'Roberts', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('eecde76a-9fd1-4299-a898-f54fe6c2af80', 92, 'Abigail', 'Spencer', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('f25392bf-47c6-4039-91de-4462a2d5edfb', 43, 'Nicholas', 'Scott', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('f4343da9-11c0-40f9-9fe7-ad6efd1f492d', 8, 'Penelope', 'Farrell', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('f5aa2129-f01c-45d5-9709-84c6e66c7bdf', 40, 'Adrian', 'Brown', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('faf42ca6-e476-4990-864f-968ea798484d', 116, 'aaaa', 'aaaaa', NULL, NULL, NULL, NULL, NULL, '2025-12-11 14:12:29', '2025-12-11 14:12:29', NULL, NULL),
+('fb594dc6-c736-423d-ad0f-63ff7fefa338', 55, 'Kristian', 'Taylor', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('fd430601-9895-4cc7-90c1-67733be8a5a6', 41, 'Stella', 'Ross', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('ffd2e4dd-d3d5-4681-bd6b-bf9f0d44ce15', 51, 'Adrianna', 'Tucker', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -2396,7 +2454,7 @@ ALTER TABLE `document_type`
 -- AUTO_INCREMENT for table `legal_content`
 --
 ALTER TABLE `legal_content`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `password_resets`
