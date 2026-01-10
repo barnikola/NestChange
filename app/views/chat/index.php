@@ -43,8 +43,14 @@ function buildActionCard($selectedChat, $otherName) {
 ob_start();
 ?>
 <main class="chat-content-wrapper">
+    <div class="chat-mobile-bar">
+        <button type="button" class="chat-mobile-toggle" data-chat-toggle aria-expanded="false">
+            Conversations
+        </button>
+    </div>
     <div class="chat-layout">
-        <aside class="chat-sidebar">
+        <aside class="chat-sidebar" data-chat-sidebar>
+            <button type="button" class="chat-sidebar-close" data-chat-close aria-label="Close conversations">×</button>
             <div class="chat-sidebar-header">
                 <div>
                     <p class="chat-sidebar-eyebrow">Chats</p>
@@ -140,24 +146,26 @@ ob_start();
                 ?>
                 <div class="chat-status-pill"><?= htmlspecialchars($statusLabel) ?></div>
 
-                <div class="chat-messages" id="chat-messages">
-                    <?php if (empty($messages)): ?>
-                        <div class="chat-message outgoing">
-                            <p>Start the conversation!</p>
-                            <span class="chat-message-time">Now</span>
-                        </div>
-                    <?php else: ?>
-                        <?php foreach ($messages as $message): ?>
-                            <?php 
-                                $isOutgoing = ($message['sender_profile_id'] === $currentProfileId);
-                                $messageTime = !empty($message['created_at']) ? date('H:i', strtotime($message['created_at'])) : '';
-                            ?>
-                            <div class="chat-message <?= $isOutgoing ? 'outgoing' : 'incoming' ?>">
-                                <p><?= htmlspecialchars($message['content']) ?></p>
-                                <span class="chat-message-time"><?= htmlspecialchars($messageTime) ?></span>
+                <div class="chat-transcript">
+                    <div class="chat-messages" id="chat-messages">
+                        <?php if (empty($messages)): ?>
+                            <div class="chat-message outgoing">
+                                <p>Start the conversation!</p>
+                                <span class="chat-message-time">Now</span>
                             </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                        <?php else: ?>
+                            <?php foreach ($messages as $message): ?>
+                                <?php 
+                                    $isOutgoing = ($message['sender_profile_id'] === $currentProfileId);
+                                    $messageTime = !empty($message['created_at']) ? date('H:i', strtotime($message['created_at'])) : '';
+                                ?>
+                                <div class="chat-message <?= $isOutgoing ? 'outgoing' : 'incoming' ?>">
+                                    <p><?= htmlspecialchars($message['content']) ?></p>
+                                    <span class="chat-message-time"><?= htmlspecialchars($messageTime) ?></span>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
 
                 <!-- Action Card: Conditionally included based on application status -->
@@ -166,6 +174,7 @@ ob_start();
                         <?php include __DIR__ . '/partials/_action_card.php'; ?>
                     <?php endif; ?>
                 </div>
+                <div id="chat-action-anchor"></div>
 
                 <div class="chat-composer">
                     <div class="chat-composer-actions">
@@ -173,7 +182,9 @@ ob_start();
                         <button class="chat-icon-btn" aria-label="Insert media">🖼️</button>
                     </div>
                     <input type="text" id="message-input" placeholder="Write a message..." class="chat-composer-input" autocomplete="off">
-                    <button class="chat-send-btn" onclick="sendMessage()">Send</button>
+                    <button class="chat-send-btn" onclick="sendMessage()" aria-label="Send message">
+                        &#10148;
+                    </button>
                 </div>
             <?php else: ?>
                 <!-- Default view when no chats exist -->
@@ -220,6 +231,7 @@ ob_start();
                         include __DIR__ . '/partials/_action_card.php';
                     ?>
                 </div>
+                <div id="chat-action-anchor"></div>
 
                 <div class="chat-composer">
                     <div class="chat-composer-actions">
@@ -227,11 +239,14 @@ ob_start();
                         <button class="chat-icon-btn" aria-label="Insert media">🖼️</button>
                     </div>
                     <input type="text" placeholder="Write a message..." class="chat-composer-input" disabled>
-                    <button class="chat-send-btn" disabled>Send</button>
+                    <button class="chat-send-btn" aria-label="Send message" disabled>
+                        &#10148;
+                    </button>
                 </div>
             <?php endif; ?>
         </section>
     </div>
+    <div class="chat-overlay" data-chat-overlay aria-hidden="true"></div>
 </main>
 
 <script id="chat-config" type="application/json">

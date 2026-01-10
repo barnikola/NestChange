@@ -45,8 +45,12 @@ class ListingController extends Controller
         $filters = array_filter($filters, fn($v) => $v !== null && $v !== '');
         
         // Pagination
-        $page = (int)($this->getInput('page', 1));
-        $limit = (int)($this->getInput('limit', 20));
+        $page = max(1, (int)($this->getInput('page', 1)));
+        $defaultLimit = $this->isMobileRequest() ? 10 : 20;
+        $limit = (int)($this->getInput('limit', $defaultLimit));
+        if ($limit <= 0) {
+            $limit = $defaultLimit;
+        }
         $offset = ($page - 1) * $limit;
         
         $filters['limit'] = $limit;
@@ -90,6 +94,13 @@ class ListingController extends Controller
 
     public function search(): void
     {
+        $defaultLimit = $this->isMobileRequest() ? 10 : 20;
+        $limit = (int)$this->getInput('limit', $defaultLimit);
+        if ($limit <= 0) {
+            $limit = $defaultLimit;
+        }
+        $offset = (int)$this->getInput('offset', 0);
+
         $filters = [
             'status' => 'published',
             'location' => $this->getInput('location'),
@@ -102,8 +113,8 @@ class ListingController extends Controller
             'attributes' => $this->getInput('attributes'),
             'services' => $this->getInput('services'),
             'sort' => $this->getInput('sort', 'newest'),
-            'limit' => $this->getInput('limit', 20),
-            'offset' => $this->getInput('offset', 0),
+            'limit' => $limit,
+            'offset' => $offset,
         ];
         
         $filters = array_filter($filters, fn($v) => $v !== null && $v !== '');
@@ -171,7 +182,6 @@ class ListingController extends Controller
         }
         
         $data = $this->allPost();
-        error_log("Attempting to store listing with data: " . print_r($data, true));
         
         // Validate input
         $validator = Validator::make($data)
@@ -221,7 +231,6 @@ class ListingController extends Controller
         }
         
         if ($validator->fails()) {
-            error_log("Validation failed: " . print_r($validator->errors(), true));
             require_once dirname(__DIR__) . '/helpers/countries.php';
             $this->flash('error', $validator->firstError());
             $this->data['old'] = $data;
@@ -235,28 +244,23 @@ class ListingController extends Controller
         }
         
         try {
-            error_log("Validation passed. Starting transaction.");
             $this->listingModel->beginTransaction();
             
             // Get user's profile ID
             $profileId = $this->getUserProfileId();
-            error_log("Got profile ID: " . ($profileId ?: 'null'));
             
             if (!$profileId) {
                 throw new Exception('User profile not found. Please complete your profile first.');
             }
             
             // Geocode address
-            error_log("Geocoding address: {$data['city']}, {$data['country']}");
             $coords = $this->geocodeAddress(
                 $data['address_line'] ?? '',
                 $data['city'],
                 $data['country']
             );
-            error_log("Geocode result: " . print_r($coords, true));
 
             // Create listing
-            error_log("Creating listing in DB...");
             $listingId = $this->listingModel->createListing([
                 'host_profile_id' => $profileId,
                 'title' => $data['title'],
@@ -271,11 +275,9 @@ class ListingController extends Controller
                 'host_role' => $data['host_role'],
                 'status' => 'draft',
             ]);
-            error_log("Listing created with ID: " . $listingId);
             
             // Handle availability
             if (!empty($data['available_from'])) {
-                error_log("Setting availability...");
                 $this->listingModel->setAvailability(
                     $listingId, 
                     $data['available_from'], 
@@ -284,36 +286,33 @@ class ListingController extends Controller
             }
 
             // Handle image uploads
-            error_log("Handling image uploads...");
             $this->handleImageUploads($listingId);
 
             // Handle verification document upload
             if (isset($_FILES['verification_document']) && !empty($_FILES['verification_document']['name'])) {
-                error_log("Handling verification document...");
                 $this->handleVerificationUpload($listingId);
             }
             
             // Set attributes
             if (!empty($data['attributes']) && is_array($data['attributes'])) {
-                error_log("Setting attributes...");
                 $this->listingModel->setAttributes($listingId, $data['attributes']);
             }
             
             // Set services
             if (!empty($data['services']) && is_array($data['services'])) {
-                error_log("Setting services...");
                 $this->listingModel->setServices($listingId, $data['services']);
             }
             
             $this->listingModel->commit();
-            error_log("Transaction committed successfully.");
             
             $this->flash('success', 'Listing created successfully! You can now publish it.');
             $this->redirect(BASE_URL . '/listings/' . $listingId);
             
         } catch (Exception $e) {
-            error_log("Caught exception in store: " . $e->getMessage());
-            error_log("Stack trace: " . $e->getTraceAsString());
+            if (defined('APP_DEBUG') && APP_DEBUG) {
+                error_log("Failed to create listing: " . $e->getMessage());
+                error_log("Stack trace: " . $e->getTraceAsString());
+            }
             $this->listingModel->rollback();
             
             if (APP_DEBUG) {
@@ -587,7 +586,7 @@ class ListingController extends Controller
         $profileId = $this->getUserProfileId();
         
         if (!$listing || $listing['host_profile_id'] !== $profileId) {
-             if (!AuthMiddleware::hasAnyRole(['admin', 'moderator'])) {
+            if (!AuthMiddleware::hasAnyRole(['admin', 'moderator'])) {
                 $this->flash('error', 'Access denied.');
                 $this->redirect(BASE_URL . '/listings');
             }
@@ -717,9 +716,7 @@ class ListingController extends Controller
 
     private function handleImageUploads(string $listingId): void
     {
-        error_log("Starting image upload for listing $listingId");
         if (!isset($_FILES['images']) || empty($_FILES['images']['name'][0])) {
-            error_log("No images found in _FILES");
             return;
         }
         
@@ -733,9 +730,7 @@ class ListingController extends Controller
         }
         
         for ($i = 0; $i < count($files['name']); $i++) {
-            error_log("Processing file " . $files['name'][$i]);
             if ($files['error'][$i] !== UPLOAD_ERR_OK) {
-                error_log("Upload error code: " . $files['error'][$i]);
                 continue;
             }
             
@@ -744,13 +739,11 @@ class ListingController extends Controller
             $mimeType = finfo_file($finfo, $files['tmp_name'][$i]);
             
             if (!in_array($mimeType, ALLOWED_IMAGE_TYPES)) {
-                error_log("Invalid mime type: $mimeType");
                 continue;
             }
             
             // Validate file size
             if ($files['size'][$i] > UPLOAD_MAX_SIZE) {
-                error_log("File too large: " . $files['size'][$i]);
                 continue;
             }
             
@@ -774,9 +767,10 @@ class ListingController extends Controller
                 $imagePath = 'uploads/images/' . $filename;
                 $this->listingModel->addImage($listingId, $imagePath, $position);
                 $position++;
-                error_log("File saved to $targetPath");
             } else {
-                error_log("Failed to move uploaded file to $targetPath");
+                if (defined('APP_DEBUG') && APP_DEBUG) {
+                    error_log("Failed to move uploaded file to $targetPath");
+                }
             }
         }
     }
@@ -830,13 +824,14 @@ class ListingController extends Controller
             
             $this->listingModel->addVerificationDocument($listingId, $relativePath, $documentTypeId);
         } else {
-            error_log("Failed to move verification document to $targetPath");
+            if (defined('APP_DEBUG') && APP_DEBUG) {
+                error_log("Failed to move verification document to $targetPath");
+            }
         }
     }
 
     private function geocodeAddress(string $address, string $city, string $country): array
     {
-
         $context = stream_context_create([
             "http" => [
                 "header" => "User-Agent: NestChange/1.0\r\n"

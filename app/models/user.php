@@ -87,7 +87,17 @@ class User extends Model
 
     public function getUserWithProfile(int|string $userId): array|false
     {
-        $sql = "SELECT a.*, p.id as profile_id, p.first_name, p.last_name, p.phone, p.bio, p.city, p.country, p.profile_picture
+        $sql = "SELECT a.*, 
+                       p.id as profile_id, 
+                       p.first_name, 
+                       p.last_name, 
+                       p.phone, 
+                       p.bio, 
+                       p.city, 
+                       p.country, 
+                       p.profile_picture,
+                       p.languages,
+                       p.accessibility_needs
                 FROM account a
                 LEFT JOIN user_profile p ON a.id = p.account_id
                 WHERE a.id = ?";

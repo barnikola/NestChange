@@ -37,7 +37,7 @@ ob_start();
                 <input type="file" class="edit-input" name="profile_picture" accept="image/*" id="photoUpload">
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="edit-form-grid">
                 <div>
                     <label class="edit-label">First Name</label>
                     <input type="text" class="edit-input" name="first_name"
@@ -84,4 +84,3 @@ ob_start();
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/main.php';
-

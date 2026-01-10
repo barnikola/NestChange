@@ -235,4 +235,44 @@ abstract class Controller
     {
         return Session::getCsrfToken();
     }
+
+    /**
+     * Determine if the request likely originates from a mobile device.
+     *
+     * @return bool
+     */
+    protected function isMobileRequest(): bool
+    {
+        if (isset($_SERVER['HTTP_SEC_CH_UA_MOBILE'])) {
+            $mobileHeader = trim($_SERVER['HTTP_SEC_CH_UA_MOBILE']);
+            if ($mobileHeader === '?1' || $mobileHeader === '1') {
+                return true;
+            }
+        }
+
+        if (empty($_SERVER['HTTP_USER_AGENT'])) {
+            return false;
+        }
+
+        $agent = strtolower($_SERVER['HTTP_USER_AGENT']);
+        $indicators = [
+            'iphone',
+            'ipad',
+            'ipod',
+            'android',
+            'mobile',
+            'blackberry',
+            'opera mini',
+            'windows phone',
+            'silk',
+        ];
+
+        foreach ($indicators as $needle) {
+            if (strpos($agent, $needle) !== false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

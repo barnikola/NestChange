@@ -17,6 +17,8 @@
     const BASE_URL = config.baseUrl;
     let currentProfileId = config.currentProfileId || '';
     let currentChatId = config.currentChatId || '';
+    const isMobileViewport = () => window.matchMedia ? window.matchMedia('(max-width: 1024px)').matches : window.innerWidth <= 1024;
+    let closeMobileSidebar = () => {};
 
     window.selectChat = function(chatId) {
         window.history.pushState({}, '', BASE_URL + '/chat?chat=' + chatId);
@@ -35,6 +37,9 @@
                     currentChatId = chatId;
                     renderChatPanel(data.chat, data.messages);
                     scrollToBottom();
+                    if (isMobileViewport()) {
+                        closeMobileSidebar();
+                    }
                 }
             })
             .catch(error => console.error('Error loading chat:', error));
@@ -132,9 +137,12 @@
             
             <div class="chat-status-pill">${escapeHtml(statusLabel)}</div>
             
-            <div class="chat-messages" id="chat-messages">${messagesHtml}</div>
+            <div class="chat-transcript">
+                <div class="chat-messages" id="chat-messages">${messagesHtml}</div>
+            </div>
             
             <div id="chat-action-container">${actionCardHtml}</div>
+            <div id="chat-action-anchor"></div>
             
             <div class="chat-composer">
                 <div class="chat-composer-actions">
@@ -144,6 +152,8 @@
                 <input type="text" id="message-input" placeholder="Write a message..." class="chat-composer-input" autocomplete="off">
                 <button class="chat-send-btn" onclick="sendMessage()">Send</button>
             </div>`;
+
+        updateActionPlacement();
     }
 
     window.sendMessage = function() {
@@ -267,7 +277,84 @@
         return new Date(dateStr).toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
     }
 
-    document.addEventListener('DOMContentLoaded', scrollToBottom);
+    function updateActionPlacement() {
+        const transcript = document.querySelector('.chat-transcript');
+        const actionContainer = document.getElementById('chat-action-container');
+        let anchor = document.getElementById('chat-action-anchor');
+
+        if (!transcript || !actionContainer) {
+            return;
+        }
+
+        if (!anchor) {
+            anchor = document.createElement('div');
+            anchor.id = 'chat-action-anchor';
+            actionContainer.insertAdjacentElement('afterend', anchor);
+        }
+
+        const shouldEmbed = window.matchMedia('(max-width: 768px)').matches;
+
+        if (shouldEmbed && !transcript.contains(actionContainer)) {
+            transcript.appendChild(actionContainer);
+        } else if (!shouldEmbed && transcript.contains(actionContainer) && anchor.parentNode) {
+            anchor.parentNode.insertBefore(actionContainer, anchor);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        scrollToBottom();
+        updateActionPlacement();
+
+        const sidebar = document.querySelector('[data-chat-sidebar]');
+        const overlay = document.querySelector('[data-chat-overlay]');
+        const toggleBtn = document.querySelector('[data-chat-toggle]');
+        const closeBtn = document.querySelector('[data-chat-close]');
+
+        const setOverlayState = (isVisible) => {
+            if (!overlay) return;
+            overlay.classList.toggle('is-visible', isVisible);
+            overlay.setAttribute('aria-hidden', isVisible ? 'false' : 'true');
+        };
+
+        const openSidebar = () => {
+            if (!sidebar) return;
+            sidebar.classList.add('is-open');
+            document.body.classList.add('chat-drawer-open');
+            setOverlayState(true);
+            if (toggleBtn) {
+                toggleBtn.setAttribute('aria-expanded', 'true');
+            }
+        };
+
+        const closeSidebar = () => {
+            if (!sidebar) return;
+            sidebar.classList.remove('is-open');
+            document.body.classList.remove('chat-drawer-open');
+            setOverlayState(false);
+            if (toggleBtn) {
+                toggleBtn.setAttribute('aria-expanded', 'false');
+            }
+        };
+
+        closeMobileSidebar = closeSidebar;
+
+        toggleBtn?.addEventListener('click', openSidebar);
+        closeBtn?.addEventListener('click', closeSidebar);
+        overlay?.addEventListener('click', closeSidebar);
+
+        window.addEventListener('resize', () => {
+            if (!isMobileViewport()) {
+                closeSidebar();
+            }
+            updateActionPlacement();
+        });
+
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && sidebar?.classList.contains('is-open')) {
+                closeSidebar();
+            }
+        });
+    });
 
     document.addEventListener('keypress', function(e) {
         if (e.key === 'Enter' && e.target.id === 'message-input') {

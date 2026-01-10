@@ -16,9 +16,72 @@
     const config = JSON.parse(configScript.textContent);
     const BASE_URL = config.baseUrl;
     const filterState = config.filterState || {};
+    const limitValue = filterState.limit ? parseInt(filterState.limit, 10) : null;
     const listingsData = config.listingsData || [];
+    const mapPanel = document.querySelector('#map-panel');
+    const mobileToggleButtons = document.querySelectorAll('[data-mobile-toggle]');
+    const mapOverlay = document.querySelector('[data-map-overlay]');
+    const mapToggleButton = document.querySelector('[data-mobile-toggle="#map-panel"]');
+    const mapFabButton = document.querySelector('[data-map-fab]');
+    if (mapFabButton) {
+        mapFabButton.setAttribute('aria-expanded', 'false');
+    }
+
+    const setFabState = (expanded) => {
+        if (!mapFabButton) return;
+        mapFabButton.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        mapFabButton.classList.toggle('is-active', expanded);
+        if (expanded) {
+            mapFabButton.classList.remove('is-visible');
+        }
+    };
+
+    const updateFabVisibility = () => {
+        if (!mapFabButton || !mapToggleButton) {
+            return;
+        }
+        if (window.innerWidth > 992) {
+            mapFabButton.classList.remove('is-visible');
+            mapFabButton.classList.remove('is-active');
+            mapFabButton.setAttribute('aria-expanded', 'false');
+            return;
+        }
+        const rect = mapToggleButton.getBoundingClientRect();
+        const triggerOffset = window.scrollY + rect.bottom;
+        const mapOpen = mapPanel?.classList.contains('is-open');
+        const shouldShow = window.scrollY > triggerOffset && !mapOpen;
+        mapFabButton.classList.toggle('is-visible', shouldShow);
+        if (!shouldShow) {
+            mapFabButton.classList.remove('is-active');
+            mapFabButton.setAttribute('aria-expanded', 'false');
+        }
+    };
+
+    updateFabVisibility();
+    window.addEventListener('scroll', updateFabVisibility);
+    window.addEventListener('resize', updateFabVisibility);
+
+    mapFabButton?.addEventListener('click', () => {
+        if (!mapPanel || mapPanel.classList.contains('is-open')) {
+            return;
+        }
+        mapToggleButton?.click();
+    });
 
     // Initialize the map
+    const isSmallScreen = window.matchMedia ? window.matchMedia('(max-width: 900px)').matches : window.innerWidth <= 900;
+
+    if (isSmallScreen && (!limitValue || limitValue > 10)) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('limit', '10');
+        params.set('page', '1');
+        const newQuery = params.toString();
+        const targetUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}`;
+        window.location.replace(targetUrl);
+        return;
+    }
+
+    const initialZoom = isSmallScreen ? 9 : 12;
     let defaultLat = 44.8378;
     let defaultLng = -0.5792;
 
@@ -27,7 +90,7 @@
         defaultLng = listingsData[0].lng;
     }
 
-    const map = L.map('map').setView([defaultLat, defaultLng], 12);
+    const map = L.map('map').setView([defaultLat, defaultLng], initialZoom);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -67,7 +130,12 @@
     });
 
     if (bounds.length > 1) {
-        map.fitBounds(bounds, { padding: [50, 50] });
+        map.fitBounds(bounds, {
+            padding: isSmallScreen ? [20, 20] : [50, 50],
+            maxZoom: isSmallScreen ? 12 : 16
+        });
+    } else if (isSmallScreen) {
+        map.setZoom(initialZoom);
     }
 
     // Search functionality
@@ -91,6 +159,9 @@
         }
         if (filterState.services?.length) {
             filterState.services.forEach(id => params.append('services[]', id));
+        }
+        if (limitValue) {
+            params.set('limit', limitValue);
         }
 
         window.location.href = BASE_URL + '/listings' + (params.toString() ? '?' + params.toString() : '');
@@ -136,11 +207,15 @@
         // Sort
         const sort = document.getElementById('sort-select').value;
         if (sort) params.set('sort', sort);
+        if (limitValue) {
+            params.set('limit', limitValue);
+        }
 
         window.location.href = BASE_URL + '/listings' + (params.toString() ? '?' + params.toString() : '');
     };
 
     window.clearFilters = function () {
+        const params = new URLSearchParams();
         // Uncheck all checkboxes
         document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
 
@@ -164,7 +239,11 @@
         servicesExpanded = false;
         rulesExpanded = false;
 
-        window.location.href = BASE_URL + '/listings';
+        if (limitValue) {
+            params.set('limit', limitValue);
+        }
+
+        window.location.href = BASE_URL + '/listings' + (params.toString() ? '?' + params.toString() : '');
     };
 
     window.toggleFilters = function () {
@@ -321,6 +400,88 @@
         const sidebar = document.getElementById('filters-sidebar');
         if (sidebar) {
             sidebar.classList.add('collapsed');
+        }
+    }
+
+    if (mapOverlay) {
+        mapOverlay.setAttribute('aria-hidden', 'true');
+    }
+    if (mobileToggleButtons.length) {
+        const updateIndicator = (btn, expanded) => {
+            btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            const indicator = btn.querySelector('.mobile-toggle-indicator');
+            if (indicator) {
+                indicator.textContent = expanded ? '−' : '+';
+            }
+        };
+
+        const setMapOverlayState = (visible) => {
+            if (!mapOverlay) {
+                return;
+            }
+            mapOverlay.classList.toggle('is-visible', visible);
+            mapOverlay.setAttribute('aria-hidden', visible ? 'false' : 'true');
+        };
+
+        mobileToggleButtons.forEach((btn) => {
+            const selector = btn.getAttribute('data-mobile-toggle');
+            if (!selector) {
+                return;
+            }
+            const panel = document.querySelector(selector);
+            if (!panel) {
+                return;
+            }
+
+            btn.addEventListener('click', () => {
+                const willOpen = !panel.classList.contains('is-open');
+                panel.classList.toggle('is-open', willOpen);
+                updateIndicator(btn, willOpen);
+                if (willOpen && selector !== '#map-panel') {
+                    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                if (selector === '#map-panel') {
+                    setMapOverlayState(willOpen);
+                    if (willOpen && map && typeof map.invalidateSize === 'function') {
+                        setTimeout(() => map.invalidateSize(), 150);
+                    }
+                    setFabState(willOpen);
+                    if (!willOpen) {
+                        updateFabVisibility();
+                    }
+                }
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992) {
+                document.querySelectorAll('#filters-sidebar, #map-panel').forEach((panel) => {
+                    panel.classList.remove('is-open');
+                });
+                mobileToggleButtons.forEach((btn) => updateIndicator(btn, false));
+                if (map && typeof map.invalidateSize === 'function') {
+                    setTimeout(() => map.invalidateSize(), 100);
+                }
+                setMapOverlayState(false);
+                setFabState(false);
+                updateFabVisibility();
+            }
+        });
+
+        if (mapOverlay && mapToggleButton) {
+            mapOverlay.addEventListener('click', () => {
+                const panel = document.querySelector('#map-panel');
+                if (!panel) {
+                    return;
+                }
+                if (panel.classList.contains('is-open')) {
+                    panel.classList.remove('is-open');
+                    updateIndicator(mapToggleButton, false);
+                    setMapOverlayState(false);
+                    setFabState(false);
+                    updateFabVisibility();
+                }
+            });
         }
     }
 })();

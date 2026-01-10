@@ -11,6 +11,7 @@
     const config = configScript ? JSON.parse(configScript.textContent || '{}') : {};
     const availabilityPeriods = Array.isArray(config.availability) ? config.availability : [];
     const applyBaseUrl = config.applyUrl || '';
+    const mapConfig = config.map || null;
 
     document.addEventListener('DOMContentLoaded', function() {
         const calendarEl = document.getElementById('availability-calendar');
@@ -20,6 +21,7 @@
 
         if (!calendarEl || !monthLabel || navButtons.length === 0) {
             initListingCarousel();
+            initListingMap();
             return;
         }
 
@@ -200,6 +202,12 @@
         } catch (error) {
             console.error('Carousel initialization error:', error);
         }
+
+        try {
+            initListingMap();
+        } catch (error) {
+            console.error('Listing map initialization error:', error);
+        }
     });
 
     function initListingCarousel() {
@@ -279,8 +287,40 @@
         const parts = dateStr.split('-');
         return `${parts[2]}-${parts[1]}-${parts[0]}`;
     }
-})();
 
+    function initListingMap() {
+        if (!mapConfig || typeof L === 'undefined') {
+            return;
+        }
+
+        const mapElement = document.getElementById('listing-map');
+        if (!mapElement) {
+            return;
+        }
+
+        const lat = parseFloat(mapConfig.lat);
+        const lng = parseFloat(mapConfig.lng);
+
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+            return;
+        }
+
+        const map = L.map(mapElement, {
+            zoomControl: false,
+        }).setView([lat, lng], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18,
+        }).addTo(map);
+
+        L.marker([lat, lng]).addTo(map).bindPopup(mapConfig.title || 'Listing');
+
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+        setTimeout(() => map.invalidateSize(), 200);
+    }
+})();
 
 
 

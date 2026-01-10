@@ -8,6 +8,7 @@ class ProfileController extends Controller
     private User $userModel;
     private Listing $listingModel;
     private Review $reviewModel;
+    private Exchange $exchangeModel;
 
     public function __construct()
     {
@@ -15,6 +16,7 @@ class ProfileController extends Controller
         $this->userModel = $this->model('User');
         $this->listingModel = $this->model('Listing');
         $this->reviewModel = $this->model('Review');
+        $this->exchangeModel = $this->model('Exchange');
     }
 
     public function index(): void
@@ -32,8 +34,40 @@ class ProfileController extends Controller
         $db = Database::getInstance();
         $documents = $db->fetchAll("SELECT * FROM user_document WHERE account_id = ?", [$user['id']]);
 
+        $listingStats = [
+            'total' => 0,
+            'published' => 0,
+            'draft' => 0,
+        ];
+
+        $exchangeStats = [
+            'active' => 0,
+            'upcoming' => 0,
+            'completed' => 0,
+        ];
+
+        $recentExchanges = [];
+
+        if (!empty($fullUser['profile_id'])) {
+            $hostListings = $this->listingModel->getByHostProfile($fullUser['profile_id']);
+            $listingStats['total'] = count($hostListings);
+            $listingStats['published'] = count(array_filter($hostListings, fn($listing) => ($listing['status'] ?? '') === 'published'));
+            $listingStats['draft'] = max(0, $listingStats['total'] - $listingStats['published']);
+
+            $recentExchanges = $this->exchangeModel->getExchangesForUser($user['id'], $fullUser['profile_id']);
+            foreach ($recentExchanges as $exchange) {
+                $status = $exchange['status'] ?? 'upcoming';
+                if (isset($exchangeStats[$status])) {
+                    $exchangeStats[$status]++;
+                }
+            }
+        }
+
         $this->data['user'] = $fullUser;
         $this->data['documents'] = $documents;
+        $this->data['listingStats'] = $listingStats;
+        $this->data['exchangeStats'] = $exchangeStats;
+        $this->data['recentExchanges'] = array_slice($recentExchanges, 0, 4);
 
         $this->view('profile/profile', $this->data);
     }

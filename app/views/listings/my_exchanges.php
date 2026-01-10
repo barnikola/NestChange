@@ -40,8 +40,8 @@ ob_start();
 
           <?php foreach ($exchanges as $exchange): ?>
             <tr>
-              <td><?= htmlspecialchars($exchange['booking_id'] ?? $exchange['application_id']) ?></td>
-              <td>
+              <td data-label="Exchange ID"><?= htmlspecialchars($exchange['booking_id'] ?? $exchange['application_id']) ?></td>
+              <td data-label="Accommodation">
                 <div class="exc-accommodation"><?= htmlspecialchars($exchange['listing_title'] ?? 'Listing') ?></div>
                 <div class="exc-location">
                   <?= htmlspecialchars(trim(($exchange['listing_city'] ?? '') . (empty($exchange['listing_country']) ? '' : ', ' . $exchange['listing_country']))) ?>
@@ -53,11 +53,11 @@ ob_start();
                   </div>
                 <?php endif; ?>
               </td>
-              <td><?= htmlspecialchars($exchange['date_range'] ?? 'Dates not set') ?></td>
-              <td class="<?= htmlspecialchars($exchange['status_class'] ?? '') ?>">
+              <td data-label="Dates"><?= htmlspecialchars($exchange['date_range'] ?? 'Dates not set') ?></td>
+              <td data-label="Status" class="<?= htmlspecialchars($exchange['status_class'] ?? '') ?>">
                 <?= htmlspecialchars(ucfirst($exchange['status'] ?? '')) ?>
               </td>
-              <td>
+              <td data-label="View">
                 <a href="<?= BASE_URL ?>/applications/<?= htmlspecialchars($exchange['application_id']) ?>">View Details</a>
               </td>
             </tr>

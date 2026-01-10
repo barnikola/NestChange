@@ -66,6 +66,22 @@ ob_start();
         <button class="search-btn" onclick="performSearch()" aria-label="Search">🔍</button>
     </div>
 </div>
+<div class="map-drawer-overlay" data-map-overlay aria-hidden="true"></div>
+
+<!-- Mobile controls -->
+<div class="search-mobile-controls">
+    <button type="button" class="mobile-toggle-btn" data-mobile-toggle="#filters-sidebar" aria-expanded="false">
+        Filters
+        <span class="mobile-toggle-indicator" aria-hidden="true">+</span>
+    </button>
+    <button type="button" class="mobile-toggle-btn" data-mobile-toggle="#map-panel" aria-expanded="false">
+        Map
+        <span class="mobile-toggle-indicator" aria-hidden="true">+</span>
+    </button>
+</div>
+<button type="button" class="mobile-map-fab" data-map-fab aria-controls="map-panel" aria-expanded="false">
+    Map
+</button>
 
 <!-- Main Content Area -->
 <div class="search-results-container">
@@ -317,6 +333,7 @@ ob_start();
                 <div class="pagination">
                     <?php 
                         $queryParams = $_GET;
+                        $queryParams['limit'] = $pagination['limit'] ?? ($filters['limit'] ?? 20);
                         $curPage = $pagination['current_page'];
                         $totalPages = $pagination['total_pages'];
                     ?>
@@ -340,7 +357,7 @@ ob_start();
     </main>
 
     <!-- Map Container -->
-    <aside class="map-container">
+    <aside class="map-container" id="map-panel">
         <div id="map"></div>
     </aside>
 </div>
@@ -357,7 +374,8 @@ echo json_encode([
         'room_type' => $filters['room_type'] ?? null,
         'attributes' => $filters['attributes'] ?? [],
         'services' => $filters['services'] ?? [],
-        'sort' => $filters['sort'] ?? 'newest'
+        'sort' => $filters['sort'] ?? 'newest',
+        'limit' => $filters['limit'] ?? ($pagination['limit'] ?? 20),
     ],
     'listingsData' => array_map(function($l) {
         return [

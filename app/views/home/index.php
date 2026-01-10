@@ -15,8 +15,12 @@ ob_start();
             </h1>
             <p class="hero-tagline">Explore the world for free!</p>
             <form action="/listings" method="GET" class="search-container">
-                <input type="text" name="location" class="search-input" placeholder="Search for listing">
-                <button type="button" class="search-clear" onclick="this.form.reset()">×</button>
+                <label for="home-search" class="sr-only">Search for listings</label>
+                <div class="search-field-wrapper">
+                    <input type="text" id="home-search" name="location" class="search-input" placeholder="Search for listing">
+                    <button type="button" class="search-clear" aria-label="Clear search" onclick="this.form.reset()">×</button>
+                </div>
+                <button type="submit" class="search-submit">Search</button>
             </form>
         </div>
     </section>

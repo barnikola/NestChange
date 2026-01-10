@@ -67,14 +67,14 @@ ob_start();
             <tr data-status="<?= htmlspecialchars($listing['status']) ?>" 
                 data-title="<?= htmlspecialchars(strtolower($listing['title'])) ?>"
                 data-location="<?= htmlspecialchars(strtolower($listing['city'] . ' ' . $listing['country'])) ?>">
-              <td><?= htmlspecialchars($listing['title']) ?></td>
-              <td><?= htmlspecialchars($listing['city']) ?>, <?= htmlspecialchars($listing['country']) ?></td>
-              <td><?= $listing['room_type'] === 'whole_apartment' ? 'Entire home' : 'Private room' ?></td>
-              <td class="<?= $listing['status'] === 'published' ? 'active' : 'done' ?>">
+              <td data-label="Title"><?= htmlspecialchars($listing['title']) ?></td>
+              <td data-label="Location"><?= htmlspecialchars($listing['city']) ?>, <?= htmlspecialchars($listing['country']) ?></td>
+              <td data-label="Type"><?= $listing['room_type'] === 'whole_apartment' ? 'Entire home' : 'Private room' ?></td>
+              <td data-label="Status" class="<?= $listing['status'] === 'published' ? 'active' : 'done' ?>">
                 <?= ucfirst(htmlspecialchars($listing['status'])) ?>
               </td>
-              <td>
-                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+              <td data-label="Actions" class="actions">
+                <div class="listing-actions">
                   <a href="<?= BASE_URL ?>/listings/<?= htmlspecialchars($listing['id']) ?>">View</a>
                   <a href="<?= BASE_URL ?>/listings/<?= htmlspecialchars($listing['id']) ?>/edit">Edit</a>
                   

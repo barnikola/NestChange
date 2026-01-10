@@ -414,6 +414,53 @@ a {
     background: #333;
 }
 
+.listing-map-section {
+    max-width: 1200px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 24px;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+}
+
+.listing-map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.listing-map-header h3 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.listing-map-header p {
+    margin: 4px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.map-helper-text {
+    font-size: 13px;
+    color: #9ca3af;
+    white-space: nowrap;
+}
+
+.listing-map-wrapper {
+    margin-top: 18px;
+    border-radius: 20px;
+    overflow: hidden;
+    height: 360px;
+    box-shadow: inset 0 0 0 1px rgba(229, 231, 235, 0.6);
+}
+
+#listing-map {
+    width: 100%;
+    height: 100%;
+}
+
 /* Calendar */
 
 .calendar-card {
@@ -697,22 +744,6 @@ a {
    Listing Cards
    ========================================================================== */
 
-.result-card {
-    display: flex;
-    gap: 16px;
-    padding: 16px;
-    border-radius: 12px;
-    background: #fff;
-    border: 1px solid #f0f0f0;
-    cursor: pointer;
-    transition: box-shadow 0.2s, transform 0.2s;
-}
-
-.result-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-}
-
 @media (max-width: 600px) {
     .result-card {
         flex-direction: column;
@@ -721,6 +752,14 @@ a {
     .result-image {
         width: 100%;
         height: 200px;
+    }
+
+    .listing-map-section {
+        padding: 24px;
+    }
+
+    .listing-map-wrapper {
+        height: 260px;
     }
 }
 

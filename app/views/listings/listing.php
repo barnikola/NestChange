@@ -7,7 +7,21 @@ $breadcrumbs = [
     ['label' => htmlspecialchars($listing['title'] ?? 'Listing')],
 ];
 
-$extraHead = '<link rel="stylesheet" href="/css/listings.css">';
+$extraHead = <<<HTML
+    <link rel="stylesheet" href="/css/listings.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+HTML;
+
+$hasMapCoordinates = isset($listing['latitude'], $listing['longitude']) &&
+    $listing['latitude'] !== null &&
+    $listing['longitude'] !== null &&
+    $listing['latitude'] !== '' &&
+    $listing['longitude'] !== '';
 
 // Helper function to get initials from name
 function getInitials($firstName, $lastName = ''): string {
@@ -179,6 +193,29 @@ $averageRating = $reviewCount > 0
         </a>
     </div>
 </section>
+
+<?php if ($hasMapCoordinates): ?>
+<section class="listing-map-section">
+    <div class="listing-map-header">
+        <div>
+            <h3>Explore the area</h3>
+            <p>
+                <?php
+                $locationParts = array_filter([
+                    $listing['city'] ?? null,
+                    $listing['country'] ?? null,
+                ]);
+                echo htmlspecialchars(!empty($locationParts) ? implode(', ', $locationParts) : 'Location shared after booking');
+                ?>
+            </p>
+        </div>
+        <span class="map-helper-text">Exact location shared after booking.</span>
+    </div>
+    <div class="listing-map-wrapper">
+        <div id="listing-map" role="presentation" aria-hidden="true"></div>
+    </div>
+</section>
+<?php endif; ?>
 
 <!-- Amenities & Preferences Section -->
 <section class="preferences-box">
@@ -393,6 +430,12 @@ $averageRating = $reviewCount > 0
 $listingConfig = [
     'availability' => $listing['availability'] ?? [],
     'applyUrl' => $applyUrl,
+    'map' => $hasMapCoordinates ? [
+        'lat' => (float)$listing['latitude'],
+        'lng' => (float)$listing['longitude'],
+        'title' => $listing['title'] ?? 'Listing',
+        'city' => $listing['city'] ?? '',
+    ] : null,
 ];
 ?>
 <script id="listing-config" type="application/json">
