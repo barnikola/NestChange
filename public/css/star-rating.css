@@ -1,0 +1,45 @@
+.star-display,
+.star-input {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.star-display {
+    font-size: 0;
+}
+
+.star-display .star,
+.star-input label {
+    font-size: 22px;
+    color: #d1d5db;
+    transition: color 0.15s ease-in-out, transform 0.15s ease-in-out;
+}
+
+.star-display .star.filled,
+.star-input label.filled {
+    color: #f5a623;
+}
+
+.star-input {
+    flex-direction: row-reverse;
+}
+
+.star-input input {
+    display: none;
+}
+
+.star-input label {
+    cursor: pointer;
+    user-select: none;
+}
+
+.star-input label:hover,
+.star-input label:hover ~ label,
+.star-input input:checked ~ label {
+    color: #f5a623;
+}
+
+.star-input label:active {
+    transform: scale(0.95);
+}

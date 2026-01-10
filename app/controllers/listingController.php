@@ -9,6 +9,8 @@ class ListingController extends Controller
     private Listing $listingModel;
     private ListingAttribute $attributeModel;
     private Service $serviceModel;
+    private Review $reviewModel;
+    private Exchange $exchangeModel;
 
     public function __construct()
     {
@@ -16,6 +18,8 @@ class ListingController extends Controller
         $this->listingModel = $this->model('Listing');
         $this->attributeModel = $this->model('ListingAttribute');
         $this->serviceModel = $this->model('Service');
+        $this->reviewModel = $this->model('Review');
+        $this->exchangeModel = $this->model('Exchange');
     }
 
     /**
@@ -128,6 +132,8 @@ class ListingController extends Controller
         $listing['services'] = $this->serviceModel->getForListingWithDescriptions($id);
         
         $this->data['listing'] = $listing;
+        $this->data['listingReviews'] = $this->reviewModel->getListingReviews($id);
+        $this->data['reviewForm'] = $this->buildReviewFormState($id);
         $this->view('listings/listing', $this->data);
     }
 
@@ -630,6 +636,82 @@ class ListingController extends Controller
         $this->listingModel->deleteImage($imageId);
         
         $this->json(['success' => true]);
+    }
+
+    private function buildReviewFormState(string $listingId): array
+    {
+        $state = [
+            'eligible' => false,
+            'booking_id' => null,
+            'role' => null,
+            'message' => 'Book and complete an exchange to review this listing.',
+            'csrf_token' => $this->getCsrfToken(),
+        ];
+
+        if (!Session::isLoggedIn()) {
+            $state['message'] = 'Sign in after your stay to leave a review.';
+            return $state;
+        }
+
+        $user = $this->currentUser();
+        if (!$user) {
+            return $state;
+        }
+
+        $profileId = $user['profile_id'] ?? $this->getUserProfileId();
+        if (!$profileId) {
+            $state['message'] = 'Complete your profile to leave a review.';
+            return $state;
+        }
+
+        $exchanges = $this->exchangeModel->getExchangesForUser((int) $user['id'], $profileId);
+
+        foreach ($exchanges as $exchange) {
+            if (($exchange['listing_id'] ?? null) !== $listingId) {
+                continue;
+            }
+
+            if (($exchange['role'] ?? '') !== 'guest') {
+                continue;
+            }
+
+            if (!($exchange['is_exchange'] ?? false)) {
+                $state['message'] = 'Reviews unlock once your stay is complete.';
+                continue;
+            }
+
+            $bookingId = $exchange['booking_id'] ?? null;
+            if (!$bookingId) {
+                continue;
+            }
+
+            $review = $this->reviewModel->getBookingReview($bookingId);
+            if ($this->hasSubmittedReview($review, 'guest')) {
+                $state['message'] = 'Thanks! You already reviewed this listing.';
+                continue;
+            }
+
+            $state['eligible'] = true;
+            $state['booking_id'] = $bookingId;
+            $state['role'] = 'guest';
+            $state['message'] = 'Share feedback from your completed exchange.';
+            return $state;
+        }
+
+        return $state;
+    }
+
+    private function hasSubmittedReview(?array $review, string $role): bool
+    {
+        if (!$review) {
+            return false;
+        }
+
+        if ($role === 'guest') {
+            return isset($review['listing_rating']) && (int) $review['listing_rating'] >= 1;
+        }
+
+        return isset($review['guest_rating']) && (int) $review['guest_rating'] >= 1;
     }
 
 

@@ -64,6 +64,15 @@ function getServiceIcon($name): string {
     return $icons[$key] ?? '✓';
 }
 
+function renderStarRating(float $rating, int $max = 5): string {
+    $rating = max(0, min($max, $rating));
+    $output = '';
+    for ($i = 1; $i <= $max; $i++) {
+        $output .= '<span class="star ' . ($rating >= $i ? 'filled' : '') . '">★</span>';
+    }
+    return '<div class="star-display" data-rating="' . htmlspecialchars(number_format($rating, 1, '.', ''), ENT_QUOTES, 'UTF-8') . '" data-max="' . $max . '">' . $output . '</div>';
+}
+
 // Group attributes by category
 $attributesByCategory = [];
 if (!empty($listing['attributes'])) {
@@ -77,6 +86,18 @@ if (!empty($listing['attributes'])) {
 }
 
 ob_start();
+$reviewForm = array_merge([
+    'eligible' => false,
+    'booking_id' => null,
+    'role' => null,
+    'message' => 'Book and complete an exchange to review this listing.',
+    'csrf_token' => Session::getCsrfToken(),
+], $reviewForm ?? []);
+$reviews = $listingReviews ?? [];
+$reviewCount = count($reviews);
+$averageRating = $reviewCount > 0
+    ? round(array_sum(array_map(fn($review) => (int) ($review['rating'] ?? 0), $reviews)) / $reviewCount, 1)
+    : null;
 ?>
 <!-- Listing Header with Carousel -->
 <section class="holder">
@@ -270,6 +291,102 @@ ob_start();
              <button class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/edit'">Edit Listing</button>
         <?php endif; ?>
     </div>
+</section>
+
+<!-- Reviews Section -->
+<section class="review-section" id="listing-reviews">
+    <div class="review-section-header">
+        <h3>Reviews & Ratings</h3>
+        <?php if ($averageRating !== null): ?>
+            <div class="review-summary">
+                <div class="review-score">
+                    <?php echo htmlspecialchars($averageRating); ?>
+                    <span>out of 5</span>
+                </div>
+                <div class="star-row" aria-label="Average rating <?php echo htmlspecialchars($averageRating); ?> out of 5">
+                    <?php echo renderStarRating($averageRating); ?>
+                    <span class="review-count"><?php echo $reviewCount; ?> review<?php echo $reviewCount === 1 ? '' : 's'; ?></span>
+                </div>
+            </div>
+        <?php else: ?>
+            <p class="review-hint">No reviews yet. Be the first guest to share feedback.</p>
+        <?php endif; ?>
+    </div>
+
+    <?php if ($reviewCount > 0): ?>
+        <div class="review-list">
+            <?php foreach ($reviews as $review): ?>
+                <article class="review-card">
+                    <div class="review-card-header">
+                        <div>
+                            <p class="reviewer-name">
+                                <?php if (!empty($review['reviewer_profile_id'])): ?>
+                                    <a href="<?php echo BASE_URL; ?>/profile/<?php echo htmlspecialchars($review['reviewer_profile_id']); ?>">
+                                        <?php echo htmlspecialchars($review['reviewer_name'] ?: 'Guest'); ?>
+                                    </a>
+                                <?php else: ?>
+                                    <?php echo htmlspecialchars($review['reviewer_name'] ?: 'Guest'); ?>
+                                <?php endif; ?>
+                            </p>
+                            <div class="star-row" aria-label="Rated <?php echo (int) $review['rating']; ?> out of 5">
+                                <?php echo renderStarRating((float) ($review['rating'] ?? 0)); ?>
+                                <span class="review-date">
+                                    <?php echo htmlspecialchars($review['reviewed_at'] ?? ''); ?>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <?php if (!empty($review['review'])): ?>
+                        <p class="review-text"><?php echo nl2br(htmlspecialchars($review['review'])); ?></p>
+                    <?php else: ?>
+                        <p class="review-text muted">No written comment.</p>
+                    <?php endif; ?>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="review-section-header">
+        <h4>Share your experience</h4>
+        <p class="review-hint"><?php echo htmlspecialchars($reviewForm['message']); ?></p>
+    </div>
+
+    <?php if (!empty($reviewForm['eligible']) && !empty($reviewForm['booking_id'])): ?>
+        <form method="POST"
+              action="<?php echo BASE_URL; ?>/bookings/<?php echo htmlspecialchars($reviewForm['booking_id']); ?>/reviews"
+              class="review-form">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($reviewForm['csrf_token']); ?>">
+
+            <div class="review-rating">
+                <div class="review-label">Overall rating</div>
+                <div class="star-input" role="radiogroup" aria-label="Select a star rating">
+                    <?php for ($star = 5; $star >= 1; $star--): ?>
+                        <input type="radio"
+                               id="review-star-<?php echo $star; ?>"
+                               name="rating"
+                               value="<?php echo $star; ?>"
+                               <?php echo $star === 5 ? 'required' : ''; ?>>
+                        <label for="review-star-<?php echo $star; ?>" title="<?php echo $star; ?> star<?php echo $star > 1 ? 's' : ''; ?>">★</label>
+                    <?php endfor; ?>
+                </div>
+            </div>
+
+            <label class="review-field" for="review-text">
+                <span class="review-label">Tell us about your stay (optional)</span>
+                <textarea id="review-text"
+                          name="review"
+                          rows="4"
+                          maxlength="2000"
+                          placeholder="Highlights, host communication, anything future guests should know."></textarea>
+            </label>
+
+            <small class="review-note">Your review helps other students decide if this place is right for them.</small>
+
+            <button type="submit" class="review-submit">
+                Submit review
+            </button>
+        </form>
+    <?php endif; ?>
 </section>
 
 <?php
