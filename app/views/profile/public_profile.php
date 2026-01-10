@@ -6,7 +6,12 @@ $bodyClass = 'dark-page';
 $profile = $data['profile'] ?? [];
 $listings = $data['listings'] ?? [];
 $stats = $data['stats'] ?? ['total_listings' => 0, 'published_listings' => 0];
-
+$reviewSummary = $data['reviewSummary'] ?? [
+    'as_host' => ['count' => 0, 'average' => null],
+    'as_guest' => ['count' => 0, 'average' => null],
+];
+$hostReviews = $data['hostReviews'] ?? [];
+$guestReviews = $data['guestReviews'] ?? [];
 $fullName = trim(($profile['first_name'] ?? '') . ' ' . ($profile['last_name'] ?? ''));
 $initials = strtoupper(substr($profile['first_name'] ?? '', 0, 1) . substr($profile['last_name'] ?? '', 0, 1));
 $avatar = $profile['profile_picture'] ?? null;
@@ -17,6 +22,18 @@ $breadcrumbs = [
     ['label' => 'Home', 'url' => '/'],
     ['label' => 'User Profile'],
 ];
+
+function renderProfileStars(?float $rating): string {
+    if ($rating === null) {
+        return '';
+    }
+    $rating = max(0, min(5, $rating));
+    $stars = '';
+    for ($i = 1; $i <= 5; $i++) {
+        $stars .= '<span class="star ' . ($rating >= $i ? 'filled' : '') . '">★</span>';
+    }
+    return '<div class="star-display" data-rating="' . htmlspecialchars(number_format($rating, 1, '.', ''), ENT_QUOTES, 'UTF-8') . '">' . $stars . '</div>';
+}
 
 ob_start();
 ?>
@@ -55,9 +72,38 @@ ob_start();
         </div>
     </div>
 
+    <div class="public-ratings">
+        <div class="public-rating-card">
+            <p class="rating-label">Hosting rating</p>
+            <?php if (!empty($reviewSummary['as_host']['count'])): ?>
+                <div class="rating-value">
+                    <?php echo number_format((float) $reviewSummary['as_host']['average'], 1); ?>
+                </div>
+                <?php echo renderProfileStars((float) $reviewSummary['as_host']['average']); ?>
+                <small><?php echo $reviewSummary['as_host']['count']; ?> guest review<?php echo $reviewSummary['as_host']['count'] === 1 ? '' : 's'; ?></small>
+            <?php else: ?>
+                <p class="rating-empty">No guest feedback yet.</p>
+            <?php endif; ?>
+        </div>
+        <div class="public-rating-card">
+            <p class="rating-label">Guest rating</p>
+            <?php if (!empty($reviewSummary['as_guest']['count'])): ?>
+                <div class="rating-value">
+                    <?php echo number_format((float) $reviewSummary['as_guest']['average'], 1); ?>
+                </div>
+                    <?php echo renderProfileStars((float) $reviewSummary['as_guest']['average']); ?>
+                <small><?php echo $reviewSummary['as_guest']['count']; ?> host review<?php echo $reviewSummary['as_guest']['count'] === 1 ? '' : 's'; ?></small>
+            <?php else: ?>
+                <p class="rating-empty">No host feedback yet.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+
     <p class="public-bio">
         <?php echo nl2br(htmlspecialchars($profile['bio'] ?? 'This host has not added a bio yet.')); ?>
     </p>
+
+
 
     <h2 class="public-section-title">Listings by <?php echo htmlspecialchars($fullName ?: 'this host'); ?></h2>
 

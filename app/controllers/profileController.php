@@ -7,12 +7,14 @@ class ProfileController extends Controller
 {
     private User $userModel;
     private Listing $listingModel;
+    private Review $reviewModel;
 
     public function __construct()
     {
         parent::__construct();
         $this->userModel = $this->model('User');
         $this->listingModel = $this->model('Listing');
+        $this->reviewModel = $this->model('Review');
     }
 
     public function index(): void
@@ -50,10 +52,16 @@ class ProfileController extends Controller
             'total_listings' => count($listings),
             'published_listings' => count(array_filter($listings, fn($listing) => ($listing['status'] ?? '') === 'published')),
         ];
+        $reviewSummary = $this->reviewModel->getProfileReviewSummary($profileId);
+        $hostReviews = $this->reviewModel->getProfileReviews($profileId, 'host');
+        $guestReviews = $this->reviewModel->getProfileReviews($profileId, 'guest');
 
         $this->data['profile'] = $profile;
         $this->data['listings'] = $listings;
         $this->data['stats'] = $stats;
+        $this->data['reviewSummary'] = $reviewSummary;
+        $this->data['hostReviews'] = $hostReviews;
+        $this->data['guestReviews'] = $guestReviews;
 
         $this->view('profile/public_profile', $this->data);
     }

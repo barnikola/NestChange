@@ -49,6 +49,165 @@ a {
     font-size: 14px;
 }
 
+/* Reviews */
+.review-section {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 28px;
+    margin: 30px 40px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.review-section-header h3 {
+    font-size: 22px;
+    margin: 0;
+    color: #111827;
+}
+
+.review-section-header h4 {
+    font-size: 18px;
+    margin: 24px 0 4px;
+    color: #111827;
+}
+
+.review-hint {
+    margin-top: 6px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.review-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.review-score {
+    font-size: 34px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1;
+}
+
+.review-score span {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.review-list {
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.review-card {
+    padding: 18px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #fdfdfd;
+}
+
+.reviewer-name {
+    font-weight: 600;
+    font-size: 16px;
+    margin: 0 0 6px;
+    color: #111827;
+}
+
+.review-text {
+    margin: 12px 0 0;
+    color: #374151;
+    line-height: 1.5;
+}
+
+.review-text.muted {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.review-date {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.star-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.review-count {
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.review-rating {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.review-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #374151;
+}
+
+.review-field textarea {
+    width: 100%;
+    margin-top: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 15px;
+    color: #111827;
+    min-height: 120px;
+    resize: vertical;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.review-field textarea:focus {
+    outline: none;
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.review-note {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.review-submit {
+    background: #2563EB;
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 12px 26px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.review-submit:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
 /* Tooltip styles */
 .amenity-item::after,
 .service-item::after {
