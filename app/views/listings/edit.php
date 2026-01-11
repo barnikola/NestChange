@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/helpers/CancellationPolicyHelper.php';
 $pageTitle = 'NestChange - Edit Listing';
 $activeNav = 'listings';
 $breadcrumbs = [
@@ -203,6 +204,20 @@ ob_start();
                     <label>Description</label>
                     <textarea name="description" placeholder="Describe your listing" required style="min-height: 150px;"><?= old('description', '', $listing) ?></textarea>
                     <?= getError('description', $errors ?? []) ?>
+                </div>
+
+                <div class="new-form-group <?= hasError('cancellation_policy', $errors ?? []) ?>">
+                    <label>Cancellation Policy</label>
+                     <div class="radio-row" style="flex-wrap: wrap; gap: 15px;">
+                        <?php foreach (CancellationPolicyHelper::getAll() as $policy): ?>
+                        <label title="<?= htmlspecialchars(CancellationPolicyHelper::getDescription($policy)) ?>">
+                            <input type="radio" name="cancellation_policy" value="<?= $policy ?>" <?= (isset($listing['cancellation_policy']) && $listing['cancellation_policy'] === $policy) ? 'checked' : '' ?>>
+                            <?= htmlspecialchars(CancellationPolicyHelper::getLabel($policy)) ?>
+                        </label>
+                        <?php endforeach; ?>
+                    </div>
+                    <small style="color:#666; display:block; margin-top:5px;">Select a policy to view its terms on your listing.</small>
+                    <?= getError('cancellation_policy', $errors ?? []) ?>
                 </div>
 
                 <?php if (!empty($attributes)): ?>

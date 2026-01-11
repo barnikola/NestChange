@@ -149,9 +149,30 @@ class ApplicationController extends Controller
      * Accept application
      * POST /applications/{id}/accept
      */
+    /**
+     * Accept application
+     * POST /applications/{id}/accept
+     */
     public function accept(string $id): void
     {
-        $this->updateStatus($id, 'accepted');
+        if ($this->updateStatus($id, 'accepted', false)) {
+            // Auto-withdraw other pending applications for this applicant
+            $appModel = $this->model('Application');
+            $application = $appModel->findById($id);
+            
+            if ($application) {
+                $count = $appModel->withdrawPendingExcept($application['applicant_id'], $id);
+                if ($count > 0) {
+                    // Update the flash message set by updateStatus to include this info
+                    // Since updateStatus sets a specific message, we might overwrite it or append.
+                    // Session::getFlash('success') might consume it.
+                    // Let's just set a combined message.
+                    $this->flash('success', 'Application accepted. ' . $count . ' other pending requests for this user were auto-withdrawn.');
+                }
+            }
+            
+            $this->redirect(BASE_URL . "/applications/$id");
+        }
     }
 
     /**
@@ -186,16 +207,100 @@ class ApplicationController extends Controller
     }
 
     /**
+     * Cancel application
+     * POST /applications/{id}/cancel
+     */
+    public function cancel(string $id): void
+    {
+        $this->requireAuth();
+
+        if (!$this->isPost() || !$this->verifyCsrf()) {
+            $this->flash('error', 'Invalid request.');
+            $this->redirect(BASE_URL . "/applications/$id");
+        }
+
+        $appModel = $this->model('Application');
+        // Fetches listing data including cancellation_policy
+        $application = $appModel->findById($id);
+
+        if (!$application) {
+            $this->flash('error', 'Application not found.');
+            $this->redirect(BASE_URL . '/my-applications');
+        }
+
+        $user = $this->currentUser();
+        
+        $isApplicant = ($user['id'] === ($application['applicant_id'] ?? null));
+        $isHost = (isset($user['profile_id']) && $user['profile_id'] === ($application['owner_profile_id'] ?? null));
+
+        if (!$isApplicant && !$isHost) {
+             $this->flash('error', 'You are not authorized to cancel this application.');
+             $this->redirect(BASE_URL . "/applications/$id");
+        }
+
+        // Check if status allows cancellation
+        if (!in_array($application['status'], ['pending', 'accepted'])) {
+             $this->flash('error', 'Application cannot be cancelled in its current status.');
+             $this->redirect(BASE_URL . "/applications/$id");
+        }
+
+        // Check eligibility
+        if ($isHost) {
+            // Host cancellation always full refund
+            $eligibility = [
+                'allowed' => true,
+                'refund' => 'Full',
+                'message' => 'Full refund (Cancelled by Host).'
+            ];
+        } else {
+            // Applicant cancellation - check policy
+            require_once dirname(__DIR__) . '/helpers/CancellationPolicyHelper.php';
+            $policy = $application['cancellation_policy'] ?? 'flexible'; 
+            $startDate = $application['start_date'];
+            
+            if (!$startDate) {
+                 $eligibility = ['allowed' => true, 'refund' => 'Full', 'message' => 'Full refund (No start date).'];
+            } else {
+                 $eligibility = CancellationPolicyHelper::checkEligibility($policy, $startDate);
+            }
+        }
+
+        if (!$eligibility['allowed']) {
+             $this->flash('error', $eligibility['message']);
+             $this->redirect(BASE_URL . "/applications/$id");
+        }
+
+        // Cancel
+        $reason = $this->postInput('reason', 'User requested cancellation');
+        if ($appModel->cancelApplication($id, $reason, $eligibility)) {
+             $this->flash('success', 'Application cancelled. ' . $eligibility['message']);
+             
+             // Send Email Notifications
+             require_once dirname(__DIR__) . '/services/EmailService.php';
+             $emailService = new EmailService();
+             // Refetch application to get updated status if needed, but we have enough info in $application and $eligibility
+             // We just need to pass the basic info we already fetched.
+             // Note: findById was updated to include email/names, so $application has them.
+             $emailService->sendCancellationNotification($application, $eligibility);
+             
+        } else {
+             $this->flash('error', 'Failed to cancel application.');
+        }
+
+        $this->redirect(BASE_URL . "/applications/$id");
+    }
+
+    /**
      * Helper to update status
      */
-    private function updateStatus(string $id, string $status): void
+    private function updateStatus(string $id, string $status, bool $shouldRedirect = true): bool
     {
         $this->requireAuth();
 
         if (!$this->isPost() || !$this->verifyCsrf()) {
             $this->flash('error', 'Invalid request');
-            $this->redirect(BASE_URL . "/applications/$id");
-            return;
+            if ($shouldRedirect) $this->redirect(BASE_URL . "/applications/$id");
+            return false;
         }
 
         $appModel = $this->model('Application');
@@ -203,8 +308,8 @@ class ApplicationController extends Controller
 
         if (!$application) {
             $this->flash('error', 'Application not found');
-            $this->redirect(BASE_URL . '/my-applications');
-            return;
+            if ($shouldRedirect) $this->redirect(BASE_URL . '/my-applications');
+            return false;
         }
 
         $user = $this->currentUser();
@@ -220,8 +325,8 @@ class ApplicationController extends Controller
 
         if (!$allowed) {
             $this->flash('error', 'You are not authorized to perform this action.');
-            $this->redirect(BASE_URL . "/applications/$id");
-            return;
+            if ($shouldRedirect) $this->redirect(BASE_URL . "/applications/$id");
+            return false;
         }
 
         $appModel->setStatus($id, $status);
@@ -232,6 +337,11 @@ class ApplicationController extends Controller
         }
         
         $this->flash('success', 'Application status updated to ' . ucfirst($status));
-        $this->redirect(BASE_URL . "/applications/$id");
+        
+        if ($shouldRedirect) {
+            $this->redirect(BASE_URL . "/applications/$id");
+        }
+        
+        return true;
     }
 }

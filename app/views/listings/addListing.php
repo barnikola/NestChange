@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/helpers/CancellationPolicyHelper.php';
 $pageTitle = 'NestChange - Add Listing';
 $activeNav = 'listings';
 $breadcrumbs = [
@@ -141,8 +142,23 @@ ob_start();
 
                 <div class="new-form-group <?= hasError('description', $errors ?? []) ?>">
                     <label>Description</label>
-                    <textarea name="description" placeholder="Value" required><?= old('description', '', $old ?? []) ?></textarea>
+                    <textarea id="description" name="description" placeholder="Value" required><?= old('description', '', $old ?? []) ?></textarea>
                     <?= getError('description', $errors ?? []) ?>
+                    <label id="char-error" style="color: red"></label>
+                </div>
+
+                <div class="new-form-group <?= hasError('cancellation_policy', $errors ?? []) ?>">
+                    <label>Cancellation Policy</label>
+                    <div class="radio-row" style="flex-wrap: wrap; gap: 15px;">
+                        <?php foreach (CancellationPolicyHelper::getAll() as $policy): ?>
+                        <label title="<?= htmlspecialchars(CancellationPolicyHelper::getDescription($policy)) ?>">
+                            <input type="radio" name="cancellation_policy" value="<?= $policy ?>" <?= isChecked('cancellation_policy', $policy, $old ?? []) ?: ($policy === 'flexible' ? 'checked' : '') ?>>
+                            <?= htmlspecialchars(CancellationPolicyHelper::getLabel($policy)) ?>
+                        </label>
+                        <?php endforeach; ?>
+                    </div>
+                     <small style="color:#666; display:block; margin-top:5px;">Select a policy to view its terms on your listing.</small>
+                    <?= getError('cancellation_policy', $errors ?? []) ?>
                 </div>
 
                 <?php if (!empty($attributes)): ?>
@@ -182,7 +198,7 @@ ob_start();
             </form>
         </div>
     </div>
-</section>
+</section><script src="/js/listing-creation.js" defer></script>
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/main.php';

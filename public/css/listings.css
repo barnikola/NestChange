@@ -761,6 +761,11 @@ a {
     .listing-map-wrapper {
         height: 260px;
     }
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1px;
+    }
 }
 
 /* Favorite Button */
