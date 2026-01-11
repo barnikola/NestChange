@@ -31,6 +31,42 @@ class EmailService
     }
 
     /**
+     * Send "Cancellation Notification" emails
+     */
+    public function sendCancellationNotification(array $application, array $refundDetails): void
+    {
+        // 1. Notify Guest (Applicant)
+        // We need applicant email. Application array might not have it unless joined.
+        // Assuming controller fetches it or we pass it.
+        // Let's rely on finding it or passing it. 
+        // Actually, let's update signature to accept explicit data or fetch within.
+        // Better: Controller fetches detailed info and passes 'applicant_email' and 'host_email'.
+        
+        if (!empty($application['applicant_email'])) {
+            $to = $application['applicant_email'];
+            $subject = 'Application Cancelled: ' . ($application['listing_title'] ?? 'Listing');
+            $body = "Hi " . ($application['applicant_name'] ?? 'Guest') . ",\n\n" .
+                    "Your application has been cancelled.\n" .
+                    "Refund Status: " . ($refundDetails['refund'] ?? 'None') . "\n" .
+                    "Details: " . ($refundDetails['message'] ?? '') . "\n\n" .
+                    "We hope to see you again soon!";
+            $this->logEmail($to, $subject, $body);
+        }
+
+        // 2. Notify Host
+        if (!empty($application['host_email'])) {
+            $toHost = $application['host_email'];
+            $subjectHost = 'Booking Cancelled: ' . ($application['listing_title'] ?? 'Listing');
+            $bodyHost = "Hi " . ($application['host_name'] ?? 'Host') . ",\n\n" .
+                        "A booking for your listing has been cancelled by the guest.\n" .
+                        "Guest: " . ($application['applicant_name'] ?? 'Guest') . "\n" .
+                        "Refund applied: " . ($refundDetails['refund'] ?? 'None') . "\n\n" .
+                        "Your calendar has been updated.";
+            $this->logEmail($toHost, $subjectHost, $bodyHost);
+        }
+    }
+
+    /**
      * Log email to file
      */
     private function logEmail(string $to, string $subject, string $body): void

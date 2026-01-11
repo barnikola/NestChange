@@ -195,7 +195,8 @@ class ListingController extends Controller
             ->required('room_type', 'Room type is required.')
             ->in('room_type', ['room', 'whole_apartment'], 'Invalid room type.')
             ->required('host_role', 'Host role is required.')
-            ->in('host_role', ['owner', 'renter'], 'Invalid host role.');
+            ->in('host_role', ['owner', 'renter'], 'Invalid host role.')
+            ->in('cancellation_policy', ['flexible', 'moderate', 'strict'], 'Invalid cancellation policy.');
         
         // Validate max_guests if provided
         if (!empty($data['max_guests'])) {
@@ -273,6 +274,7 @@ class ListingController extends Controller
                 'room_type' => $data['room_type'],
                 'max_guests' => $data['max_guests'] ?: null,
                 'host_role' => $data['host_role'],
+                'cancellation_policy' => $data['cancellation_policy'] ?? 'flexible',
                 'status' => 'draft',
             ]);
             
@@ -401,7 +403,8 @@ class ListingController extends Controller
             ->required('room_type', 'Room type is required.')
             ->in('room_type', ['room', 'whole_apartment'], 'Invalid room type.')
             ->required('host_role', 'Host role is required.')
-            ->in('host_role', ['owner', 'renter'], 'Invalid host role.');
+            ->in('host_role', ['owner', 'renter'], 'Invalid host role.')
+            ->in('cancellation_policy', ['flexible', 'moderate', 'strict'], 'Invalid cancellation policy.');
         
         require_once dirname(__DIR__) . '/helpers/countries.php';
 
@@ -432,6 +435,7 @@ class ListingController extends Controller
                 'room_type' => $data['room_type'],
                 'max_guests' => $data['max_guests'] ?: null,
                 'host_role' => $data['host_role'],
+                'cancellation_policy' => $data['cancellation_policy'] ?? 'flexible',
             ]);
             
             // Handle new image uploads

@@ -230,6 +230,15 @@ ob_start();
                         $step3Class = 'active';
                         $progressWidth = '100%'; 
                     }
+                    
+                    // CANCELLATION INFO
+                    require_once __DIR__ . '/../../helpers/CancellationPolicyHelper.php';
+                    $cancelPolicy = $application['cancellation_policy'] ?? 'flexible';
+                    $startDate = $application['start_date'] ?? null;
+                    $cancelEligibility = null;
+                    if ($startDate && $status === 'accepted') {
+                         $cancelEligibility = CancellationPolicyHelper::checkEligibility($cancelPolicy, $startDate);
+                    }
                 ?>
                 <div class="timeline-container">
                     <div class="timeline">
@@ -302,11 +311,144 @@ ob_start();
                             <button formaction="/applications/<?php echo $application['id']; ?>/withdraw" class="btn-outline" onclick="return confirm('Withdraw application?')">Withdraw</button>
                         <?php endif; ?>
                     </form>
+                <?php elseif ($status === 'accepted'): ?>
+                    <?php if ($isApplicant): ?>
+                        <!-- APPLICANT VIEW -->
+                        <?php if($cancelEligibility): ?>
+                            <div class="meta-group" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+                                <span class="meta-label">Cancellation Policy</span>
+                                <div class="meta-value">
+                                    <?php echo ucfirst($cancelPolicy); ?> 
+                                    <span style="font-size: 14px; color: #666; font-weight: normal;">
+                                        (<?php echo $cancelEligibility['message']; ?>)
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <form id="cancelForm" method="post" class="action-bar" action="/applications/<?php echo $application['id']; ?>/cancel">
+                                <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
+                                <button type="button" class="btn-outline btn-danger" onclick="openCancelModal()">
+                                    Cancel Booking
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <!-- Fallback -->
+                             <form method="post" class="action-bar" action="/applications/<?php echo $application['id']; ?>/cancel">
+                                <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
+                                <button type="submit" class="btn-outline btn-danger" onclick="return confirm('Are you sure you want to cancel?')">Cancel Booking</button>
+                            </form>
+                        <?php endif; ?>
+
+                    <?php elseif ($isHost): ?>
+                        <!-- HOST VIEW -->
+                        <div class="meta-group" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+                            <span class="meta-label">Actions</span>
+                            <div class="meta-value">
+                                <form id="cancelFormHost" method="post" action="/applications/<?php echo $application['id']; ?>/cancel">
+                                    <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
+                                    <button type="button" class="btn-outline btn-danger" onclick="openCancelModalHost()">
+                                        Cancel Booking (Host)
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 <?php endif; ?>
 
             </div>
         </div>
+    </section>
+
+    <!-- Cancellation Modal structure -->
+    <?php if (isset($cancelEligibility) && $cancelEligibility): ?>
+    <div id="cancelModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Cancel Application</h3>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel your booking for <strong><?php echo htmlspecialchars($application['listing_title']); ?></strong>?</p>
+                
+                <div class="policy-highlight">
+                    <p><strong>Cancellation Policy:</strong> <?php echo ucfirst($cancelPolicy); ?></p>
+                    <p class="refund-text"><?php echo $cancelEligibility['message']; ?></p>
+                </div>
+                
+                <p>This action cannot be undone.</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-modal-cancel" onclick="closeCancelModal()">Keep Application</button>
+                <button type="button" class="btn-modal-confirm" onclick="confirmCancel()">Confirm Cancel</button>
+            </div>
+        </div>
     </div>
+    <?php endif; ?>
+
+    <!-- Host Cancellation Modal -->
+    <?php if ($isHost && $status === 'accepted'): ?>
+    <div id="cancelModalHost" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Cancel Guest Booking</h3>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this booking for <strong><?php echo htmlspecialchars($application['applicant_name'] ?? 'Guest'); ?></strong>?</p>
+                
+                <div class="policy-highlight">
+                    <p><strong>Note:</strong> Cancelling a confirmed booking will trigger a <strong>Full Refund</strong> to the guest.</p>
+                </div>
+                
+                <p>Please ensure you have communicated with the guest before proceeding.</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-modal-cancel" onclick="closeCancelModalHost()">Keep Booking</button>
+                <button type="button" class="btn-modal-confirm" onclick="confirmCancelHost()">Confirm Cancel</button>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <script>
+        function openCancelModal() {
+            document.getElementById('cancelModal').classList.add('active');
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancelModal').classList.remove('active');
+        }
+
+        function confirmCancel() {
+            document.getElementById('cancelForm').submit();
+        }
+        
+        function openCancelModalHost() {
+            document.getElementById('cancelModalHost').classList.add('active');
+        }
+        function closeCancelModalHost() {
+            document.getElementById('cancelModalHost').classList.remove('active');
+        }
+        function confirmCancelHost() {
+            document.getElementById('cancelFormHost').submit();
+        }
+        
+        // Close modal if clicked outside
+        document.getElementById('cancelModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCancelModal();
+            }
+        });
+        
+        const hostModal = document.getElementById('cancelModalHost');
+        if (hostModal) {
+            hostModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeCancelModalHost();
+                }
+            });
+        }
+    </script>
+</div>
+
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/main.php';

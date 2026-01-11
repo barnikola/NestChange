@@ -111,6 +111,7 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
     $router->post('/applications/{id}/accept', ['ApplicationController', 'accept']);
     $router->post('/applications/{id}/reject', ['ApplicationController', 'reject']);
     $router->post('/applications/{id}/withdraw', ['ApplicationController', 'withdraw']);
+    $router->post('/applications/{id}/cancel', ['ApplicationController', 'cancel']);
     $router->get('/applications/list.json', ['ApplicationController', 'listJson']);
 
     // ====== API/AJAX Routes ======

@@ -133,17 +133,74 @@ class Application extends Model
 
     public function findById(string $id): ?array
     {
-        $sql = "SELECT a.*, l.title as listing_title, l.host_profile_id as owner_profile_id
+        $sql = "SELECT a.*, 
+                       l.title as listing_title, 
+                       l.host_profile_id as owner_profile_id, 
+                       l.cancellation_policy,
+                       
+                       -- Applicant Details
+                       ac.email as applicant_email,
+                       ap.first_name as applicant_name,
+                       
+                       -- Host Details
+                       hc.email as host_email,
+                       hp.first_name as host_name
+                       
                 FROM {$this->table} a
                 LEFT JOIN listing l ON a.listing_id = l.id
-                WHERE a.id = ?";
                 
+                -- Join Applicant Info
+                LEFT JOIN account ac ON a.applicant_id = ac.id
+                LEFT JOIN user_profile ap ON a.applicant_profile_id = ap.id
+                
+                -- Join Host Info
+                LEFT JOIN user_profile hp ON l.host_profile_id = hp.id
+                LEFT JOIN account hc ON hp.account_id = hc.id
+                
+                WHERE a.id = ?";
+            
         return $this->db->fetchOne($sql, [$id]);
     }
 
     public function getForDashboard(): array
     {
         return $this->findAll('created_at DESC', 5);
+    }
+
+    /**
+     * Cancel application
+     */
+    public function cancelApplication(string $id, string $reason, array $refundDetails): bool
+    {
+        // 1. Insert into application_cancellations
+        $cancellationId = $this->generateUuid();
+        $this->db->insert('application_cancellations', [
+            'id' => $cancellationId,
+            'application_id' => $id,
+            'reason' => $reason,
+            'refund_amount' => $refundDetails['refund'] ?? 'None',
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+
+        // 2. Update listing_application status
+        return $this->setStatus($id, 'cancelled');
+    }
+
+    /**
+     * Withdraw other pending applications for this applicant
+     */
+    public function withdrawPendingExcept(string $applicantId, string $excludeId): int
+    {
+        // Don't use $this->update because we need a custom WHERE clause
+        // UPDATE listing_application SET status = 'withdrawn' 
+        // WHERE applicant_id = ? AND id != ? AND status = 'pending'
+        
+        return $this->db->update(
+            $this->table,
+            ['status' => 'withdrawn'],
+            "applicant_id = ? AND id != ? AND status = 'pending'",
+            [$applicantId, $excludeId]
+        );
     }
 
     private function generateUuid(): string

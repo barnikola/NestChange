@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/helpers/CancellationPolicyHelper.php';
 $pageTitle = 'NestChange - ' . htmlspecialchars($listing['title'] ?? 'Listing Details');
 $activeNav = 'listings';
 $breadcrumbs = [
@@ -261,7 +262,26 @@ $averageRating = $reviewCount > 0
         <?php endforeach; ?>
     </div>
 </section>
+</section>
 <?php endif; ?>
+
+<!-- Cancellation Policy -->
+<section class="preferences-box">
+    <div class="preferences">
+        <h3>Cancellation Policy</h3>
+        <p class="subtext">Review the cancellation rules for this booking</p>
+    </div>
+    <div class="row" style="padding: 0 15px;">
+        <div class="col-12">
+            <p><strong><?= htmlspecialchars(CancellationPolicyHelper::getLabel($listing['cancellation_policy'] ?? 'flexible')) ?>:</strong> <?= htmlspecialchars(CancellationPolicyHelper::getDescription($listing['cancellation_policy'] ?? 'flexible')) ?></p>
+            <ul class="text-muted small" style="margin-top: 10px; padding-left: 20px;">
+                <?php foreach (CancellationPolicyHelper::getDetails($listing['cancellation_policy'] ?? 'flexible') as $detail): ?>
+                    <li><?= htmlspecialchars($detail) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
+</section>
 
 <!-- Availability Calendar -->
 <section class="calendar-card">
