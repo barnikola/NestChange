@@ -24,7 +24,7 @@ class ModeratorController extends Controller
         $listingModel = $this->model('Listing');
 
         $data = [
-            'pendingDocuments' => $pd = $userModel->countAllPendingDocuments(),
+            'pendingDocuments' => $userModel->countAllPendingDocuments(),
             'pendingListings' => $listingModel->countSearch(['status' => 'pending-approval']) + $listingModel->countSearch(['status' => 'draft'])
         ];
 
