@@ -27,7 +27,7 @@ class AdminController extends Controller
         $data = [
             'totalUsers' => $userModel->count(),
             'pendingDocuments' => $userModel->countAllPendingDocuments(),
-            'pendingListings' => $listingModel->countSearch(['status' => 'pending-approval'])
+            'pendingListings' => $listingModel->countSearch(['status' => 'pending-approval']) + $listingModel->countSearch(['status' => 'draft'])
         ];
 
         $this->view('admin/dashboard', $data);

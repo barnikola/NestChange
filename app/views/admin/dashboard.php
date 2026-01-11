@@ -42,9 +42,9 @@ ob_start();
                 <a href="/admin/documents" style="text-decoration:none; color:inherit; display:block; height:100%;">
                     <h3 style="font-size: 1.5rem; margin-bottom: 15px;">
                         📄 Verify Documents
-                        <?php if (isset($pendingDocuments) && $pendingDocuments > 0): ?>
-                            <span style="font-size: 0.8em; background: #ffcccc; color: #cc0000; padding: 2px 6px; border-radius: 10px;"><?php echo $pendingDocuments; ?> Pending</span>
-                        <?php endif; ?>
+                        <span style="font-size: 0.8em; background: <?php echo ($pendingDocuments ?? 0) > 0 ? '#ffcccc' : '#eee'; ?>; color: <?php echo ($pendingDocuments ?? 0) > 0 ? '#cc0000' : '#666'; ?>; padding: 2px 6px; border-radius: 10px;">
+                            <?php echo $pendingDocuments ?? 0; ?> Pending
+                        </span>
                     </h3>
                     <p>Check uploaded IDs and documents for verification.</p>
                 </a>
