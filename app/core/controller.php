@@ -237,6 +237,16 @@ abstract class Controller
     }
 
     /**
+     * Generate captcha value
+     *
+     * @return int
+     */
+    protected function setCaptcha(): void
+    {
+        Session::setCaptcha();
+    }
+
+    /**
      * Determine if the request likely originates from a mobile device.
      *
      * @return bool

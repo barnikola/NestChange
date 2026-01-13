@@ -20,11 +20,19 @@ class AuthController extends Controller
         if (Session::isLoggedIn()) {
             $this->redirect('/home');
         }
-        
+        $this->setCaptcha();
         $this->data['csrf_token'] = $this->getCsrfToken();
         $this->view('auth/register', $this->data);
     }
 
+    private function captcha(): bool
+    {
+        $captcha = (int) $this->postInput('captcha');
+        if($_SESSION['captcha_value'] !== $captcha){
+            return false;
+        }
+        return true;
+    }
 
     public function register(): void
     {
@@ -51,6 +59,11 @@ class AuthController extends Controller
             ->required('password_confirm', 'Please confirm your password.')
             ->matches('password_confirm', 'password', 'Passwords do not match.')
             ->required('student_status_until', 'Student status end date is required.');
+
+        if(!$this->captcha()){
+            $validator->addError('error', 'Invalid captcha');
+        }
+        $this->setCaptcha();
 
         // Check if email already exists
         if ($this->userModel->emailExists($data['email'] ?? '')) {
@@ -133,7 +146,7 @@ class AuthController extends Controller
         if (Session::isLoggedIn()) {
             $this->redirect('/home');
         }
-        
+        $this->setCaptcha();
         $this->data['csrf_token'] = $this->getCsrfToken();
         $this->view('auth/signin', $this->data);
     }
@@ -141,6 +154,7 @@ class AuthController extends Controller
 
     public function login(): void
     {
+
         if (!$this->isPost()) {
             $this->redirect('/signin');
         }
@@ -160,6 +174,11 @@ class AuthController extends Controller
             ->required('email', 'Email is required.')
             ->email('email', 'Please enter a valid email address.')
             ->required('password', 'Password is required.');
+
+        if(!$this->captcha()){
+            $validator->addError('error', 'Invalid captcha');
+        }
+        $this->setCaptcha();
 
         if ($validator->fails()) {
             $this->flash('error', $validator->firstError());

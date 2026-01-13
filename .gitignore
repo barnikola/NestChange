@@ -29,3 +29,16 @@ replay_pid*
 *.idea
 temp*
 .env
+
+public/uploads/
+public/assets/documents/
+
+*.jpg
+*.jpeg
+*.png
+*.pdf
+
+error_log
+.env
+
+app/storage/sessions

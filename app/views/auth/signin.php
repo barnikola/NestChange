@@ -75,7 +75,15 @@ ob_start();
                         <span>Remember me</span>
                     </label>
                 </div>
-                
+
+                <div class="captcha-box">
+                    <label class="form-label"> Verify you are a human: </label>
+                    <div style="gap: 10px ; margin: 10px 0 0 10px; align-items:center; display: flex; flex-direction: row">
+                        <label style="text-wrap: nowrap" class="form-label"><?= $_SESSION['captcha_x']?> + <?= $_SESSION['captcha_y']?> =</label>
+                        <input type="number" class="form-input" style="width: 6vw; " name="captcha">
+                    </div>
+                </div>
+
                 <button type="submit" class="btn-submit">Sign In</button>
                 
                 <div class="form-links">

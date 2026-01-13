@@ -3524,6 +3524,7 @@ body.chat-drawer-open {
     .edit-profile-section {
         padding: 30px 16px;
     }
+    
 }/* Cancellation Modal */
 .modal-overlay {
     position: fixed;
