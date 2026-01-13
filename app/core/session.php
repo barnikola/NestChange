@@ -221,6 +221,20 @@ class Session
     }
 
     /**
+     * Determine captcha value
+     */
+    public static function setCaptcha(): void
+    {
+        self::start();
+        $x = random_int(1, 100);
+        $y = random_int(1, 100);
+        $_SESSION['captcha_x'] = $x;
+        $_SESSION['captcha_y'] = $y;
+        $_SESSION['captcha_value'] = $x + $y;
+    }
+
+
+    /**
      * Verify CSRF token
      */
     public static function verifyCsrfToken(string $token): bool
