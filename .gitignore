@@ -40,3 +40,5 @@ public/assets/documents/
 
 error_log
 .env
+
+app/storage/sessions
