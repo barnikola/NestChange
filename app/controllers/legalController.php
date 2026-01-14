@@ -11,7 +11,6 @@ class LegalController extends Controller
         $document = $legalModel->getByType($type);
 
         if (!$document) {
-            // Alternatively, show a 404 page
             header("HTTP/1.0 404 Not Found");
             echo "Legal document not found.";
             return;

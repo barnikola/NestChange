@@ -210,7 +210,12 @@ class User extends Model
 
     public function getRecent(int $limit = 10): array
     {
-        return $this->findAll('created_at DESC', $limit);
+        $sql = "SELECT a.*, p.first_name, p.last_name 
+                FROM account a 
+                LEFT JOIN user_profile p ON a.id = p.account_id 
+                ORDER BY a.created_at DESC 
+                LIMIT {$limit}";
+        return $this->db->fetchAll($sql);
     }
 
 

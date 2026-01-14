@@ -170,6 +170,17 @@ abstract class Controller
     }
 
     /**
+     * Check if client expects JSON response
+     * 
+     * @return bool
+     */
+    protected function expectsJson(): bool
+    {
+        return isset($_SERVER['HTTP_ACCEPT']) && 
+               strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false;
+    }
+
+    /**
      * Set flash message
      * 
      * @param string $type Message type (success, error, warning, info)

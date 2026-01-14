@@ -26,6 +26,7 @@ class AdminController extends Controller
         // Dashboard Stats
         $data = [
             'totalUsers' => $userModel->count(),
+            'pendingUsers' => $userModel->countByStatus('pending'),
             'pendingDocuments' => $userModel->countAllPendingDocuments(),
             'pendingListings' => $listingModel->countSearch(['status' => 'pending-approval']) + $listingModel->countSearch(['status' => 'draft'])
         ];
@@ -38,14 +39,14 @@ class AdminController extends Controller
         $this->requireAdmin();
         $userModel = $this->model('User');
         
-        // Search Logic
         $search = $_GET['search'] ?? '';
-        $users = !empty($search) ? $userModel->search($search) : $userModel->getRecent(50); // Using getRecent or findAll
-        // Note: User model lacks findAll public wrapper maybe? getRecent calls findAll.
-        // Let's assume getRecent or implement getAll in Model if needed.
-        // Checking User model: getRecent exists.
+        $users = !empty($search) ? $userModel->search($search) : $userModel->getRecent(50);
         
-        // Pass data to view
+        if ($this->expectsJson()) {
+            $this->json($users);
+            return;
+        }
+        
         $this->view('admin/user_table', ['users' => $users, 'search' => $search]);
     }
 
