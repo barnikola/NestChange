@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management</title>
     <link rel="stylesheet" href="/css/theme.css">
     <style>
-        /* Standalone styles for the table view */
         table { width: 90%; margin: 40px auto; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
         th, td { padding: 15px; border-bottom: 1px solid #ddd; text-align: left; }
         th { background: #f5f5f5; font-weight: 600; }
@@ -23,6 +23,49 @@
         .search-form { display: flex; gap: 10px; align-items: center; }
         .search-input { padding: 8px; width: 200px; border: 1px solid #ddd; border-radius: 4px; height: 36px; box-sizing: border-box; }
         .search-btn { padding: 0 20px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer; height: 36px; box-sizing: border-box; font-size: 0.9em; }
+
+        .mobile-label { display: none; }
+        @media screen and (max-width: 768px) {
+            table, tbody, th, td, tr {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            thead {
+                display: none;
+            }
+
+            tr {
+                border: 1px solid #cccccc;
+                margin-bottom: 15px;
+                border-radius: 8px;
+            }
+
+            td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border: none;
+                border-bottom: 1px solid #eee;
+                padding: 12px 15px;
+                text-align: right;
+            }
+
+            td:before {
+                content: none; 
+                display: none;
+            }
+            .mobile-label {
+                display: inline-block;
+                font-weight: 600;
+                color: #555;
+                margin-right: auto;
+            }
+
+            .search-container { justify-content: center; }
+            .search-input { width: 100%; }
+            
+        }
     </style>
 </head>
 <body>
@@ -67,16 +110,18 @@
         <?php else: ?>
             <?php foreach ($users as $user): ?>
             <tr>
-                <td><?= htmlspecialchars($user['id']) ?></td>
-                <td><?= htmlspecialchars(($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? '')) ?></td>
-                <td><?= htmlspecialchars($user['email']) ?></td>
-                <td><?= ucfirst(htmlspecialchars($user['role'])) ?></td>
+                <td><span class="mobile-label">ID:</span> <?= htmlspecialchars($user['id']) ?></td>
+                <td><span class="mobile-label">Name:</span> <?= htmlspecialchars(($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? '')) ?></td>
+                <td><span class="mobile-label">Email:</span> <?= htmlspecialchars($user['email']) ?></td>
+                <td><span class="mobile-label">Role:</span> <?= ucfirst(htmlspecialchars($user['role'])) ?></td>
                 <td>
+                    <span class="mobile-label">Status:</span>
                     <span class="status <?= htmlspecialchars($user['status']) ?>">
                         <?= ucfirst(htmlspecialchars($user['status'])) ?>
                     </span>
                 </td>
                 <td class="actions">
+                    <span class="mobile-label">Actions:</span>
                     <?php if ($user['status'] !== 'approved'): ?>
                     <form action="/admin/users/approve" method="POST" style="display:inline;" onsubmit="return confirm('Approve this user?');">
                         <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
@@ -101,6 +146,9 @@
         <?php endif; ?>
     </tbody>
 </table>
+
+<script src="/js/admin-users.js">
+</script>
 
 </body>
 </html>

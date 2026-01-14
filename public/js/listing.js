@@ -4,7 +4,7 @@
  * - Apply button date query handling
  * - Image carousel controls
  */
-(function() {
+(function () {
     'use strict';
 
     const configScript = document.getElementById('listing-config');
@@ -13,7 +13,7 @@
     const applyBaseUrl = config.applyUrl || '';
     const mapConfig = config.map || null;
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const calendarEl = document.getElementById('availability-calendar');
         const monthLabel = document.querySelector('.calendar-month-label');
         const navButtons = document.querySelectorAll('.calendar-nav');
@@ -134,12 +134,17 @@
                     const startTime = normalizedStart.getTime();
                     const endTime = normalizedEnd.getTime();
 
-                    if (cellTime === startTime) {
-                        cell.classList.add('range-start', 'selected');
-                    } else if (cellTime === endTime) {
-                        cell.classList.add('range-end', 'selected');
-                    } else if (cellTime > startTime && cellTime < endTime) {
-                        cell.classList.add('in-range');
+                    if (startTime === endTime && cellTime === startTime) {
+                        cell.classList.add('selected');
+                    }
+                    else {
+                        if (cellTime === startTime) {
+                            cell.classList.add('range-start', 'selected');
+                        } else if (cellTime === endTime) {
+                            cell.classList.add('range-end', 'selected');
+                        } else if (cellTime > startTime && cellTime < endTime) {
+                            cell.classList.add('in-range');
+                        }
                     }
                 } else if (normalizedStart && dateStr === selectedStartDate) {
                     cell.classList.add('selected');

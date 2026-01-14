@@ -6,7 +6,6 @@ $breadcrumbs = [
     ['label' => 'Home', 'url' => '/'],
     ['label' => 'New Listing'],
 ];
-$extraHead = '<link rel="stylesheet" href="/css/listings.css">';
 
 function old($key, $default = '', $data = []) {
     return isset($data['old'][$key]) ? htmlspecialchars($data['old'][$key]) : $default;

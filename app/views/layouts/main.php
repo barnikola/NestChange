@@ -66,6 +66,8 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                                     <span><?= htmlspecialchars($navContext['user_name']) ?></span>
                                 </div>
                                 <a href="<?php echo rtrim(BASE_URL, '/'); ?>/profile" class="dropdown-item">My Profile</a>
+                                <a href="<?php echo rtrim(BASE_URL, '/'); ?>/my-applications" class="dropdown-item">My Applications</a>
+                                <a href="<?php echo rtrim(BASE_URL, '/'); ?>/received-applications" class="dropdown-item">Received Applications</a>
                                 <a href="<?php echo rtrim(BASE_URL, '/'); ?>/profile/edit" class="dropdown-item">Settings</a>
                                 <a href="<?php echo rtrim(BASE_URL, '/'); ?>/notifications" class="dropdown-item">
                                     Notifications
