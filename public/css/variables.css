@@ -14,14 +14,16 @@
     --color-accent-hover: #FFC700;
     --color-accent-active: #FFB700;
     
-    /* Neutrals - beige background with white surfaces */
-    --color-bg: #d2c4ad; /* Light beige background */
-    --color-bg-alt: #c7b89f;
+    /* Neutrals - Two-tone yellow backgrounds */
+    --color-bg: #FDC81D; /* Vibrant yellow - main background */
+    --color-bg-alt: #FAE8B6; /* Light yellow - secondary background */
+    --color-bg-header: #EBEAE6; /* Light grey-beige for header/footer */
     --color-surface: #ffffff; /* White cards/inputs */
     --color-surface-elevated: #ffffff;
-    --color-text: #040707; /* Dark grey for text */
-    --color-text-muted: #3a3a3a;
-    --color-text-subtle: #666666;
+    --color-text: #040707; /* Dark grey/black for text */
+    --color-text-muted: #1a1a1a;
+    --color-text-subtle: #333333;
+    --color-text-white: #ffffff; /* White text for contrast */
     --color-border: #FFD700; /* Gold border for inputs */
     --color-border-hover: #FFC700;
     
