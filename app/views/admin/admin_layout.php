@@ -34,9 +34,10 @@ $baseUrl = '/NestChange/public'; // Adjust if needed
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $pageTitle ?? 'Admin Panel' ?> - NestChange</title>
+    <link rel="stylesheet" href="<?= $baseUrl ?>/css/variables.css">
     <link rel="stylesheet" href="<?= $baseUrl ?>/css/panel.css">
     <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
