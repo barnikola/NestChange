@@ -26,20 +26,39 @@ class FavoriteController extends Controller
         $this->requireAuth();
         
         $user = $this->currentUser();
+        if (!$user) {
+            $this->flash('error', 'Please log in to view favorites.');
+            $this->redirect(BASE_URL . '/auth/signin');
+            return;
+        }
+        
         $profileId = $this->getUserProfileId();
         
         if (!$profileId) {
-            $this->flash('error', 'Profile not found.');
-            $this->redirect(BASE_URL . '/');
+            $this->flash('error', 'Please complete your profile first.');
+            $this->redirect(BASE_URL . '/profile');
             return;
         }
 
-        $favorites = $this->favoriteModel->getByUser($profileId);
-        
-        $this->view('favorites/index', [
-            'favorites' => $favorites,
-            'csrf_token' => $this->getCsrfToken()
-        ]);
+        try {
+            $favorites = $this->favoriteModel->getByUser($profileId);
+            
+            $pageTitle = 'My Favorites - NestChange';
+            $activeNav = 'favorites';
+            $breadcrumbs = [
+                ['label' => 'Home', 'url' => '/'],
+                ['label' => 'My Favorites'],
+            ];
+            
+            $this->view('favorites/index', [
+                'favorites' => $favorites ?? [],
+                'csrf_token' => $this->getCsrfToken()
+            ]);
+        } catch (Exception $e) {
+            error_log('Favorites index error: ' . $e->getMessage());
+            $this->flash('error', 'Unable to load favorites. Please try again.');
+            $this->redirect(BASE_URL . '/');
+        }
     }
 
     /**

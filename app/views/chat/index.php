@@ -1,4 +1,6 @@
 <?php
+require_once dirname(__DIR__, 2) . '/models/chat.php';
+
 $pageTitle = 'NestChange - Chat';
 $activeNav = 'chat';
 $bodyClass = 'chat-page';
@@ -162,6 +164,9 @@ ob_start();
                                 <div class="chat-message <?= $isOutgoing ? 'outgoing' : 'incoming' ?>">
                                     <p><?= htmlspecialchars($message['content']) ?></p>
                                     <span class="chat-message-time"><?= htmlspecialchars($messageTime) ?></span>
+                                    <?php if (Session::isLoggedIn()): ?>
+                                        <button onclick="openReportModal('message', '<?= htmlspecialchars($message['id']) ?>')" class="btn-report" style="margin-left:8px;">Report</button>
+                                    <?php endif; ?>
                                 </div>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -252,13 +257,13 @@ ob_start();
 <script id="chat-config" type="application/json">
 <?php
 echo json_encode([
-    'baseUrl' => BASE_URL,
+    'baseUrl' => rtrim(BASE_URL, '/'),
     'currentProfileId' => $currentProfileId ?? '',
     'currentChatId' => $selectedChatId ?? ''
 ]);
 ?>
 </script>
-<script src="/js/chat.js"></script>
+<script src="<?= rtrim(BASE_URL, '/') ?>/js/chat.js?v=<?= time() ?>"></script>
 
 <?php
 $content = ob_get_clean();

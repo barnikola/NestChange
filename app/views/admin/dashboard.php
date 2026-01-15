@@ -122,6 +122,16 @@ ob_start();
                     <p>Edit Terms of Service, Privacy Policy, etc.</p>
                 </a>
             </div>
+
+            <!-- Reports -->
+            <div class="card">
+                <a href="/admin/reports" style="text-decoration:none; color:inherit; display:block; height:100%;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">
+                        🚩 Reports
+                    </h3>
+                    <p>View and manage abuse, dispute, and inappropriate content reports.</p>
+                </a>
+            </div>
         </div>
         
     </div>

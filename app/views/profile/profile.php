@@ -127,12 +127,12 @@ ob_start();
             <article class="profile-card">
                 <h3>Favorite stays</h3>
                 <p>Jump back into homes you have saved.</p>
-                <a href="/favorites" class="profile-card-btn">View favorites</a>
+                <a href="<?= rtrim(BASE_URL, '/') ?>/favorites" class="profile-card-btn">View favorites</a>
             </article>
             <article class="profile-card">
                 <h3>Messages</h3>
                 <p>Continue conversations with other students.</p>
-                <a href="/chat" class="profile-card-btn">Open chat</a>
+                <a href="<?= rtrim(BASE_URL, '/') ?>/chat" class="profile-card-btn">Open chat</a>
             </article>
         </section>
 

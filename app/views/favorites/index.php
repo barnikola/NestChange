@@ -5,7 +5,7 @@ $breadcrumbs = [
     ['label' => 'Home', 'url' => '/'],
     ['label' => 'My Favorites'],
 ];
-$extraHead = '<link rel="stylesheet" href="/css/listings.css">';
+$extraHead = '<link rel="stylesheet" href="' . rtrim(BASE_URL, '/') . '/css/listings.css">';
 
 ob_start();
 ?>
@@ -107,7 +107,14 @@ ob_start();
     }
 </style>
 
-<script src="/js/favorites.js"></script>
+<script id="favorites-config" type="application/json">
+<?php
+echo json_encode([
+    'baseUrl' => rtrim(BASE_URL, '/')
+], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+?>
+</script>
+<script src="<?= rtrim(BASE_URL, '/') ?>/js/favorites.js?v=<?= time() ?>"></script>
 
 <?php
 $content = ob_get_clean();

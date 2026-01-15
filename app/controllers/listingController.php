@@ -609,11 +609,15 @@ class ListingController extends Controller
     public function myListings(): void
     {
         AuthMiddleware::requireAuth();
-        
+
         $profileId = $this->getUserProfileId();
-        $listings = $this->listingModel->getByHostProfile($profileId);
-        
-        $this->data['listings'] = $listings;
+        if ($profileId === null) {
+            $this->data['listings'] = [];
+            $this->data['no_profile'] = true;
+        } else {
+            $this->data['listings'] = $this->listingModel->getByHostProfile($profileId);
+            $this->data['no_profile'] = false;
+        }
         $this->data['csrf_token'] = $this->getCsrfToken();
         $this->view('listings/my-listings', $this->data);
     }

@@ -44,7 +44,7 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                     <!-- Chat link visible only if logged in or allow access to login via it -->
                     <a href="<?php echo rtrim(BASE_URL, '/'); ?>/chat" class="nav-link<?php echo $activeNav === 'chat' ? ' nav-link-active' : ''; ?>">Chat</a>
                     <a href="<?php echo rtrim(BASE_URL, '/'); ?>/favorites" class="nav-link">Favorites</a>
-                    <a href="#" class="nav-link">Contact</a>
+                    <a href="<?php echo rtrim(BASE_URL, '/'); ?>/contact" class="nav-link<?php echo $activeNav === 'contact' ? ' nav-link-active' : ''; ?>">Contact</a>
                 </nav>
                 <div class="header-right">
                     <?php if ($navContext['is_logged_in']): ?>
@@ -109,7 +109,9 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
         </nav>
     <?php endif; ?>
 
+
     <?php echo $content ?? ''; ?>
+    <?php include dirname(__DIR__) . '/partials/report_modal.php'; ?>
 
     <!-- Footer -->
     <footer class="footer">
