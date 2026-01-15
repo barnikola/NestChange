@@ -14,7 +14,6 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
-    <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/variables.css?v=<?= time() ?>">
     <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/theme.css?v=<?= time() ?>">
     <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/dropdown.css?v=<?= time() ?>">
     <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/star-rating.css?v=<?= time() ?>">
@@ -171,7 +170,7 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
         <div class="footer-bottom">
             <div class="footer-bottom-container">
                 <p class="footer-copyright">&copy; <?php echo date('Y'); ?> NestChange. All rights reserved.</p>
-                <p class="footer-made-with">Made with <span style="color: var(--color-accent);">❤</span> for students</p>
+                <p class="footer-made-with">Made with <span style="color: #FFD700;">❤</span> for students</p>
             </div>
         </div>
     </footer>
