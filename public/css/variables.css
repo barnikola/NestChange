@@ -1,0 +1,60 @@
+/**
+ * NestChange Design Tokens
+ * Shared variables for consistent styling across public + admin
+ */
+
+:root {
+    /* ========== Colors ========== */
+    
+    /* Brand colors */
+    --color-primary: #6366f1;
+    --color-primary-hover: #4f46e5;
+    --color-accent: #FFD700;
+    
+    /* Neutrals */
+    --color-bg: #f0f9ff;
+    --color-bg-alt: #e0f2fe;
+    --color-surface: #ffffff;
+    --color-text: #0c4a6e;
+    --color-text-muted: #475569;
+    --color-text-subtle: #64748b;
+    --color-border: #bae6fd;
+    --color-border-hover: #7dd3fc;
+    
+    /* ========== Spacing ========== */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+    
+    /* ========== Border Radius ========== */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    
+    /* ========== Shadows ========== */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    
+    /* ========== Focus Ring ========== */
+    --focus-ring-color: rgba(99, 102, 241, 0.5);
+    --focus-ring-width: 2px;
+    --focus-ring-offset: 2px;
+    --focus-ring: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
+    
+    /* ========== Motion ========== */
+    --motion-normal: 250ms;
+    --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* ========== Typography ========== */
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --font-size-xs: 12px;
+    --font-size-sm: 14px;
+    --font-size-lg: 18px;
+    --font-size-xl: 20px;
+    --font-weight-semibold: 600;
+    --line-height-normal: 1.5;
+}

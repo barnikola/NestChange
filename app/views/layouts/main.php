@@ -14,9 +14,11 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
+    <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/variables.css?v=<?= time() ?>">
     <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/theme.css?v=<?= time() ?>">
     <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/dropdown.css?v=<?= time() ?>">
     <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/star-rating.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <?php echo $extraHead; ?>
 </head>
 <body<?php echo $bodyAttr; ?>>
@@ -116,24 +118,68 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
-            <div class="footer-left">
-                <a href="<?php echo rtrim(BASE_URL, '/'); ?>">
+            <div class="footer-brand">
+                <a href="<?php echo rtrim(BASE_URL, '/'); ?>" class="footer-logo-link">
                     <img src="<?php echo rtrim(BASE_URL, '/'); ?>/assets/logo.png" alt="NestChange Logo" class="footer-logo">
                 </a>
+                <p class="footer-tagline">Exchange homes with students worldwide. Live like a local, save money, and make unforgettable connections.</p>
+                <div class="footer-social">
+                    <a href="#" class="footer-social-link" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="footer-social-link" aria-label="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="footer-social-link" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="footer-social-link" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
             </div>
-            <div class="footer-nav">
+            
+            <div class="footer-links">
                 <div class="footer-nav-column">
-                    <h4 class="footer-nav-title">Resources</h4>
+                    <h4 class="footer-nav-title">Product</h4>
                     <ul class="footer-nav-links">
-                        <li><a href="/legal/terms">Terms of Service</a></li>
-                        <li><a href="/legal/privacy">Privacy Policy</a></li>
-                        <li><a href="/legal/cookie_policy">Cookie Policy</a></li>
-                        <li><a href="/support">Support</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/listings">Browse Listings</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/listings/create">List Your Place</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>#how-it-works">How It Works</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/faq">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-nav-column">
+                    <h4 class="footer-nav-title">Company</h4>
+                    <ul class="footer-nav-links">
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/about">About Us</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/contact">Contact</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/blog">Blog</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/careers">Careers</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-nav-column">
+                    <h4 class="footer-nav-title">Legal</h4>
+                    <ul class="footer-nav-links">
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/legal/terms">Terms of Service</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/legal/privacy">Privacy Policy</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/legal/cookie_policy">Cookie Policy</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/support">Support</a></li>
                     </ul>
                 </div>
             </div>
         </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-bottom-container">
+                <p class="footer-copyright">&copy; <?php echo date('Y'); ?> NestChange. All rights reserved.</p>
+                <p class="footer-made-with">Made with <span style="color: #FFD700;">❤</span> for students</p>
+            </div>
+        </div>
     </footer>
+    <script src="<?php echo rtrim(BASE_URL, '/'); ?>/js/ui.js?v=<?= time() ?>" defer></script>
     <script src="<?php echo rtrim(BASE_URL, '/'); ?>/js/navigation.js?v=<?= time() ?>" defer></script>
     <script src="<?php echo rtrim(BASE_URL, '/'); ?>/js/stars.js?v=<?= time() ?>" defer></script>
     </body>
