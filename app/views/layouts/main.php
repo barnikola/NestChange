@@ -48,6 +48,15 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                 </nav>
                 <div class="header-right">
                     <?php if ($navContext['is_logged_in']): ?>
+                        <a href="<?php echo rtrim(BASE_URL, '/'); ?>/notifications" class="notification-bell-wrapper" title="Notifications">
+                            <svg class="notification-bell-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <?php if ($navContext['notification_count'] > 0): ?>
+                                <span class="notification-bell-badge"><?= $navContext['notification_count'] ?></span>
+                            <?php endif; ?>
+                        </a>
                         <div class="user-dropdown" tabindex="0">
                             <div class="user-avatar-btn">
                                 <?php if ($navContext['avatar']): ?>

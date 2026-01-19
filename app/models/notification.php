@@ -1,41 +1,26 @@
 <?php
 
-class Notification
-{
-    private string $storageFile;
+require_once dirname(__DIR__) . '/core/model.php';
 
-    public function __construct()
-    {
-        // Store in temp directory
-        $this->storageFile = dirname(__DIR__, 2) . '/temp/notifications.json';
-        
-        // Initialize file if needed
-        if (!file_exists($this->storageFile)) {
-            $dir = dirname($this->storageFile);
-            if (!is_dir($dir)) {
-                mkdir($dir, 0777, true);
-            }
-            file_put_contents($this->storageFile, json_encode([]));
-        }
-    }
+class Notification extends Model
+{
+    protected string $table = 'notification';
+    protected string $primaryKey = 'id';
 
     /**
      * Add a notification for a user
      */
     public function add(int $userId, string $message, string $type = 'info'): void
     {
-        $notifications = $this->load();
-        
-        $notifications[] = [
-            'id' => uniqid('notif_', true),
+        $data = [
+            'id' => $this->generateUuid(),
             'user_id' => $userId,
             'message' => $message,
             'type' => $type,
-            'created_at' => date('Y-m-d H:i:s'),
-            'read' => false
+            'is_read' => 0
         ];
         
-        $this->save($notifications);
+        $this->create($data);
     }
 
     /**
@@ -43,41 +28,44 @@ class Notification
      */
     public function getByUserId(int $userId): array
     {
-        $notifications = $this->load();
-        
-        // Filter by user_id
-        $userNotifications = array_filter($notifications, function($n) use ($userId) {
-            return isset($n['user_id']) && $n['user_id'] == $userId;
-        });
-        
-        // Sort by date desc
-        usort($userNotifications, function($a, $b) {
-            return strtotime($b['created_at']) - strtotime($a['created_at']);
-        });
-        
-        return array_values($userNotifications);
-    }
-    
-    /**
-     * Load notifications from file
-     */
-    private function load(): array
-    {
-        if (!file_exists($this->storageFile)) {
-            return [];
-        }
-        
-        $json = file_get_contents($this->storageFile);
-        $data = json_decode($json, true);
-        
-        return is_array($data) ? $data : [];
+        $sql = "SELECT * FROM {$this->table} WHERE user_id = ? ORDER BY created_at DESC";
+        return $this->db->fetchAll($sql, [$userId]);
     }
 
     /**
-     * Save notifications to file
+     * Mark a notification as read
      */
-    private function save(array $data): void
+    public function markAsRead(string $notificationId): bool
     {
-        file_put_contents($this->storageFile, json_encode($data, JSON_PRETTY_PRINT));
+        return $this->update($notificationId, ['is_read' => 1]) > 0;
+    }
+
+    /**
+     * Mark all notifications as read for a user
+     */
+    public function markAllAsRead(int $userId): int
+    {
+        $sql = "UPDATE {$this->table} SET is_read = 1 WHERE user_id = ? AND is_read = 0";
+        $stmt = $this->db->query($sql, [$userId]);
+        return $stmt->rowCount();
+    }
+
+    /**
+     * Get unread notification count for a user
+     */
+    public function getUnreadCount(int $userId): int
+    {
+        return $this->count(['user_id' => $userId, 'is_read' => 0]);
+    }
+
+    /**
+     * Generate a UUID v4
+     */
+    private function generateUuid(): string
+    {
+        $data = random_bytes(16);
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 }

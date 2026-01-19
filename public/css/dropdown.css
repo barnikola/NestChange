@@ -116,3 +116,53 @@
     border-radius: 10px;
     margin-left: auto;
 }
+
+/* Notification Bell Icon */
+.notification-bell-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: #666;
+    text-decoration: none;
+    transition: color 0.2s;
+    margin-right: 10px;
+}
+
+.notification-bell-wrapper:hover {
+    color: #333;
+}
+
+.notification-bell-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.notification-bell-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #e53935;
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .notification-bell-wrapper {
+        margin-right: 0;
+        margin-bottom: 0;
+    }
+}

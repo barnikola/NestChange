@@ -2,6 +2,7 @@
 
 require_once dirname(__DIR__) . '/core/session.php';
 require_once dirname(__DIR__) . '/core/database.php';
+require_once dirname(__DIR__) . '/models/notification.php';
 
 class ProfileHelper
 {
@@ -43,8 +44,9 @@ class ProfileHelper
             $initials .= strtoupper(substr($lastName, 0, 1));
         }
 
-        // Mock notification count for now
-        $notificationCount = 0;
+        // Get unread notification count
+        $notificationModel = new Notification();
+        $notificationCount = $notificationModel->getUnreadCount($user['id']);
 
         return [
             'is_logged_in' => true,
