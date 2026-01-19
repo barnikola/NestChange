@@ -63,25 +63,27 @@ ob_start();
             <h2 class="listings-title">Recent Listings</h2>
             <p class="listings-subtitle">Available stays</p>
             <div class="listings-grid">
-                <?php if (!empty($listings)): ?>
-                    <?php foreach ($listings as $listing): ?>
-                        <div class="listing-card">
-                            <?php if (!empty($listing['primary_image'])): ?>
-                                <img src="/assets/listing.jpg" alt="Property listing" class="listing-image">
-                            <?php endif; ?>
-                            <h3 class="listing-title">
-                                <a href="/listings/<?php echo $listing['id']; ?>" style="text-decoration: none; color: inherit;">
-                                    <?php echo htmlspecialchars($listing['title']); ?>
-                                </a>
-                            </h3>
-                            <p class="listing-description">
-                                <?php echo htmlspecialchars(substr($listing['description'] ?? '', 0, 100)); ?>...
-                            </p>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>No listings available at the moment.</p>
-                <?php endif; ?>
+                    <?php if (!empty($listings)): ?>
+                        <?php foreach ($listings as $listing): ?>
+                            <div class="listing-card">
+                                <?php if (!empty($listing['primary_image'])): ?>
+                                    <img src="/<?php echo ltrim($listing['primary_image'], '/'); ?>" alt="Property listing" class="listing-image">
+                                <?php else: ?>
+                                    <img src="/assets/listing.jpg" alt="No image available" class="listing-image">
+                                <?php endif; ?>
+                                <h3 class="listing-title">
+                                    <a href="/listings/<?php echo $listing['id']; ?>" style="text-decoration: none; color: inherit;">
+                                        <?php echo htmlspecialchars($listing['title']); ?>
+                                    </a>
+                                </h3>
+                                <p class="listing-description">
+                                    <?php echo htmlspecialchars(substr($listing['description'] ?? '', 0, 100)); ?>...
+                                </p>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p>No listings available at the moment.</p>
+                    <?php endif; ?>
             </div>
         </div>
     </section>

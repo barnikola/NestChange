@@ -3,9 +3,10 @@
 require_once dirname(__DIR__) . '/core/controller.php';
 require_once dirname(__DIR__) . '/services/EmailService.php';
 
+
 class AdminController extends Controller
 {
-    private function requireAdmin(): void
+    protected function requireAdmin(): void
     {
         $this->requireAuth();
         $userId = Session::getUserId();

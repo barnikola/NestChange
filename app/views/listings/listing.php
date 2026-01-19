@@ -171,8 +171,10 @@ $averageRating = $reviewCount > 0
                     <?php echo htmlspecialchars(($listing['host']['first_name'] ?? 'Anonymous') . ' ' . ($listing['host']['last_name'] ?? '')); ?>
                 </a>
             </h3>
-            
-            </div>
+            <!-- Report Button for Listing -->
+            <?php if (Session::isLoggedIn()): ?>
+                <button onclick="openReportModal('listing', '<?php echo htmlspecialchars($listing['id']); ?>')" style="margin-top:8px;" class="btn-report">Report Listing</button>
+            <?php endif; ?>
         </div>
     </div>
     
@@ -189,7 +191,7 @@ $averageRating = $reviewCount > 0
         <a href="<?php echo BASE_URL; ?>/profile/<?php echo htmlspecialchars($listing['host_profile_id']); ?>" class="host-action-btn">
             View Profile
         </a>
-        <a href="<?php echo BASE_URL; ?>/chat/<?php echo htmlspecialchars($listing['host_profile_id']); ?>?listing_id=<?php echo htmlspecialchars($listing['id']); ?>" class="host-action-btn primary">
+        <a href="<?php echo BASE_URL; ?>/chat" class="host-action-btn primary">
             Contact Host
         </a>
     </div>
@@ -341,11 +343,23 @@ $averageRating = $reviewCount > 0
         <?php if (!$isOwner): ?>
             <?php if (AuthMiddleware::hasAnyRole(['admin', 'moderator'])): ?>
                 <button class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/edit'" style="background: #2196F3;">Edit Listing (Mod)</button>
+                <?php if ($listing['status'] === 'draft'): ?>
+                    <form method="POST" action="/listings/<?php echo $listing['id']; ?>/publish" style="display:inline; margin-left:10px;">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(Session::getCsrfToken()); ?>">
+                        <button type="submit" class="listing" style="background: #4CAF50; color: #fff;">Publish Listing</button>
+                    </form>
+                <?php endif; ?>
             <?php else: ?>
                 <a href="/listings/<?php echo $listing['id']; ?>/apply" class="listing" id="apply-listing-btn" style="display: block; text-align: center; text-decoration: none;">Apply for listing</a>
             <?php endif; ?>
         <?php else: ?>
-             <button class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/edit'">Edit Listing</button>
+            <button class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/edit'">Edit Listing</button>
+            <?php if (AuthMiddleware::hasAnyRole(['admin', 'moderator']) && $listing['status'] === 'draft'): ?>
+                <form method="POST" action="/listings/<?php echo $listing['id']; ?>/publish" style="display:inline; margin-left:10px;">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(Session::getCsrfToken()); ?>">
+                    <button type="submit" class="listing" style="background: #4CAF50; color: #fff;">Publish Listing</button>
+                </form>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </section>

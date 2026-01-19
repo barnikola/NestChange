@@ -24,6 +24,8 @@ ob_start();
       <li><a href="#" class="filter-btn" data-status="published">Published</a></li>
       <li><a href="#" class="filter-btn" data-status="draft">Draft</a></li>
       <li><a href="#" class="filter-btn" data-status="paused">Paused</a></li>
+      <li><a href="#" class="filter-btn" data-status="archived">Archived</a></li>
+      <li><a href="#" class="filter-btn" data-status="pending-approval">Pending Approval</a></li>
     </ul>
   </div>
 
@@ -35,14 +37,18 @@ ob_start();
       </a>
     </div>
 
-    <?php if (empty($listings)): ?>
-      <div style="text-align: center; padding: 40px 20px; color: #666;">
-        <p>You haven't created any listings yet.</p>
-        <a href="<?= BASE_URL ?>/listings/create" class="details-btn" style="display: inline-block; margin-top: 20px;">
-          Create Your First Listing
-        </a>
-      </div>
-    <?php else: ?>
+    <?php if (!empty($no_profile) && $no_profile): ?>
+          <div style="text-align: center; padding: 40px 20px; color: #666;">
+            <p>You need to complete your profile before you can manage listings.</p>
+          </div>
+    <?php elseif (empty($listings)): ?>
+          <div style="text-align: center; padding: 40px 20px; color: #666;">
+            <p>You haven't created any listings yet.</p>
+            <a href="<?= BASE_URL ?>/listings/create" class="details-btn" style="display: inline-block; margin-top: 20px;">
+              Create Your First Listing
+            </a>
+          </div>
+        <?php else: ?>
       <div class="exc-images" id="listing-images">
         <?php foreach (array_slice($listings, 0, 8) as $listing): ?>
           <a href="<?= BASE_URL ?>/listings/<?= htmlspecialchars($listing['id']) ?>">

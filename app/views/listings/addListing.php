@@ -43,6 +43,13 @@ ob_start();
         </h1>
 
         <div class="form-box">
+
+            <?php if (isset($_SESSION['flash_success'])): ?>
+                <div class="alert alert-success" style="background:#e6ffe6; color:#1f8a4c; padding:10px; margin-bottom:20px;">
+                    <?= htmlspecialchars($_SESSION['flash_success']) ?>
+                    <?php unset($_SESSION['flash_success']); ?>
+                </div>
+            <?php endif; ?>
             <?php if (isset($_SESSION['flash_error'])): ?>
                 <div class="alert alert-error" style="background:#ffe6e6; color:#d00; padding:10px; margin-bottom:20px;">
                     <?= htmlspecialchars($_SESSION['flash_error']) ?>

@@ -20,8 +20,9 @@
 
     submit.addEventListener('submit', (e) => {
         let isValid = true;
-        if(description.value.lenght < 20){
+        if(description.value.length < 20){
             isValid = false;
+            err.innerHTML = 'Please add at least 20 characters';
         }
         if(!isValid){
             e.preventDefault();

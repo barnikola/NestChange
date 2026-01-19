@@ -98,6 +98,11 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
     $router->get('/profile', ['ProfileController', 'index']);
     $router->get('/profile/edit', ['ProfileController', 'edit']);
     $router->post('/profile/edit', ['ProfileController', 'update']);
+
+    // ====== Report Routes ======
+    $router->post('/report/create', ['ReportController', 'create']);
+    $router->get('/admin/reports', ['ReportController', 'index']);
+    $router->post('/admin/reports/update', ['ReportController', 'update']);
     $router->post('/profile/update', ['ProfileController', 'update']);
     $router->get('/profile/{id}', ['ProfileController', 'show']);
     $router->post('/profile/upload-document', ['ProfileController', 'uploadDocument']);

@@ -189,7 +189,13 @@ abstract class Controller
      */
     protected function flash(string $type, string $message): void
     {
-        Session::setFlash($type, $message);
+        if ($type === 'success') {
+            $_SESSION['flash_success'] = $message;
+        } elseif ($type === 'error') {
+            $_SESSION['flash_error'] = $message;
+        } else {
+            Session::setFlash($type, $message);
+        }
     }
 
     /**
@@ -212,6 +218,19 @@ abstract class Controller
     {
         if (!Session::isLoggedIn()) {
             $this->flash('error', 'Please log in to access this page.');
+            $this->redirect(BASE_URL . '/login');
+        }
+    }
+
+    /**
+     * Require user to be admin
+     * 
+     * @return void
+     */
+    protected function requireAdmin(): void
+    {
+        if (!Session::isLoggedIn() || !Session::get('is_admin')) {
+            $this->flash('error', 'Admin access required.');
             $this->redirect(BASE_URL . '/login');
         }
     }
