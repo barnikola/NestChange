@@ -114,7 +114,7 @@ ob_start();
             flex-direction: column;
             align-items: center;
             gap: 8px;
-            background: white; /* Hide line behind circle */
+            background: white;
             padding: 0 10px;
         }
 
@@ -208,11 +208,10 @@ ob_start();
                 <?php
                     $status = strtolower($application['status'] ?? 'pending');
                     
-                    // Logic to determine active step
-                    $step1Class = 'completed'; // Submitted is always done
+                    $step1Class = 'completed';
                     $step2Class = '';
                     $step3Class = '';
-                    $progressWidth = '33%'; // Default at step 1
+                    $progressWidth = '33%';
 
                     if ($status === 'pending') {
                         $step2Class = 'active';

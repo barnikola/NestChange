@@ -11,22 +11,18 @@ class NotificationController extends Controller
      */
     public function triggerApproval(): void
     {
-        // Check authentication
         $this->requireAuth();
-        
-        // Ensure POST request
+
         if (!$this->isPost()) {
              $this->json(['error' => 'Method not allowed. Use POST.'], 405);
         }
-        
-        // Get user_id from POST data
+
         $userId = $this->postInput('user_id');
         
         if (!$userId) {
             $this->json(['error' => 'User ID is required'], 400);
         }
-        
-        // Load User model
+
         $userModel = $this->model('User');
         $user = $userModel->find($userId);
         
@@ -35,15 +31,12 @@ class NotificationController extends Controller
         }
         
         try {
-            // 1. Send Account Approved Email
+
             $emailService = new EmailService();
             $emailService->sendAccountApproved($user);
-            
-            // 2. Add Notification
             $notifModel = $this->model('Notification');
             $notifModel->add($userId, "Your account has been approved! Welcome to NestChange.", 'success');
-            
-            // Return success response
+
             $this->json([
                 'success' => true, 
                 'message' => 'Approval triggered successfully. Email sent and notification created.'

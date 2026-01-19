@@ -46,7 +46,7 @@
                 justify-content: space-between;
                 align-items: center;
                 border: none;
-                border-bottom: 1px solid #eee;
+                border-bottom: 1px solid #eeeeee;
                 padding: 12px 15px;
                 text-align: right;
             }
