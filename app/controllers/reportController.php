@@ -11,6 +11,10 @@ class ReportController extends Controller
     {
         $this->requireAuth();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->json(['success' => false, 'error' => 'Invalid request (CSRF mismatch).']);
+                return;
+            }
             $reporterId = $this->getUserProfileId();
             // If no profile, fallback to account id
             if (!$reporterId) {
@@ -77,6 +81,10 @@ class ReportController extends Controller
     {
         AuthMiddleware::requireAdmin();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->json(['success' => false, 'error' => 'Invalid request (CSRF mismatch).']);
+                return;
+            }
             $id = $this->postInput('id');
             $status = $this->postInput('status');
             

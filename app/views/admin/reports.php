@@ -160,7 +160,7 @@ $reports = $reports ?? [];
                         <?php elseif ($report['reported_type'] === 'message'): ?>
                             <span style="color:#666;">Message #<?= htmlspecialchars($report['reported_id']) ?></span>
                         <?php else: ?>
-                            <?= htmlspecialchars($report['reported_id']) ?>
+                            <?php echo htmlspecialchars($report['reported_id']); ?>
                         <?php endif; ?>
                     </td>
                     <td style="padding:10px 8px;"><?= htmlspecialchars($report['reason']) ?></td>
@@ -302,6 +302,9 @@ $reports = $reports ?? [];
                 return;
             }
             
+            // Get CSRF token
+            const csrfToken = '<?= Session::getCsrfToken() ?>';
+            
             btn.disabled = true;
             btn.textContent = 'Updating...';
             
@@ -311,7 +314,7 @@ $reports = $reports ?? [];
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: 'id=' + encodeURIComponent(id) + '&status=' + encodeURIComponent(status)
+                body: 'id=' + encodeURIComponent(id) + '&status=' + encodeURIComponent(status) + '&csrf_token=' + encodeURIComponent(csrfToken)
             })
             .then(r => r.json())
             .then(res => {

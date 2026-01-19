@@ -57,7 +57,7 @@
             <?php foreach ($listings as $listing): ?>
             <tr>
                 <td>
-                    <a href="/listings/<?= $listing['id'] ?>" target="_blank" style="font-weight:bold; color:#333; text-decoration:underline;">
+                    <a href="/listings/<?= htmlspecialchars($listing['id']) ?>" target="_blank" style="font-weight:bold; color:#333; text-decoration:underline;">
                         <?= htmlspecialchars($listing['title']) ?>
                     </a>
                 </td>
@@ -68,7 +68,7 @@
                         $docs = explode(',', $listing['verification_docs']);
                         foreach ($docs as $i => $doc) {
                             $num = $i + 1;
-                            echo '<a href="/' . ltrim($doc, '/') . '" target="_blank" style="color:#007bff; margin-right:5px;">Doc ' . $num . '</a>';
+                            echo '<a href="/' . htmlspecialchars(ltrim($doc, '/')) . '" target="_blank" style="color:#007bff; margin-right:5px;">Doc ' . $num . '</a>';
                         }
                     } else {
                         echo '<span style="color:#999;">None</span>';
@@ -81,7 +81,7 @@
                         $photos = explode(',', $listing['listing_photos']);
                         foreach ($photos as $i => $photo) {
                             $num = $i + 1;
-                            echo '<a href="/' . ltrim($photo, '/') . '" target="_blank" style="color:#28a745; margin-right:5px;">Img ' . $num . '</a>';
+                            echo '<a href="/' . htmlspecialchars(ltrim($photo, '/')) . '" target="_blank" style="color:#28a745; margin-right:5px;">Img ' . $num . '</a>';
                         }
                     } else {
                         echo '<span style="color:#999;">None</span>';
@@ -98,6 +98,7 @@
                     <a href="/listings/<?= $listing['id'] ?>/edit" style="text-decoration:none; display:inline-block; padding: 7px 15px; margin-right: 5px; background: #2196F3; color: white; border-radius: 4px; font-size: 0.9em; vertical-align: middle;">Edit</a>
                     <?php if ($listing['status'] !== 'published'): ?>
                     <form action="/admin/listings/publish" method="POST" style="display:inline;" onsubmit="return confirm('Publish this listing?');">
+                        <input type="hidden" name="csrf_token" value="<?= Session::getCsrfToken() ?>">
                         <input type="hidden" name="listing_id" value="<?= $listing['id'] ?>">
                         <button type="submit" class="publish">Publish</button>
                     </form>
@@ -105,12 +106,14 @@
 
                     <?php if ($listing['status'] === 'published'): ?>
                     <form action="/admin/listings/pause" method="POST" style="display:inline;" onsubmit="return confirm('Pause this listing?');">
+                        <input type="hidden" name="csrf_token" value="<?= Session::getCsrfToken() ?>">
                         <input type="hidden" name="listing_id" value="<?= $listing['id'] ?>">
                         <button type="submit" class="pause">Pause</button>
                     </form>
                     <?php endif; ?>
 
                     <form action="/admin/listings/delete" method="POST" style="display:inline;" onsubmit="return confirm('Delete this listing?');">
+                        <input type="hidden" name="csrf_token" value="<?= Session::getCsrfToken() ?>">
                         <input type="hidden" name="listing_id" value="<?= $listing['id'] ?>">
                         <button type="submit" class="delete">Delete</button>
                     </form>

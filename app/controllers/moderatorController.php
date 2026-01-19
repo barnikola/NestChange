@@ -53,6 +53,11 @@ class ModeratorController extends Controller
     {
         $this->requireModerator();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request.');
+                header('Location: /moderator/documents');
+                exit;
+            }
             $documentId = $_POST['document_id'];
             $userId = $_POST['user_id'] ?? null;
             $action = $_POST['action']; // 'approve' or 'reject'
@@ -78,6 +83,11 @@ class ModeratorController extends Controller
     {
         $this->requireModerator();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request.');
+                header('Location: /moderator/listings');
+                exit;
+            }
             $id = $_POST['listing_id'];
             $this->model('Listing')->update($id, ['status' => 'published']);
             $this->setFlash('success', 'Listing published.');
@@ -90,6 +100,11 @@ class ModeratorController extends Controller
     {
          $this->requireModerator();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request.');
+                header('Location: /moderator/listings');
+                exit;
+            }
             $id = $_POST['listing_id'];
              $this->model('Listing')->update($id, ['status' => 'paused']);
              $this->setFlash('success', 'Listing paused.');
@@ -102,6 +117,11 @@ class ModeratorController extends Controller
     {
          $this->requireModerator();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request.');
+                header('Location: /moderator/listings');
+                exit;
+            }
             $id = $_POST['listing_id'];
              $this->model('Listing')->delete($id);
              $this->setFlash('success', 'Listing deleted.');

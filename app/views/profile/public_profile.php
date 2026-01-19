@@ -42,7 +42,7 @@ ob_start();
 <section class="public-profile-container">
     <div class="public-avatar">
         <?php if ($avatar): ?>
-            <img src="/<?php echo ltrim($avatar, '/'); ?>"
+            <img src="/<?php echo htmlspecialchars(ltrim($avatar, '/')); ?>"
                 alt="<?php echo htmlspecialchars($fullName ?: 'Host'); ?>">
         <?php else: ?>
             <div class="host-avatar-placeholder">
@@ -115,7 +115,7 @@ ob_start();
             ?>
                 <div class="public-listing-card">
                     <a href="<?php echo BASE_URL; ?>/listings/<?php echo htmlspecialchars($listing['id']); ?>">
-                        <img src="<?php echo $image ? '/' . ltrim($image, '/') : '/assets/listing.jpg'; ?>"
+                        <img src="<?php echo $image ? '/' . htmlspecialchars(ltrim($image, '/')) : '/assets/listing.jpg'; ?>"
                             alt="<?php echo htmlspecialchars($listing['title'] ?? 'Listing'); ?>">
                         <h4><?php echo htmlspecialchars($listing['title'] ?? 'Listing'); ?></h4>
                     </a>

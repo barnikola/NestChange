@@ -83,6 +83,12 @@ class ChatController extends Controller
         
         if (!$this->isPost()) {
             $this->json(['success' => false, 'error' => 'Invalid request method.'], 400);
+            return;
+        }
+
+        if (!$this->verifyCsrf()) {
+            $this->json(['success' => false, 'error' => 'Invalid request (CSRF mismatch).'], 400);
+            return;
         }
         
         $user = $this->currentUser();

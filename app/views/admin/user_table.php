@@ -124,6 +124,7 @@
                     <span class="mobile-label">Actions:</span>
                     <?php if ($user['status'] !== 'approved'): ?>
                     <form action="/admin/users/approve" method="POST" style="display:inline;" onsubmit="return confirm('Approve this user?');">
+                        <input type="hidden" name="csrf_token" value="<?= Session::getCsrfToken() ?>">
                         <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                         <button type="submit" style="background:#4CAF50; color:white;">Approve</button>
                     </form>
@@ -131,12 +132,14 @@
 
                     <?php if ($user['status'] !== 'suspended'): ?>
                     <form action="/admin/users/suspend" method="POST" style="display:inline;" onsubmit="return confirm('Suspend this user?');">
+                        <input type="hidden" name="csrf_token" value="<?= Session::getCsrfToken() ?>">
                         <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                         <button type="submit" style="background:#FF9800; color:white;">Suspend</button>
                     </form>
                     <?php endif; ?>
 
                     <form action="/admin/users/delete" method="POST" style="display:inline;" onsubmit="return confirm('Delete this user? This cannot be undone.');">
+                        <input type="hidden" name="csrf_token" value="<?= Session::getCsrfToken() ?>">
                         <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                         <button type="submit" class="delete">Delete</button>
                     </form>

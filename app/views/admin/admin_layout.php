@@ -33,7 +33,7 @@ $baseUrl = '/NestChange/public'; // Adjust if needed
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $pageTitle ?? 'Admin Panel' ?> - NestChange</title>
+    <title><?= htmlspecialchars($pageTitle ?? 'Admin Panel') ?> - NestChange</title>
     <link rel="stylesheet" href="<?= $baseUrl ?>/css/variables.css">
     <link rel="stylesheet" href="<?= $baseUrl ?>/css/panel.css">
     <!-- FontAwesome for Icons -->

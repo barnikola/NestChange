@@ -220,7 +220,9 @@ body {
 }
 
 @keyframes spinner {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Aliases for existing button classes */
@@ -1158,7 +1160,7 @@ body.nav-open {
     margin: 0;
 }
 
-.alert p + p {
+.alert p+p {
     margin-top: var(--space-xs);
 }
 
@@ -1308,10 +1310,10 @@ body.nav-open {
 .form-row {
     display: flex;
     gap: var(--space-md);
-    align-items: flex-start;
+    align-items: center;
 }
 
-.form-row > * {
+.form-row>* {
     flex: 1;
     min-width: 0;
 }
@@ -1406,12 +1408,10 @@ body.nav-open {
 
 /* Skeleton loaders */
 .skeleton {
-    background: linear-gradient(
-        90deg,
-        var(--color-bg-alt) 0%,
-        #e8e8e8 50%,
-        var(--color-bg-alt) 100%
-    );
+    background: linear-gradient(90deg,
+            var(--color-bg-alt) 0%,
+            #e8e8e8 50%,
+            var(--color-bg-alt) 100%);
     background-size: 200% 100%;
     animation: skeleton-loading 1.5s ease-in-out infinite;
     border-radius: var(--radius-sm);
@@ -1421,6 +1421,7 @@ body.nav-open {
     0% {
         background-position: 200% 0;
     }
+
     100% {
         background-position: -200% 0;
     }
@@ -1501,9 +1502,11 @@ body.nav-open {
     0% {
         transform: translateX(-100%);
     }
+
     50% {
         transform: translateX(0);
     }
+
     100% {
         transform: translateX(100%);
     }
@@ -1542,6 +1545,7 @@ body.nav-open {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1566,6 +1570,7 @@ body.nav-open {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1577,6 +1582,7 @@ body.nav-open {
         opacity: 0;
         transform: translateY(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1597,6 +1603,7 @@ body.nav-open {
         opacity: 0;
         transform: scale(0.95);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
@@ -1613,16 +1620,45 @@ body.nav-open {
     animation: fadeIn var(--motion-normal) var(--easing-out) forwards;
 }
 
-.stagger-item:nth-child(1) { animation-delay: 0ms; }
-.stagger-item:nth-child(2) { animation-delay: 50ms; }
-.stagger-item:nth-child(3) { animation-delay: 100ms; }
-.stagger-item:nth-child(4) { animation-delay: 150ms; }
-.stagger-item:nth-child(5) { animation-delay: 200ms; }
-.stagger-item:nth-child(6) { animation-delay: 250ms; }
-.stagger-item:nth-child(7) { animation-delay: 300ms; }
-.stagger-item:nth-child(8) { animation-delay: 350ms; }
-.stagger-item:nth-child(9) { animation-delay: 400ms; }
-.stagger-item:nth-child(10) { animation-delay: 450ms; }
+.stagger-item:nth-child(1) {
+    animation-delay: 0ms;
+}
+
+.stagger-item:nth-child(2) {
+    animation-delay: 50ms;
+}
+
+.stagger-item:nth-child(3) {
+    animation-delay: 100ms;
+}
+
+.stagger-item:nth-child(4) {
+    animation-delay: 150ms;
+}
+
+.stagger-item:nth-child(5) {
+    animation-delay: 200ms;
+}
+
+.stagger-item:nth-child(6) {
+    animation-delay: 250ms;
+}
+
+.stagger-item:nth-child(7) {
+    animation-delay: 300ms;
+}
+
+.stagger-item:nth-child(8) {
+    animation-delay: 350ms;
+}
+
+.stagger-item:nth-child(9) {
+    animation-delay: 400ms;
+}
+
+.stagger-item:nth-child(10) {
+    animation-delay: 450ms;
+}
 
 .file-input-wrapper {
     position: relative;
@@ -4429,8 +4465,10 @@ body.chat-drawer-open {
     .edit-profile-section {
         padding: 30px 16px;
     }
-    
-}/* ========== Modal System ========== */
+
+}
+
+/* ========== Modal System ========== */
 .modal-overlay {
     position: fixed;
     top: 0;

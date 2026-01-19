@@ -122,7 +122,7 @@ $averageRating = $reviewCount > 0
             <?php if (!empty($listing['images'])): ?>
                 <?php foreach ($listing['images'] as $index => $img): ?>
                     <img
-                        src="/<?php echo ltrim($img['image'], '/'); ?>"
+                        src="/<?php echo htmlspecialchars(ltrim($img['image'], '/')); ?>"
                         alt="<?php echo htmlspecialchars($listing['title']); ?> photo <?php echo $index + 1; ?>"
                         class="carousel-slide<?php echo $index === 0 ? ' active' : ''; ?>">
                 <?php endforeach; ?>
@@ -156,7 +156,7 @@ $averageRating = $reviewCount > 0
     <div class="host-panel-header">
         <div class="host-avatar">
             <?php if (!empty($listing['host']['profile_picture'])): ?>
-                <img src="/<?php echo ltrim($listing['host']['profile_picture'], '/'); ?>" 
+                <img src="/<?php echo htmlspecialchars(ltrim($listing['host']['profile_picture'], '/')); ?>" 
                      alt="<?php echo htmlspecialchars($listing['host']['first_name'] ?? 'Host'); ?>">
             <?php else: ?>
                 <div class="host-avatar-placeholder">
@@ -475,7 +475,8 @@ $listingConfig = [
 <script id="listing-config" type="application/json">
 <?php echo json_encode($listingConfig, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>
 </script>
-<script src="/js/listing.js" defer></script>
+<script src="/js/listing.js?v=<?= time() ?>" defer></script>
+<script src="/js/favorites.js?v=<?= time() ?>" defer></script>
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/main.php';

@@ -73,6 +73,11 @@ class AdminController extends Controller
     {
         $this->requireAdmin();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request (CSRF check failed).');
+                header('Location: /admin/users');
+                exit;
+            }
             $userId = $_POST['user_id'];
             $userModel = $this->model('User');
             
@@ -102,6 +107,11 @@ class AdminController extends Controller
     {
         $this->requireAdmin();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request.');
+                header('Location: /admin/users');
+                exit;
+            }
             $userId = $_POST['user_id'];
             $this->model('User')->updateStatus($userId, 'suspended');
              $this->setFlash('success', 'User suspended.');
@@ -114,6 +124,11 @@ class AdminController extends Controller
     {
         $this->requireAdmin();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request.');
+                header('Location: /admin/users');
+                exit;
+            }
             $userId = $_POST['user_id'];
             $this->model('User')->delete($userId);
             $this->setFlash('success', 'User deleted.');
@@ -126,6 +141,11 @@ class AdminController extends Controller
     {
         $this->requireAdmin();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request.');
+                header('Location: /admin/documents');
+                exit;
+            }
             $documentId = $_POST['document_id'];
             $userId = $_POST['user_id'] ?? null;
             $action = $_POST['action']; // 'approve' or 'reject'
@@ -158,6 +178,11 @@ class AdminController extends Controller
     {
         $this->requireAdmin();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request.');
+                header('Location: /admin/listings');
+                exit;
+            }
             $id = $_POST['listing_id']; // or from route param
             // Assuming Listing model has updateStatus or similar. 
             // Previous code used delete/update logic directly in view? No, Listing model exists.
@@ -174,6 +199,11 @@ class AdminController extends Controller
     {
          $this->requireAdmin();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request.');
+                header('Location: /admin/listings');
+                exit;
+            }
             $id = $_POST['listing_id'];
              $this->model('Listing')->update($id, ['status' => 'paused']); // or 'inactive'
              $this->setFlash('success', 'Listing paused.');
@@ -186,6 +216,11 @@ class AdminController extends Controller
     {
          $this->requireAdmin();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request.');
+                header('Location: /admin/listings');
+                exit;
+            }
             $id = $_POST['listing_id'];
              $this->model('Listing')->delete($id);
              $this->setFlash('success', 'Listing deleted.');
@@ -222,6 +257,11 @@ class AdminController extends Controller
     {
         $this->requireAdmin();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request.');
+                header('Location: /admin/legal');
+                exit;
+            }
             $type = $_POST['type'];
             $title = $_POST['title'];
             $content = $_POST['content'];

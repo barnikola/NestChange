@@ -175,7 +175,7 @@ ob_start();
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="/applications/<?php echo $app['id']; ?>" class="btn-sm">Review</a>
+                                        <a href="/applications/<?php echo htmlspecialchars($app['id']); ?>" class="btn-sm">Review</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

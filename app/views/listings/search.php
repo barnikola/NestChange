@@ -286,14 +286,14 @@ ob_start();
                              onclick="window.location.href='<?php echo BASE_URL; ?>/listings/<?php echo htmlspecialchars($listing['id']); ?>'">
                         <div class="result-image">
                             <?php if (!empty($listing['primary_image'])): ?>
-                                <img src="/<?php echo ltrim($listing['primary_image'], '/'); ?>" 
+                                <img src="/<?php echo htmlspecialchars(ltrim($listing['primary_image'], '/')); ?>" 
                                      alt="<?php echo htmlspecialchars($listing['title']); ?>">
                             <?php else: ?>
                                 <img src="/assets/listing.jpg" alt="<?php echo htmlspecialchars($listing['title']); ?>">
                             <?php endif; ?>
                             <button class="btn-favorite <?php echo !empty($listing['is_favorited']) ? 'favorited' : ''; ?>" 
                                     onclick="event.stopPropagation(); toggleFavorite(this, '<?php echo $listing['id']; ?>')"
-                                    data-listing-id="<?php echo $listing['id']; ?>"
+                                    data-listing-id="<?php echo htmlspecialchars($listing['id']); ?>"
                                     title="<?php echo !empty($listing['is_favorited']) ? 'Remove from favorites' : 'Add to favorites'; ?>">
                                 <?php echo !empty($listing['is_favorited']) ? '❤️' : '♡'; ?>
                             </button>
@@ -391,7 +391,7 @@ echo json_encode([
 ?>
 </script>
 <script src="/js/listings-filters.js"></script>
-<script src="/js/favorites.js"></script>
+<script src="/js/favorites.js?v=<?= time() ?>"></script>
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/main.php';

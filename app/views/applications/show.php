@@ -304,10 +304,10 @@ ob_start();
                         <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
                         
                         <?php if ($isHost): ?>
-                            <button formaction="/applications/<?php echo $application['id']; ?>/accept" class="btn-submit" onclick="return confirm('Accept this application?')">Accept</button>
-                            <button formaction="/applications/<?php echo $application['id']; ?>/reject" class="btn-outline btn-danger" onclick="return confirm('Reject this application?')">Reject</button>
+                            <button formaction="/applications/<?php echo htmlspecialchars($application['id']); ?>/accept" class="btn-submit" onclick="return confirm('Accept this application?')">Accept</button>
+                            <button formaction="/applications/<?php echo htmlspecialchars($application['id']); ?>/reject" class="btn-outline btn-danger" onclick="return confirm('Reject this application?')">Reject</button>
                         <?php elseif ($isApplicant): ?>
-                            <button formaction="/applications/<?php echo $application['id']; ?>/withdraw" class="btn-outline" onclick="return confirm('Withdraw application?')">Withdraw</button>
+                            <button formaction="/applications/<?php echo htmlspecialchars($application['id']); ?>/withdraw" class="btn-outline" onclick="return confirm('Withdraw application?')">Withdraw</button>
                         <?php endif; ?>
                     </form>
                 <?php elseif ($status === 'accepted'): ?>
@@ -332,7 +332,7 @@ ob_start();
                             </form>
                         <?php else: ?>
                             <!-- Fallback -->
-                             <form method="post" class="action-bar" action="/applications/<?php echo $application['id']; ?>/cancel">
+                             <form method="post" class="action-bar" action="/applications/<?php echo htmlspecialchars($application['id']); ?>/cancel">
                                 <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
                                 <button type="submit" class="btn-outline btn-danger" onclick="return confirm('Are you sure you want to cancel?')">Cancel Booking</button>
                             </form>
@@ -343,7 +343,7 @@ ob_start();
                         <div class="meta-group" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
                             <span class="meta-label">Actions</span>
                             <div class="meta-value">
-                                <form id="cancelFormHost" method="post" action="/applications/<?php echo $application['id']; ?>/cancel">
+                                <form id="cancelFormHost" method="post" action="/applications/<?php echo htmlspecialchars($application['id']); ?>/cancel">
                                     <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
                                     <button type="button" class="btn-outline btn-danger" onclick="openCancelModalHost()">
                                         Cancel Booking (Host)

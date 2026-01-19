@@ -86,14 +86,15 @@
                     </span>
                 </td>
                 <td class="actions" style="display:flex; gap:5px;">
-                    <a href="/<?= ltrim($doc['document_path'] ?? '#', '/') ?>" target="_blank" style="text-decoration:none;">
+                    <a href="/<?= htmlspecialchars(ltrim($doc['document_path'] ?? '#', '/')) ?>" target="_blank" style="text-decoration:none;">
                         <button type="button" class="view-btn">View</button>
                     </a>
                     
                     <?php if (($doc['document_status'] ?? 'pending') !== 'approved'): ?>
                     <form action="/admin/documents/approve" method="POST" style="display:inline;" onsubmit="return confirm('Approve this document?');">
-                        <input type="hidden" name="document_id" value="<?= $doc['id'] ?>">
-                        <input type="hidden" name="user_id" value="<?= $doc['account_id'] ?>">
+                        <input type="hidden" name="csrf_token" value="<?= Session::getCsrfToken() ?>">
+                        <input type="hidden" name="document_id" value="<?= htmlspecialchars($doc['id']) ?>">
+                        <input type="hidden" name="user_id" value="<?= htmlspecialchars($doc['account_id']) ?>">
                         <input type="hidden" name="action" value="approve">
                         <button type="submit" class="approve">Approve</button>
                     </form>
@@ -101,8 +102,9 @@
                     
                     <?php if (($doc['document_status'] ?? 'pending') !== 'rejected'): ?>
                     <form action="/admin/documents/approve" method="POST" style="display:inline;" onsubmit="return confirm('Reject this document?');">
-                        <input type="hidden" name="document_id" value="<?= $doc['id'] ?>">
-                        <input type="hidden" name="user_id" value="<?= $doc['account_id'] ?>">
+                        <input type="hidden" name="csrf_token" value="<?= Session::getCsrfToken() ?>">
+                        <input type="hidden" name="document_id" value="<?= htmlspecialchars($doc['id']) ?>">
+                        <input type="hidden" name="user_id" value="<?= htmlspecialchars($doc['account_id']) ?>">
                         <input type="hidden" name="action" value="reject">
                         <button type="submit" class="reject">Reject</button>
                     </form>

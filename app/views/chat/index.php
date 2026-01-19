@@ -259,8 +259,9 @@ ob_start();
 echo json_encode([
     'baseUrl' => rtrim(BASE_URL, '/'),
     'currentProfileId' => $currentProfileId ?? '',
-    'currentChatId' => $selectedChatId ?? ''
-]);
+    'currentChatId' => $selectedChatId ?? '',
+    'csrfToken' => Session::getCsrfToken()
+], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
 ?>
 </script>
 <script src="<?= rtrim(BASE_URL, '/') ?>/js/chat.js?v=<?= time() ?>"></script>

@@ -17,13 +17,8 @@ if (configScript) {
 
 // Fallback: detect base URL from current location
 if (!BASE_URL) {
-    const path = window.location.pathname;
-    const pathParts = path.split('/').filter(p => p);
-    if (pathParts.length > 0 && pathParts[0] !== 'favorites') {
-        BASE_URL = window.location.origin + '/' + pathParts[0];
-    } else {
-        BASE_URL = window.location.origin;
-    }
+    // If we're running at root (localhost:8081/), BASE_URL is just the origin
+    BASE_URL = window.location.origin;
 }
 
 /**

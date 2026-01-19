@@ -89,6 +89,7 @@
                     
                     <?php if (($doc['document_status'] ?? 'pending') !== 'approved'): ?>
                     <form action="/moderator/documents/approve" method="POST" style="display:inline;" onsubmit="return confirm('Approve this document?');">
+                        <input type="hidden" name="csrf_token" value="<?= Session::getCsrfToken() ?>">
                         <input type="hidden" name="document_id" value="<?= $doc['id'] ?>">
                         <input type="hidden" name="user_id" value="<?= $doc['account_id'] ?>">
                         <input type="hidden" name="action" value="approve">
@@ -98,6 +99,7 @@
                     
                     <?php if (($doc['document_status'] ?? 'pending') !== 'rejected'): ?>
                     <form action="/moderator/documents/approve" method="POST" style="display:inline;" onsubmit="return confirm('Reject this document?');">
+                        <input type="hidden" name="csrf_token" value="<?= Session::getCsrfToken() ?>">
                         <input type="hidden" name="document_id" value="<?= $doc['id'] ?>">
                         <input type="hidden" name="user_id" value="<?= $doc['account_id'] ?>">
                         <input type="hidden" name="action" value="reject">

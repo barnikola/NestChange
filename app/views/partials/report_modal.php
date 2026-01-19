@@ -15,6 +15,7 @@ require_once dirname(__DIR__, 2) . '/config.php';
         <form id="reportForm" class="report-form">
             <input type="hidden" name="reported_type" id="reported_type">
             <input type="hidden" name="reported_id" id="reported_id">
+            <input type="hidden" name="csrf_token" id="report_csrf_token" value="<?= Session::getCsrfToken() ?>">
             
             <div class="report-form-group">
                 <label for="reason" class="report-label">Reason <span class="required">*</span></label>

@@ -12,6 +12,10 @@ class FavoriteController extends Controller
 {
     private Favorite $favoriteModel;
 
+    private function debugLog($message) {
+        file_put_contents('/var/www/html/NestChange/public/debug_fav.log', date('[Y-m-d H:i:s] ') . $message . "\n", FILE_APPEND);
+    }
+
     public function __construct()
     {
         parent::__construct();
@@ -70,6 +74,7 @@ class FavoriteController extends Controller
     {
         // Check if user is logged in
         if (!Session::isLoggedIn()) {
+            $this->debugLog("User not logged in");
             if ($this->isAjax()) {
                 $this->json(['success' => false, 'error' => 'Please log in to save favorites.', 'login_required' => true], 401);
             } else {
@@ -79,8 +84,11 @@ class FavoriteController extends Controller
             return;
         }
 
+        $this->debugLog("Request ID: $id. IsAjax: " . ($this->isAjax() ? 'Yes' : 'No') . ". CSRF verify: " . ($this->verifyCsrf() ? 'Pass' : 'Fail'));
+
         // Verify CSRF for non-AJAX requests
         if (!$this->isAjax() && !$this->verifyCsrf()) {
+            $this->debugLog("CSRF Failed");
             $this->flash('error', 'Invalid request.');
             $this->redirect(BASE_URL . '/listings/' . $id);
             return;

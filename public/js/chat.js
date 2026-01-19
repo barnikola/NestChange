@@ -3,7 +3,7 @@
  * Handles chat functionality, message sending, and real-time updates
  */
 
-(function() {
+(function () {
     'use strict';
 
     // Get configuration from data attribute or global variable
@@ -17,19 +17,20 @@
     const BASE_URL = config.baseUrl;
     let currentProfileId = config.currentProfileId || '';
     let currentChatId = config.currentChatId || '';
+    const csrfToken = config.csrfToken || '';
     const isMobileViewport = () => window.matchMedia ? window.matchMedia('(max-width: 1024px)').matches : window.innerWidth <= 1024;
-    let closeMobileSidebar = () => {};
+    let closeMobileSidebar = () => { };
 
-    window.selectChat = function(chatId) {
+    window.selectChat = function (chatId) {
         window.history.pushState({}, '', BASE_URL + '/chat?chat=' + chatId);
-        
+
         document.querySelectorAll('.chat-thread').forEach(thread => {
             thread.classList.remove('active');
             if (thread.dataset.chatId === chatId) {
                 thread.classList.add('active');
             }
         });
-        
+
         fetch(BASE_URL + '/chat/details?chat_id=' + encodeURIComponent(chatId))
             .then(response => response.json())
             .then(data => {
@@ -49,11 +50,11 @@
         if (!chat || !chat.application_id) {
             return '';
         }
-        
+
         const applicationStatus = chat.application_status || null;
         const currentUserRole = chat.current_user_role || null;
         const applicationId = chat.application_id;
-        
+
         // Host can accept/decline pending applications
         if (applicationStatus === 'pending' && currentUserRole === 'host') {
             return `
@@ -75,22 +76,22 @@
                     </div>
                 </div>`;
         }
-        
+
         return '';
     }
 
     function renderChatPanel(chat, messages) {
         const panel = document.getElementById('chat-panel');
         if (!panel) return;
-        
+
         const otherName = ((chat.other_first_name || '') + ' ' + (chat.other_last_name || '')).trim() || 'Unknown User';
         const initials = getInitials(chat.other_first_name, chat.other_last_name);
-        
+
         let dateRange = '';
         if (chat.start_date && chat.end_date) {
             dateRange = ` · ${formatShortDate(chat.start_date)} – ${formatShortDate(chat.end_date)}`;
         }
-        
+
         const statusLabels = {
             'pending': 'Exchange request pending',
             'accepted': 'Host accepted the exchange',
@@ -99,7 +100,7 @@
             'cancelled': 'Exchange cancelled'
         };
         const statusLabel = statusLabels[chat.application_status] || 'No active request';
-        
+
         let messagesHtml = '';
         if (messages.length === 0) {
             messagesHtml = `<div class="chat-message outgoing"><p>Start the conversation!</p><span class="chat-message-time">Now</span></div>`;
@@ -113,9 +114,9 @@
                     </div>`;
             });
         }
-        
+
         const actionCardHtml = buildActionCardHtml(chat, otherName);
-        
+
         panel.innerHTML = `
             <header class="chat-panel-header">
                 <div class="chat-panel-participant">
@@ -126,12 +127,12 @@
                     </div>
                 </div>
                 <div class="chat-panel-actions">
-                    ${chat.listing_id 
-                        ? `<button class="chat-panel-btn" onclick="window.location.href='${BASE_URL}/listings/${escapeHtml(chat.listing_id)}'">View listing</button>`
-                        : `<button class="chat-panel-btn" disabled>View listing</button>`}
-                    ${chat.application_id 
-                        ? `<button class="chat-panel-btn" onclick="window.location.href='${BASE_URL}/applications/${escapeHtml(chat.application_id)}'">View exchange details</button>`
-                        : `<button class="chat-panel-btn" disabled>View exchange details</button>`}
+                    ${chat.listing_id
+                ? `<button class="chat-panel-btn" onclick="window.location.href='${BASE_URL}/listings/${escapeHtml(chat.listing_id)}'">View listing</button>`
+                : `<button class="chat-panel-btn" disabled>View listing</button>`}
+                    ${chat.application_id
+                ? `<button class="chat-panel-btn" onclick="window.location.href='${BASE_URL}/applications/${escapeHtml(chat.application_id)}'">View exchange details</button>`
+                : `<button class="chat-panel-btn" disabled>View exchange details</button>`}
                 </div>
             </header>
             
@@ -156,18 +157,21 @@
         updateActionPlacement();
     }
 
-    window.sendMessage = function() {
+    window.sendMessage = function () {
         const input = document.getElementById('message-input');
         if (!input) return;
-        
+
         const content = input.value.trim();
-        
+
         if (!content || !currentChatId) return;
-        
+
         const formData = new FormData();
         formData.append('chat_id', currentChatId);
         formData.append('content', content);
-        
+        if (csrfToken) {
+            formData.append('csrf_token', csrfToken);
+        }
+
         fetch(BASE_URL + '/chat/send', { method: 'POST', body: formData })
             .then(response => response.json())
             .then(data => {
@@ -190,7 +194,7 @@
     let searchTimeout = null;
     const searchInput = document.getElementById('chat-search-input');
     if (searchInput) {
-        searchInput.addEventListener('input', function(e) {
+        searchInput.addEventListener('input', function (e) {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 fetch(BASE_URL + '/chat/search?q=' + encodeURIComponent(e.target.value.trim()))
@@ -205,12 +209,12 @@
     function renderChatList(chats) {
         const list = document.getElementById('chat-thread-list');
         if (!list) return;
-        
+
         if (chats.length === 0) {
             list.innerHTML = '<div class="chat-empty-state"><p>No conversations found.</p></div>';
             return;
         }
-        
+
         list.innerHTML = chats.map(chat => {
             const isActive = chat.chat_id === currentChatId;
             const otherName = ((chat.other_first_name || '') + ' ' + (chat.other_last_name || '')).trim() || 'Unknown User';
@@ -356,7 +360,7 @@
         });
     });
 
-    document.addEventListener('keypress', function(e) {
+    document.addEventListener('keypress', function (e) {
         if (e.key === 'Enter' && e.target.id === 'message-input') {
             e.preventDefault();
             sendMessage();

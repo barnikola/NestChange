@@ -94,6 +94,7 @@
 
                     <?php if ($listing['status'] !== 'published'): ?>
                     <form action="/moderator/listings/publish" method="POST" style="display:inline;" onsubmit="return confirm('Publish this listing?');">
+                        <input type="hidden" name="csrf_token" value="<?= Session::getCsrfToken() ?>">
                         <input type="hidden" name="listing_id" value="<?= $listing['id'] ?>">
                         <button type="submit" class="publish">Publish</button>
                     </form>
@@ -101,12 +102,14 @@
 
                     <?php if ($listing['status'] === 'published'): ?>
                     <form action="/moderator/listings/pause" method="POST" style="display:inline;" onsubmit="return confirm('Pause this listing?');">
+                        <input type="hidden" name="csrf_token" value="<?= Session::getCsrfToken() ?>">
                         <input type="hidden" name="listing_id" value="<?= $listing['id'] ?>">
                         <button type="submit" class="pause">Pause</button>
                     </form>
                     <?php endif; ?>
                     
                     <form action="/moderator/listings/delete" method="POST" style="display:inline;" onsubmit="return confirm('Delete this listing?');">
+                        <input type="hidden" name="csrf_token" value="<?= Session::getCsrfToken() ?>">
                         <input type="hidden" name="listing_id" value="<?= $listing['id'] ?>">
                         <button type="submit" class="delete">Delete</button>
                     </form>
