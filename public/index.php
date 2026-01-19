@@ -175,6 +175,10 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
     // AFTER defining all routes, save them to the cache file
     // We use var_export to turn the array into PHP code
     if (getenv('APP_ENV') !== 'development') {
+        $cacheDir = dirname($cacheFile);
+        if (!is_dir($cacheDir)) {
+            mkdir($cacheDir, 0777, true);
+        }
         file_put_contents($cacheFile, '<?php return ' . var_export($router->getRoutes(), true) . ';');
     }
 }
