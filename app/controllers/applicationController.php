@@ -272,7 +272,7 @@ class ApplicationController extends Controller
             $eligibility = [
                 'allowed' => true,
                 'refund' => 'Full',
-                'message' => 'Full refund (Cancelled by Host).'
+                'message' => 'Application cancelled by Host.'
             ];
         } else {
             // Applicant cancellation - check policy
@@ -281,7 +281,7 @@ class ApplicationController extends Controller
             $startDate = $application['start_date'];
             
             if (!$startDate) {
-                 $eligibility = ['allowed' => true, 'refund' => 'Full', 'message' => 'Full refund (No start date).'];
+                 $eligibility = ['allowed' => true, 'refund' => 'Full', 'message' => 'Cancellation allowed (No start date).'];
             } else {
                  $eligibility = CancellationPolicyHelper::checkEligibility($policy, $startDate);
             }

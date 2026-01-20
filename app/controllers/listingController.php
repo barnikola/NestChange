@@ -761,17 +761,16 @@ class ListingController extends Controller
                 continue;
             }
             
-            // Generate unique filename
-            $extension = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
-            if (!$extension) {
-                $extensions = [
-                    'image/jpeg' => 'jpg',
-                    'image/png' => 'png',
-                    'image/webp' => 'webp',
-                    'image/gif' => 'gif'
-                ];
-                $extension = $extensions[$mimeType] ?? 'jpg';
-            }
+            // Generate unique filename with SAFE extension derived from MIME type
+            $extensionMap = [
+                'image/jpeg' => 'jpg',
+                'image/png' => 'png',
+                'image/webp' => 'webp',
+                'image/gif' => 'gif'
+            ];
+            
+            // Fallback or strict check
+            $extension = $extensionMap[$mimeType] ?? 'jpg';
             
             $filename = $listingId . '_' . uniqid() . '.' . $extension;
             $targetPath = $uploadDir . $filename;

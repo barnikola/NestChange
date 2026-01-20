@@ -114,6 +114,20 @@ $averageRating = $reviewCount > 0
     ? round(array_sum(array_map(fn($review) => (int) ($review['rating'] ?? 0), $reviews)) / $reviewCount, 1)
     : null;
 ?>
+<!-- Listing Status Banner for Owner/Admin/Moderator -->
+<?php 
+$currentUser = Session::getUser();
+$userProfileId = $currentUser['profile_id'] ?? null;
+$isOwner = $userProfileId && $userProfileId === $listing['host_profile_id'];
+$canViewStatus = $isOwner || AuthMiddleware::hasAnyRole(['admin', 'moderator']);
+?>
+
+<?php if ($canViewStatus): ?>
+    <div style="background: #e3f2fd; color: #0d47a1; padding: 15px; text-align: center; border-bottom: 1px solid #bbdefb; margin-bottom: 20px; font-size: 16px;">
+        Listing Status: <span style="text-transform: uppercase; font-weight: 700; color: #1565c0;"><?= htmlspecialchars($listing['status']) ?></span>
+    </div>
+<?php endif; ?>
+
 <!-- Listing Header with Carousel -->
 <section class="holder">
     <div class="listing-carousel">

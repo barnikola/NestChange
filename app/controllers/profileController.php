@@ -134,9 +134,22 @@ class ProfileController extends Controller
         $data = $this->allPost();
 
         // Validate
+        // Validate
         $validator = Validator::make($data)
             ->required('first_name', 'First name is required.')
-            ->required('last_name', 'Last name is required.');
+            ->required('last_name', 'Last name is required.')
+            ->file('id_document', [
+                'required' => false,
+                'maxSize' => 10 * 1024 * 1024,
+                'mimeTypes' => ['application/pdf', 'image/jpeg', 'image/png'],
+                'extensions' => ['pdf', 'jpg', 'jpeg', 'png']
+            ], 'ID Document must be a valid PDF or Image (max 10MB).')
+            ->file('profile_picture', [
+                'required' => false,
+                'maxSize' => 5 * 1024 * 1024,
+                'mimeTypes' => ['image/jpeg', 'image/png'],
+                'extensions' => ['jpg', 'jpeg', 'png']
+            ], 'Profile picture must be a JPG or PNG (max 5MB).');
 
         if ($validator->fails()) {
             $this->flash('error', $validator->firstError());
@@ -189,13 +202,26 @@ class ProfileController extends Controller
             return null;
         }
 
-        // Allowed file types
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
-        if (!in_array($file['type'], $allowedTypes)) {
+        // 1. Secure MIME Type Detection
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $file['tmp_name']);
+        finfo_close($finfo);
+
+        // 2. Map MIME to Extension (Strict Whitelist)
+        $extensions = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'application/pdf' => 'pdf',
+        ];
+
+        if (!isset($extensions[$mimeType])) {
+            // Should have been caught by Validator, but double check
             return null;
         }
+        
+        $extension = $extensions[$mimeType];
 
-        // Create upload directory if it doesn't exist
+        // 3. Setup Directories
         $publicDir = dirname(__DIR__, 2) . '/public';
         $uploadDir = $publicDir . '/' . ($subDir ?: 'uploads/');
 
@@ -203,14 +229,12 @@ class ProfileController extends Controller
             mkdir($uploadDir, 0755, true);
         }
 
-        // Generate unique filename
-        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $filename = uniqid() . '.' . $extension; // simpler unique id
+        // 4. Generate Safe Filename
+        $filename = uniqid('doc_', true) . '.' . $extension;
         $filepath = $uploadDir . $filename;
 
-        // Move uploaded file
+        // 5. Move File
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
-            // Return path relative to public
             return $subDir . $filename;
         }
 
