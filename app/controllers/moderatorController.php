@@ -63,15 +63,29 @@ class ModeratorController extends Controller
             $action = $_POST['action']; // 'approve' or 'reject'
             
             $userModel = $this->model('User');
+            $document = $userModel->getDocument($documentId);
+            $userId = $document['account_id'] ?? $userId; // Ensure we have userId
+
+            $docLabel = match ((int)($document['document_type_id'] ?? 0)) {
+                1 => 'Passport / ID',
+                2 => 'Student ID',
+                default => 'Document',
+            };
             
             if ($action === 'approve') {
                 if ($userModel->updateDocumentStatus($documentId, 'approved')) {
                     $this->setFlash('success', 'Document verified successfully.');
+                    if ($userId) {
+                        $this->model('Notification')->add($userId, "Your {$docLabel} has been verified successfully.", 'success');
+                    }
                 } else {
                      $this->setFlash('error', 'Failed to update document status.');
                 }
             } elseif ($action === 'reject') {
                 $userModel->updateDocumentStatus($documentId, 'rejected');
+                 if ($userId) {
+                    $this->model('Notification')->add($userId, "Your {$docLabel} verification was rejected. Please re-upload.", 'error');
+                }
                  $this->setFlash('success', 'Document rejected.');
             }
         }

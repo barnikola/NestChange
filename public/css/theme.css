@@ -4789,3 +4789,33 @@ body.chat-drawer-open {
     color: #999;
     font-size: 13px;
 }
+
+/* Document Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 0.25em 0.6em;
+    font-size: 0.75em;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 10rem;
+    margin-left: 8px;
+}
+
+.status-pending {
+    color: #856404;
+    background-color: #fff3cd;
+}
+
+.status-approved,
+.status-verified {
+    color: #155724;
+    background-color: #d4edda;
+}
+
+.status-rejected {
+    color: #721c24;
+    background-color: #f8d7da;
+}

@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Moderator - Document Verification</title>
+    <link rel="stylesheet" href="/css/variables.css">
     <link rel="stylesheet" href="/css/theme.css">
     <style>
-        table { width: 90%; margin: 40px auto; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        table { width: 90%; margin: 40px auto; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.1); font-family: var(--font-family); }
         th, td { padding: 15px; border-bottom: 1px solid #ddd; text-align: left; }
         th { background: #f5f5f5; font-weight: 600; }
         .actions button { padding: 6px 14px; margin-right: 5px; cursor: pointer; border: none; border-radius: 4px; font-size: 0.9em; transition: all 0.3s ease; }

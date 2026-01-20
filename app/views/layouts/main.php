@@ -19,6 +19,9 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
     <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/dropdown.css?v=<?= time() ?>">
     <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/star-rating.css?v=<?= time() ?>">
     <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/star-rating.css?v=<?= time() ?>">
+    <script>
+        const APP_BASE_URL = '<?php echo rtrim(BASE_URL, '/'); ?>';
+    </script>
     <?php echo $extraHead; ?>
 </head>
 <body<?php echo $bodyAttr; ?>>
@@ -94,9 +97,6 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                                 <a href="<?php echo rtrim(BASE_URL, '/'); ?>/profile/edit" class="dropdown-item">Settings</a>
                                 <a href="<?php echo rtrim(BASE_URL, '/'); ?>/notifications" class="dropdown-item">
                                     Notifications
-                                    <?php if ($navContext['notification_count'] > 0): ?>
-                                        <span class="notification-badge"><?= $navContext['notification_count'] ?></span>
-                                    <?php endif; ?>
                                 </a>
                                 <a href="<?php echo rtrim(BASE_URL, '/'); ?>/auth/logout" class="dropdown-item">Sign Out</a>
                             </div>

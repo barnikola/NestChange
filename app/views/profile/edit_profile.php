@@ -29,7 +29,7 @@ ob_start();
             <div class="edit-photo-row">
                 <div class="edit-photo-preview">
                     <?php if (!empty($user['profile_picture'])): ?>
-                        <img src="/<?= htmlspecialchars($user['profile_picture']) ?>" id="previewImg" alt="Preview">
+                        <img src="<?= htmlspecialchars($user['profile_picture']) ?>" id="previewImg" alt="Preview">
                     <?php else: ?>
                         <img src="/assets/logo.png" id="previewImg" alt="Preview">
                     <?php endif; ?>

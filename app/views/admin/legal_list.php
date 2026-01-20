@@ -28,6 +28,7 @@ ob_start();
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 1px 4px rgba(44,62,80,0.04);
+    font-family: var(--font-family);
 }
 .legal-table th, .legal-table td {
     padding: 16px 18px;

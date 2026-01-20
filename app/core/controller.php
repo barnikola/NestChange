@@ -17,6 +17,18 @@ abstract class Controller
     {
         // Initialize session
         Session::start();
+
+        // Check verification status if logged in
+        if (Session::isLoggedIn()) {
+            $userModel = $this->model('User');
+            $user = $userModel->find(Session::getUserId());
+
+            if (!$user || $user['status'] === 'suspended') {
+                Session::logout();
+                Session::setFlash('error', 'Your account has been suspended.');
+                $this->redirect('/signin');
+            }
+        }
     }
 
     /**

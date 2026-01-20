@@ -10,13 +10,13 @@ $breadcrumbs = [
 ob_start();
 ?>
 
-
 <style>
     .container {
         display: flex;
         justify-content: center;
         margin-top: 40px;
         width: 100%;
+        font-family: var(--font-family);
     }
 
     .panel-box {
@@ -43,6 +43,7 @@ ob_start();
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         transition: transform 0.2s, box-shadow 0.2s;
         border: 1px solid #e1e4e8;
+        font-family: var(--font-family);
     }
 
     .card:hover {
@@ -61,6 +62,7 @@ ob_start();
         align-items: center;
         flex-wrap: wrap;
         gap: 8px;
+        font-family: var(--font-family-heading, var(--font-family));
     }
 
     .card p {
@@ -69,6 +71,7 @@ ob_start();
         margin: 0;
     }
 </style>
+
 
 <section class="listings-section" style="background-color: #f7f7f7; min-height: 80vh;">
     <div class="listings-container">

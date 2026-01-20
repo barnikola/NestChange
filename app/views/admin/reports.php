@@ -202,7 +202,7 @@ $reports = $reports ?? [];
                 gap: 6px;
             }
         .reports-table {
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: var(--font-family);
             font-size: 15px;
             border-radius: 16px;
             overflow: hidden;

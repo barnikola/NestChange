@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jan 19, 2026 at 05:12 PM
+-- Generation Time: Jan 20, 2026 at 10:34 AM
 -- Server version: 8.0.44-0ubuntu0.24.04.2
 -- PHP Version: 8.2.30
 
@@ -169,7 +169,8 @@ INSERT INTO `account` (`id`, `status`, `email`, `password_hash`, `student_status
 (124, 'approved', 'test@test.com', '$2y$12$2tv3T.bp0Twmupj4pDzTk.0Ot0Lbr50ZnJxlXl5X9pK4TR9SPK.4W', '2026-01-30', '2026-01-11 10:20:35', 'admin', 'en', NULL),
 (125, 'approved', 'mal32@gmail.com', '$2y$12$4EXf9OLSPbNIoeJaa33gC.RBeDbRgT6hrovNkQVWQmHIFrOBpH7WS', '2026-01-29', '2026-01-13 11:39:01', 'student', 'en', NULL),
 (126, 'approved', 'mal1@gmail.com', '$2y$12$Ce/ULvcOupB9wSxtKUogVu/aPupmWQj411y4HZ6iSPSCDCe9LgrKi', '2026-01-30', '2026-01-13 11:41:10', 'student', 'en', NULL),
-(127, 'approved', 'mariferen52@gmail.com', '$2y$12$EmD5cBdwMMBgDf67hlbdruwptGwJ7smTz88JWqd0BULz3rLLg14xW', '2028-06-15', '2026-01-14 08:15:32', 'student', 'en', NULL);
+(127, 'approved', 'mariferen52@gmail.com', '$2y$12$EmD5cBdwMMBgDf67hlbdruwptGwJ7smTz88JWqd0BULz3rLLg14xW', '2028-06-15', '2026-01-14 08:15:32', 'student', 'en', NULL),
+(128, 'approved', 'mal@test.com', '$2y$12$BstGcmUZGqBUzZBQGs/DP.8yxJuS0lqVUzGT4HMx6o3mrZp/etLve', '2026-01-31', '2026-01-20 09:01:56', 'student', 'en', NULL);
 
 -- --------------------------------------------------------
 
@@ -267,6 +268,7 @@ CREATE TABLE `chat` (
 --
 
 INSERT INTO `chat` (`id`, `application_id`, `created_at`, `last_message_at`) VALUES
+('03201db4-2e66-4889-824c-3c63aa663580', '06091d6e-a8e0-4bb7-9ff3-81eddcff1f5d', '2026-01-20 08:16:04', '2026-01-20 08:16:04'),
 ('03dc1271-5611-4964-9f7b-e3f556811b73', '83b56635-d4ff-4cc6-a3f5-7d0ac7308149', '2026-01-11 12:37:01', '2026-01-11 12:37:01'),
 ('096c83b6-86cc-4863-a5a4-3f5470b480e0', '0ac0ff2a-cd21-488d-a09b-2f1b1caad9ba', '2025-12-14 21:31:19', '2025-12-14 22:31:49'),
 ('098e1333-8b32-418e-a05f-ebc11078512a', '8f8ca210-9bb0-40e6-a000-a1f9b5df3ddb', '2025-12-14 21:34:25', '2026-01-06 09:57:00'),
@@ -288,7 +290,9 @@ INSERT INTO `chat` (`id`, `application_id`, `created_at`, `last_message_at`) VAL
 ('89fddc6d-ac9a-4ee6-a616-8fe348280919', '7f5977ee-b7fb-4613-8978-71b47f932a26', '2025-12-17 15:49:23', '2025-12-17 15:49:23'),
 ('9d0c53ee-b15b-41a2-a385-97554df5382c', '38e01f2f-705f-49af-bb69-15a88198deab', '2025-12-14 21:27:54', NULL),
 ('aa543075-53d7-4083-bdf3-efb61d050e04', '960ccc9b-f7c4-42b1-87df-799b5043ee03', '2025-12-17 15:25:39', NULL),
+('b2e46e86-b02b-4cc3-a537-730f32186d3e', 'adc2bc3c-65c9-42ec-8a52-a267e9b6ea6c', '2026-01-20 09:10:05', '2026-01-20 09:10:05'),
 ('beae38c2-92f9-4c7c-9e2e-f130f78c6dbf', '8fa2969b-1b88-48eb-8745-45815e2d6458', '2026-01-11 12:29:58', '2026-01-11 12:29:58'),
+('d1d142f6-efca-46df-a8ea-90c439b41ff8', 'ba86a0d1-b2e0-4815-882d-31d48e7766ef', '2026-01-20 09:14:54', '2026-01-20 09:14:54'),
 ('ea680481-d9b2-4358-87cf-53093bcb7ed3', '5bee208c-1679-4bf9-abe8-7e6ffac5952b', '2026-01-11 12:25:14', '2026-01-11 12:25:14'),
 ('ef1faf9d-9413-45dc-9f1d-003373b424c5', '8c93be1f-bf9a-4d15-b8c6-fc8a59a07999', '2025-12-14 22:36:18', '2025-12-14 22:36:25'),
 ('f1f2a38d-420e-44cb-8c5d-c1165e56e777', '0a1b1f80-2109-4cc1-9947-2864f78b7ed1', '2026-01-11 12:38:23', '2026-01-11 12:38:23'),
@@ -321,6 +325,7 @@ INSERT INTO `chat_message` (`id`, `chat_id`, `sender_id`, `sender_profile_id`, `
 ('09dcfc6b-7179-4fbd-90f5-db5418ed42f5', '60edb959-4ce0-4df8-bdb0-472baac7e918', 124, '425d7131-0854-4437-853c-59f2cee9cafb', 'njnjjnjnnjnjnjnjnjnj', 'ok', '2026-01-11 12:16:11'),
 ('0bdccfcc-632e-477f-bca1-ae0ee945b5a9', '3335ebc5-e87f-4262-b35c-a307220eb124', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'e', 'ok', '2026-01-10 11:26:57'),
 ('0fac08c0-d118-49ae-b0b6-1d6ff5af23dc', '3335ebc5-e87f-4262-b35c-a307220eb124', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'e', 'ok', '2026-01-10 11:26:57'),
+('1026fcab-dcfd-4445-88c2-69620d2384c2', 'd1d142f6-efca-46df-a8ea-90c439b41ff8', 127, '056e9e40-5ade-4d48-be1b-0b340dabf82d', 'ndkwndkwndkwnwkdnwkwnkndkwnd', 'ok', '2026-01-20 09:14:54'),
 ('13db5f7e-724c-4462-92d0-abcaa54b0c54', '38dd2e23-20c9-4360-8010-e074f623cc05', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'aaaaaa', 'ok', '2025-12-14 22:40:07'),
 ('186a5daa-08a1-40b1-b4fb-24337115505d', '8208c83b-2a10-464c-8b79-8043272b7f66', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'e', 'ok', '2025-12-13 16:17:13'),
 ('1cc44d14-9f08-44bb-8c90-93df11724207', '55395707-fdc5-44fa-98dd-72322fc0080a', 124, '425d7131-0854-4437-853c-59f2cee9cafb', 'jbj', 'ok', '2026-01-11 10:47:54'),
@@ -328,7 +333,7 @@ INSERT INTO `chat_message` (`id`, `chat_id`, `sender_id`, `sender_profile_id`, `
 ('2dd9031a-bfc5-11f0-a648-52f5d85831eb', '2dd6d054-bfc5-11f0-a648-52f5d85831eb', 3, '236a8940-1475-48c4-a793-2e67c005bba8', 'Hello, is this still available?', 'ok', '2025-11-12 11:43:24'),
 ('30ec346e-5021-4222-98aa-46ddc244d1f6', '3335ebc5-e87f-4262-b35c-a307220eb124', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'e', 'ok', '2026-01-10 11:26:58'),
 ('3b356855-095e-42b3-92b6-b86ee989bad2', '3d8b77e5-8326-4883-a754-52fd6205a6ce', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'eje', 'ok', '2026-01-10 10:59:06'),
-('3bd9023e-9835-4ca1-8f3a-eef646e3fd25', '55395707-fdc5-44fa-98dd-72322fc0080a', 124, '425d7131-0854-4437-853c-59f2cee9cafb', 'jbjbjbjb\\\\', 'ok', '2026-01-11 10:47:58'),
+('3bd9023e-9835-4ca1-8f3a-eef646e3fd25', '55395707-fdc5-44fa-98dd-72322fc0080a', 124, '425d7131-0854-4437-853c-59f2cee9cafb', 'Hello, is this room is still available?', 'ok', '2026-01-11 10:47:58'),
 ('429b11b8-6adf-42c0-8c7d-e740576dc33f', '098e1333-8b32-418e-a05f-ebc11078512a', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'a', 'ok', '2025-12-14 22:34:35'),
 ('46352ba5-46f1-4eaf-8958-58f22df7cb05', '8208c83b-2a10-464c-8b79-8043272b7f66', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'a', 'ok', '2025-12-13 19:30:26'),
 ('4717ba44-75a2-4e2e-b25d-8516d5e26267', '3d8b77e5-8326-4883-a754-52fd6205a6ce', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'eje', 'ok', '2026-01-10 10:59:05'),
@@ -344,7 +349,7 @@ INSERT INTO `chat_message` (`id`, `chat_id`, `sender_id`, `sender_profile_id`, `
 ('75a6f9e2-3592-404e-a6d8-f780a3aca67f', '1b552a4d-b7b6-4f96-9e12-2a86eda8b4e3', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'adadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsadadadadadsadsad', 'ok', '2025-12-14 13:12:58'),
 ('7a516ea2-6448-452c-ae86-159eef4d31a9', 'ef1faf9d-9413-45dc-9f1d-003373b424c5', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'adada', 'ok', '2025-12-14 22:36:25'),
 ('81b6dca2-4c0e-4695-a5de-28ce98b0e911', '3335ebc5-e87f-4262-b35c-a307220eb124', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'e', 'ok', '2026-01-10 11:26:57'),
-('8225621b-f735-4292-bbd0-60cd6548bd77', '841b0ee9-eee6-4d58-a229-79ac69b4b997', 124, '425d7131-0854-4437-853c-59f2cee9cafb', 'jbxsbjsb', 'ok', '2026-01-13 14:59:07'),
+('8225621b-f735-4292-bbd0-60cd6548bd77', '841b0ee9-eee6-4d58-a229-79ac69b4b997', 124, '425d7131-0854-4437-853c-59f2cee9cafb', 'Hello, is this room still available?', 'ok', '2026-01-13 14:59:07'),
 ('82e733b3-89eb-43e8-a9d1-1dfeb81c5eda', '89fddc6d-ac9a-4ee6-a616-8fe348280919', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'dfghjktzui', 'ok', '2025-12-17 15:49:23'),
 ('83f0d53a-0fbb-445c-b59c-ca7c486839e5', '3d8b77e5-8326-4883-a754-52fd6205a6ce', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'je', 'ok', '2026-01-10 10:59:06'),
 ('887780b5-0311-464b-ac2e-257dc36c3f3a', '3335ebc5-e87f-4262-b35c-a307220eb124', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'e', 'ok', '2026-01-10 11:26:58'),
@@ -361,6 +366,7 @@ INSERT INTO `chat_message` (`id`, `chat_id`, `sender_id`, `sender_profile_id`, `
 ('a616223a-1eef-4fff-b4a6-beb4aeedfbc8', '9d0c53ee-b15b-41a2-a385-97554df5382c', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'eee top', NULL, '2025-12-14 21:27:54'),
 ('a6550da7-8e61-4e49-a3d6-85ca147ab1c9', '3d8b77e5-8326-4883-a754-52fd6205a6ce', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'jesi perv', 'ok', '2026-01-10 12:06:38'),
 ('ab6e6fd4-667f-4429-8051-67279cb735a6', '3d8b77e5-8326-4883-a754-52fd6205a6ce', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'ej', 'ok', '2026-01-10 10:59:04'),
+('b5d03da3-ec7e-4cdf-b2a1-ec5b82f890c3', '03201db4-2e66-4889-824c-3c63aa663580', 127, '056e9e40-5ade-4d48-be1b-0b340dabf82d', 'nbnbbnbnbnb', 'ok', '2026-01-20 08:16:04'),
 ('b8325771-62b8-4669-ab66-0d8acfa0431a', '8208c83b-2a10-464c-8b79-8043272b7f66', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'ey', 'ok', '2025-12-13 16:17:00'),
 ('bbe00757-6836-4c24-9870-84ab99b424b2', 'f51699b6-cc98-4d46-a7a7-2e3e4d22d874', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'e', 'ok', '2025-12-13 19:37:25'),
 ('bc4c98d7-fc6d-430e-8e75-b88e1aa03f36', '3d8b77e5-8326-4883-a754-52fd6205a6ce', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'eje', 'ok', '2026-01-10 10:59:06'),
@@ -371,6 +377,7 @@ INSERT INTO `chat_message` (`id`, `chat_id`, `sender_id`, `sender_profile_id`, `
 ('cfd0625e-b0c1-485b-9e93-bf08866faffc', '3335ebc5-e87f-4262-b35c-a307220eb124', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'e', 'ok', '2026-01-10 11:26:58'),
 ('cfe04c79-c6f8-422a-b167-c35a1e466937', '3335ebc5-e87f-4262-b35c-a307220eb124', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'e', 'ok', '2026-01-10 11:26:57'),
 ('d1481a0d-78e7-4f77-a801-786f525e7efa', 'f51699b6-cc98-4d46-a7a7-2e3e4d22d874', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'asadas', 'ok', '2025-12-13 19:37:27'),
+('d48dfd2a-cac4-46a9-b951-7ce0772bc7dc', 'b2e46e86-b02b-4cc3-a537-730f32186d3e', 127, '056e9e40-5ade-4d48-be1b-0b340dabf82d', 'Hey is this available', 'ok', '2026-01-20 09:10:05'),
 ('d7037566-69f9-429e-9c34-08e08c3c701f', 'f51699b6-cc98-4d46-a7a7-2e3e4d22d874', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'e', 'ok', '2025-12-13 19:37:25'),
 ('d907d1fc-f39a-49e1-b82e-53f8aaa93d67', '38dd2e23-20c9-4360-8010-e074f623cc05', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', 'e', 'ok', '2025-12-14 22:47:15'),
 ('da5344b7-87a0-4087-b97d-60467b83153d', 'fad3e9d6-4310-4172-b29a-dfd37ca93130', 124, '425d7131-0854-4437-853c-59f2cee9cafb', 'n n n n n', 'ok', '2026-01-11 12:38:36'),
@@ -430,6 +437,7 @@ INSERT INTO `favorite` (`id`, `profile_id`, `listing_id`, `created_at`) VALUES
 ('70f4c55f-aaeb-489c-a775-675e351e4a2e', '056e9e40-5ade-4d48-be1b-0b340dabf82d', '942722bb-028d-49fe-8799-a2671dd05761', '2026-01-19 15:18:57'),
 ('7d9c8b71-f165-49b7-a6f1-8948dcb280dd', '056e9e40-5ade-4d48-be1b-0b340dabf82d', '5e12538e-bfd8-11f0-9b66-3c11a3fd0c43', '2026-01-19 16:03:08'),
 ('8368af48-0b68-4c4a-8097-ee89117bdbfd', '357e760a-d08c-4078-be80-b6d8c819f56a', '5e128d72-bfd8-11f0-9b66-3c11a3fd0c43', '2026-01-06 09:42:02'),
+('938cd3b5-f028-47ac-8bb9-285694cb773d', '056e9e40-5ade-4d48-be1b-0b340dabf82d', '2f0fd0de-79b6-43ea-9148-39ae45ce176d', '2026-01-20 09:29:05'),
 ('a45171d9-b9d1-4ec6-9493-84b15e014df9', '357e760a-d08c-4078-be80-b6d8c819f56a', '5e128b1a-bfd8-11f0-9b66-3c11a3fd0c43', '2026-01-10 23:17:50'),
 ('a928cd30-27c3-49a7-bc3e-ae6c21a97138', '3284455a-e9db-4e02-8f41-c6995838d53f', '942722bb-028d-49fe-8799-a2671dd05761', '2026-01-08 22:19:22'),
 ('b8667650-9d14-4b77-820a-0a1fdff6bcf3', '056e9e40-5ade-4d48-be1b-0b340dabf82d', '5e123aa2-bfd8-11f0-9b66-3c11a3fd0c43', '2026-01-19 15:18:59'),
@@ -497,6 +505,7 @@ INSERT INTO `listing` (`id`, `host_profile_id`, `title`, `description`, `country
 ('2dcaeb54-bfc5-11f0-a648-52f5d85831eb', 'be0267ae-304e-40a7-949a-50bbec15936e', 'STUDIO NEAR CAMPUS', 'A BRIGHT SUNNY STUDIO APARTMENT PERFECT FOR A STUDENT. 10 MINUTES WALK FROM THE MAIN CAMPUS.', 'FRANCE', 'PARIS', '123 ISSY', 48.8566, 2.3522, 'room', 1, 'owner', 'published', 'moderate', '2025-11-12 11:43:24', '2025-11-12 11:43:24'),
 ('2dcbb778-bfc5-11f0-a648-52f5d85831eb', 'b429f253-cee8-45ce-81b7-e5acf8f4eebb', 'SHARED APARTMENT', 'A ROOM IN A 2 BEDROOM SHARED APARTMENT. CLOSE TO TRANSPORTATION', 'FRANCE', 'CALAIS', '456 RUE DE BAC', 50.9513, 1.8587, 'room', 2, 'renter', 'published', 'moderate', '2025-11-12 11:43:24', '2025-11-12 11:43:24'),
 ('2dcca07a-bfc5-11f0-a648-52f5d85831eb', 'be0267ae-304e-40a7-949a-50bbec15936e', 'DRAFT LISTING', 'THIS IS NOT FINISHED', 'GERMANY', 'BERLIN', NULL, NULL, NULL, 'whole_apartment', 4, 'owner', 'draft', 'moderate', '2025-11-12 11:43:24', '2025-11-12 11:43:24'),
+('2f0fd0de-79b6-43ea-9148-39ae45ce176d', 'cc20f470-d0fa-4e78-a1bb-d28df5a4f5a4', 'Negotiaition', 'AMskmsakmdakdmksamdksamdksa', 'BB', 'Poaris', 'Palaala', NULL, NULL, 'room', 1, 'renter', 'published', 'flexible', '2026-01-20 09:08:35', '2026-01-20 09:09:48'),
 ('331d2b70-bfd0-11f0-a648-52f5d85831eb', '9463d8c6-fbf8-48d3-aa49-7edf12b531f8', 'ADMIN ADMINSON • Student Stay', 'Comfortable room hosted by ADMIN ADMINSON in BERLIN. Host account status: APPROVED.', 'GERMANY', 'BERLIN', '101 ALEXANDERPLATZ', 52.5249, 13.4113, 'room', 2, 'renter', 'published', 'moderate', '2025-11-12 13:02:18', '2025-11-12 13:02:18'),
 ('331d44fc-bfd0-11f0-a648-52f5d85831eb', 'be0267ae-304e-40a7-949a-50bbec15936e', 'ALEKSANDRE TEST • Student Stay', 'Comfortable room hosted by ALEKSANDRE TEST in AMSTERDAM. Host account status: APPROVED.', 'NETHERLANDS', 'AMSTERDAM', '102 KEIZERSGRACHT', 52.3798, 4.9126, 'room', 3, 'owner', 'published', 'moderate', '2025-11-12 13:02:18', '2025-11-12 13:02:18'),
 ('331d460a-bfd0-11f0-a648-52f5d85831eb', '236a8940-1475-48c4-a793-2e67c005bba8', 'SURESH TESTER • Student Stay', 'Comfortable apartment hosted by SURESH TESTER in BRUSSELS. Host account status: APPROVED.', 'BELGIUM', 'BRUSSELS', '103 GRAND PLACE', 50.8647, 4.3689, 'whole_apartment', 4, 'renter', 'published', 'moderate', '2025-11-12 13:02:18', '2025-11-12 13:02:18'),
@@ -706,10 +715,10 @@ INSERT INTO `listing` (`id`, `host_profile_id`, `title`, `description`, `country
 ('5e128d72-bfd8-11f0-9b66-3c11a3fd0c43', '832794de-0511-4d24-9aa1-1d20d6c9ff78', 'MICHAEL MYERS • Student Stay', 'Comfortable room hosted by Michael Myers in BRUSSELS. Host account status: APPROVED.', 'BELGIUM', 'BRUSSELS', '203 GRAND PLACE', 50.8745, 4.3815, 'room', 4, 'renter', 'published', 'moderate', '2025-11-12 14:00:46', '2025-11-12 14:00:46'),
 ('5e128e3a-bfd8-11f0-9b66-3c11a3fd0c43', '2f760c60-0317-4585-995c-e6f8a7d35530', 'TED FOWLER • Student Stay', 'Comfortable room hosted by Ted Fowler in BARCELONA. Host account status: APPROVED.', 'SPAIN', 'BARCELONA', '204 AVINGUDA DIAGONAL', 41.4194, 2.1978, 'room', 1, 'owner', 'published', 'moderate', '2025-11-12 14:00:46', '2025-11-12 14:00:46'),
 ('5e128f0c-bfd8-11f0-9b66-3c11a3fd0c43', '83710363-2633-4264-8987-5600e20c1254', 'ALINA CRAIG • Student Stay', 'Comfortable apartment hosted by Alina Craig in PARIS. Host account status: APPROVED.', 'FRANCE', 'PARIS', '205 RUE DES ECOLES', 48.85, 2.35, 'whole_apartment', 2, 'renter', 'published', 'moderate', '2025-11-12 14:00:46', '2025-11-12 14:00:46'),
-('942722bb-028d-49fe-8799-a2671dd05761', '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'Demo 2', 'demo demo demo demo demo', 'Paris', 'Issy-les-Moulinoux', '10 Rue de Vanves', NULL, NULL, 'whole_apartment', 4, 'renter', 'published', 'flexible', '2025-12-17 12:48:58', '2026-01-11 12:24:55'),
+('942722bb-028d-49fe-8799-a2671dd05761', '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'Demo 2', 'demo demo demo demo demo', 'Paris', 'Issy-les-Moulinoux', '10 Rue de Vanves', NULL, NULL, 'whole_apartment', 4, 'renter', 'paused', 'flexible', '2025-12-17 12:48:58', '2026-01-19 20:55:18'),
 ('b11f4a2c-c053-47de-80b2-5cace81c78e8', '425d7131-0854-4437-853c-59f2cee9cafb', 'Teste', 'knknkknknknknknknk jbjbjb', 'TR', 'Ankara', 'Ankara', NULL, NULL, 'room', 1, 'renter', 'draft', 'flexible', '2026-01-11 11:30:20', '2026-01-11 12:17:52'),
 ('c3a8e969-00f7-4f30-b019-25491a931870', '357e760a-d08c-4078-be80-b6d8c819f56a', 'daj vise brt', 'daj vise brtdaj vise brtdaj vise brt', 'FR', 'Paris', '23 Rue Labrouste', 48.8348135, 2.3089142, 'whole_apartment', 5, 'renter', 'draft', 'moderate', '2026-01-06 10:00:42', '2026-01-06 10:00:42'),
-('ecc326f4-8b34-445d-9c17-765d76bdfaa5', '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'Demo listing', 'Demo demo demo demo demo demo demo', 'France', 'Paris', '28 Rue Notre Dame des Champs', NULL, NULL, 'whole_apartment', 6, 'owner', 'published', 'moderate', '2025-12-17 10:47:48', '2025-12-17 12:49:28');
+('ecc326f4-8b34-445d-9c17-765d76bdfaa5', '55e0f49d-5bad-4822-abec-00e5eb51c1c8', 'Demo listing', 'Demo demo demo demo demo demo demo', 'France', 'Paris', '28 Rue Notre Dame des Champs', NULL, NULL, 'whole_apartment', 6, 'owner', 'paused', 'moderate', '2025-12-17 10:47:48', '2026-01-19 20:55:22');
 
 -- --------------------------------------------------------
 
@@ -735,6 +744,7 @@ CREATE TABLE `listing_application` (
 --
 
 INSERT INTO `listing_application` (`id`, `listing_id`, `applicant_id`, `applicant_profile_id`, `start_date`, `end_date`, `status`, `created_at`, `updated_at`) VALUES
+('06091d6e-a8e0-4bb7-9ff3-81eddcff1f5d', '5e1246d2-bfd8-11f0-9b66-3c11a3fd0c43', 127, '056e9e40-5ade-4d48-be1b-0b340dabf82d', '2026-01-28', '2026-01-30', 'pending', '2026-01-20 08:16:04', '2026-01-20 08:16:04'),
 ('0a1b1f80-2109-4cc1-9947-2864f78b7ed1', '5e124498-bfd8-11f0-9b66-3c11a3fd0c43', 124, '425d7131-0854-4437-853c-59f2cee9cafb', '2026-01-11', '2026-01-11', 'withdrawn', '2026-01-11 12:38:23', '2026-01-11 12:41:34'),
 ('0ac0ff2a-cd21-488d-a09b-2f1b1caad9ba', '5e128be2-bfd8-11f0-9b66-3c11a3fd0c43', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', '2025-12-14', '2025-12-27', 'pending', '2025-12-14 21:31:19', '2025-12-14 22:31:19'),
 ('0e63eeff-4b6f-43c1-8681-f782b333a2a3', '5e126e46-bfd8-11f0-9b66-3c11a3fd0c43', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', '2025-12-21', '2025-12-30', 'pending', '2025-12-14 22:40:07', '2025-12-14 22:40:07'),
@@ -756,7 +766,9 @@ INSERT INTO `listing_application` (`id`, `listing_id`, `applicant_id`, `applican
 ('8f8ca210-9bb0-40e6-a000-a1f9b5df3ddb', '5e128584-bfd8-11f0-9b66-3c11a3fd0c43', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', '2025-12-21', '2025-12-28', 'pending', '2025-12-14 21:34:25', '2025-12-14 22:34:25'),
 ('8fa2969b-1b88-48eb-8745-45815e2d6458', '942722bb-028d-49fe-8799-a2671dd05761', 124, '425d7131-0854-4437-853c-59f2cee9cafb', '2026-01-11', '2026-01-11', 'rejected', '2026-01-11 12:29:58', '2026-01-11 12:36:31'),
 ('960ccc9b-f7c4-42b1-87df-799b5043ee03', '5e128e3a-bfd8-11f0-9b66-3c11a3fd0c43', 118, '55e0f49d-5bad-4822-abec-00e5eb51c1c8', NULL, NULL, 'pending', '2025-12-17 15:25:39', '2025-12-17 15:25:39'),
+('adc2bc3c-65c9-42ec-8a52-a267e9b6ea6c', '2f0fd0de-79b6-43ea-9148-39ae45ce176d', 127, '056e9e40-5ade-4d48-be1b-0b340dabf82d', '2026-01-20', '2026-01-22', 'accepted', '2026-01-20 09:10:05', '2026-01-20 09:57:46'),
 ('b618cb3c-ed70-47e3-9ae9-74fed37e1f92', '5e1288b8-bfd8-11f0-9b66-3c11a3fd0c43', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', NULL, NULL, 'pending', '2025-12-13 16:17:26', '2025-12-13 16:17:26'),
+('ba86a0d1-b2e0-4815-882d-31d48e7766ef', '5e124b82-bfd8-11f0-9b66-3c11a3fd0c43', 127, '056e9e40-5ade-4d48-be1b-0b340dabf82d', '2026-01-22', '2026-01-31', 'pending', '2026-01-20 09:14:54', '2026-01-20 09:14:54'),
 ('caff6f8a-1ded-4879-a32e-7cb4dd451b26', '5e128a48-bfd8-11f0-9b66-3c11a3fd0c43', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', NULL, NULL, 'pending', '2025-12-13 20:41:27', '2025-12-13 20:41:27'),
 ('cc64e7a2-7455-42df-96c7-f9095bb199b1', 'ecc326f4-8b34-445d-9c17-765d76bdfaa5', 124, '425d7131-0854-4437-853c-59f2cee9cafb', NULL, NULL, 'withdrawn', '2026-01-11 10:22:16', '2026-01-11 12:37:56'),
 ('cf6e6bb1-2c9f-42fb-800d-569efe65d887', 'ecc326f4-8b34-445d-9c17-765d76bdfaa5', 113, '357e760a-d08c-4078-be80-b6d8c819f56a', NULL, NULL, 'pending', '2026-01-08 21:18:32', '2026-01-08 21:18:32'),
@@ -950,6 +962,7 @@ INSERT INTO `listing_attribute` (`listing_id`, `attribute_id`) VALUES
 ('942722bb-028d-49fe-8799-a2671dd05761', 2),
 ('ecc326f4-8b34-445d-9c17-765d76bdfaa5', 2),
 ('2dcaeb54-bfc5-11f0-a648-52f5d85831eb', 3),
+('2f0fd0de-79b6-43ea-9148-39ae45ce176d', 3),
 ('5e1230ac-bfd8-11f0-9b66-3c11a3fd0c43', 3),
 ('5e1232be-bfd8-11f0-9b66-3c11a3fd0c43', 3),
 ('5e1233cc-bfd8-11f0-9b66-3c11a3fd0c43', 3),
@@ -989,6 +1002,7 @@ INSERT INTO `listing_attribute` (`listing_id`, `attribute_id`) VALUES
 ('c3a8e969-00f7-4f30-b019-25491a931870', 3),
 ('ecc326f4-8b34-445d-9c17-765d76bdfaa5', 3),
 ('2dcbb778-bfc5-11f0-a648-52f5d85831eb', 4),
+('2f0fd0de-79b6-43ea-9148-39ae45ce176d', 4),
 ('5e122d82-bfd8-11f0-9b66-3c11a3fd0c43', 4),
 ('5e1230ac-bfd8-11f0-9b66-3c11a3fd0c43', 4),
 ('5e123174-bfd8-11f0-9b66-3c11a3fd0c43', 4),
@@ -1248,7 +1262,8 @@ INSERT INTO `listing_availability` (`id`, `listing_id`, `available_from`, `creat
 ('10c40c87-bed6-4566-a4a6-855d9b3f8e61', 'b11f4a2c-c053-47de-80b2-5cace81c78e8', '2026-02-04', '2026-01-14 13:15:44', '2026-02-07'),
 ('693af09b-ffea-4991-ac50-6a379bea3782', 'c3a8e969-00f7-4f30-b019-25491a931870', '2026-01-01', '2026-01-06 10:00:42', '2026-05-29'),
 ('8cc2f14d-bcd4-4b2d-8d12-b8aff7b6d17a', '942722bb-028d-49fe-8799-a2671dd05761', '2025-12-17', '2025-12-17 12:48:58', NULL),
-('96e43efd-72eb-4012-a8ee-6cb1d7737ced', 'ecc326f4-8b34-445d-9c17-765d76bdfaa5', '2025-12-17', '2025-12-17 10:47:48', NULL);
+('96e43efd-72eb-4012-a8ee-6cb1d7737ced', 'ecc326f4-8b34-445d-9c17-765d76bdfaa5', '2025-12-17', '2025-12-17 10:47:48', NULL),
+('cd2e8e4e-a395-4d57-8e98-37396745326c', '2f0fd0de-79b6-43ea-9148-39ae45ce176d', '2026-01-15', '2026-01-20 09:08:35', '2026-01-22');
 
 -- --------------------------------------------------------
 
@@ -1272,6 +1287,7 @@ INSERT INTO `listing_image` (`id`, `listing_id`, `image`, `position`, `created_a
 ('02752886-2233-4048-afb1-b978a29f6e78', 'ecc326f4-8b34-445d-9c17-765d76bdfaa5', 'uploads/images/ecc326f4-8b34-445d-9c17-765d76bdfaa5_69428a547de21.webp', 0, '2025-12-17 10:47:48'),
 ('0e23ac49-08dd-4dab-b6e8-0a8d482b8091', '942722bb-028d-49fe-8799-a2671dd05761', 'uploads/images/942722bb-028d-49fe-8799-a2671dd05761_6942a6ba42542.jpg', 2, '2025-12-17 12:48:58'),
 ('1567de44-b26f-49fb-9f77-b3788db0b7c9', '942722bb-028d-49fe-8799-a2671dd05761', 'uploads/images/942722bb-028d-49fe-8799-a2671dd05761_6942a6ba41195.webp', 0, '2025-12-17 12:48:58'),
+('1985aa1e-8a49-4dea-8533-a9a404adea9e', '2f0fd0de-79b6-43ea-9148-39ae45ce176d', 'uploads/images/2f0fd0de-79b6-43ea-9148-39ae45ce176d_696f4613197fd.jpeg', 0, '2026-01-20 09:08:35'),
 ('20cdeed2-0003-4a83-9b4b-10165ee75e07', 'c3a8e969-00f7-4f30-b019-25491a931870', 'uploads/images/c3a8e969-00f7-4f30-b019-25491a931870_695cdd4a1d6e6.jpg', 0, '2026-01-06 10:00:42'),
 ('2dd25a6a-bfc5-11f0-a648-52f5d85831eb', '2dcaeb54-bfc5-11f0-a648-52f5d85831eb', 'https://example.com/img/listing1_1.jpg', 0, '2025-11-12 11:43:24'),
 ('2dd25f38-bfc5-11f0-a648-52f5d85831eb', '2dcaeb54-bfc5-11f0-a648-52f5d85831eb', 'https://example.com/img/listing1_2.jpg', 1, '2025-11-12 11:43:24'),
@@ -1506,6 +1522,7 @@ CREATE TABLE `listing_service` (
 
 INSERT INTO `listing_service` (`listing_id`, `service_id`) VALUES
 ('2dcaeb54-bfc5-11f0-a648-52f5d85831eb', 1),
+('2f0fd0de-79b6-43ea-9148-39ae45ce176d', 1),
 ('5e122d82-bfd8-11f0-9b66-3c11a3fd0c43', 1),
 ('5e12300c-bfd8-11f0-9b66-3c11a3fd0c43', 1),
 ('5e1230ac-bfd8-11f0-9b66-3c11a3fd0c43', 1),
@@ -1758,6 +1775,7 @@ INSERT INTO `listing_service` (`listing_id`, `service_id`) VALUES
 ('5e128caa-bfd8-11f0-9b66-3c11a3fd0c43', 4),
 ('5e128f0c-bfd8-11f0-9b66-3c11a3fd0c43', 4),
 ('ecc326f4-8b34-445d-9c17-765d76bdfaa5', 4),
+('2f0fd0de-79b6-43ea-9148-39ae45ce176d', 5),
 ('5e122d82-bfd8-11f0-9b66-3c11a3fd0c43', 5),
 ('5e12300c-bfd8-11f0-9b66-3c11a3fd0c43', 5),
 ('5e12311a-bfd8-11f0-9b66-3c11a3fd0c43', 5),
@@ -2064,6 +2082,7 @@ INSERT INTO `listing_verification_document` (`id`, `listing_id`, `document_type_
 ('5e1a2104-bfd8-11f0-9b66-3c11a3fd0c43', '5e128d72-bfd8-11f0-9b66-3c11a3fd0c43', 4, 'lease.pdf', '2025-11-12 14:00:46', NULL),
 ('5e1a2186-bfd8-11f0-9b66-3c11a3fd0c43', '5e128e3a-bfd8-11f0-9b66-3c11a3fd0c43', 3, 'house_deed.pdf', '2025-11-12 14:00:46', NULL),
 ('5e1a246a-bfd8-11f0-9b66-3c11a3fd0c43', '5e128f0c-bfd8-11f0-9b66-3c11a3fd0c43', 4, 'lease.pdf', '2025-11-12 14:00:46', NULL),
+('cb029ccc-db66-4acf-992e-d497be1c3a53', '2f0fd0de-79b6-43ea-9148-39ae45ce176d', 5, 'uploads/verification_docs/2f0fd0de-79b6-43ea-9148-39ae45ce176d_verification_696f461319967.jpeg', '2026-01-20 09:08:35', NULL),
 ('d9031e4e-e710-4e3e-bd3e-5fbceeab85c6', 'b11f4a2c-c053-47de-80b2-5cace81c78e8', 5, 'uploads/verification_docs/b11f4a2c-c053-47de-80b2-5cace81c78e8_verification_696389cc01dbb.png', '2026-01-11 11:30:20', NULL),
 ('fa58137a-7568-46c1-ac26-074a8abf8a83', 'ecc326f4-8b34-445d-9c17-765d76bdfaa5', 3, 'uploads/verification_docs/ecc326f4-8b34-445d-9c17-765d76bdfaa5_verification_69428a547f72f.pdf', '2025-12-17 10:47:48', NULL);
 
@@ -2085,6 +2104,17 @@ CREATE TABLE `negotiation` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `negotiation`
+--
+
+INSERT INTO `negotiation` (`id`, `application_id`, `proposer_profile_id`, `proposed_start_date`, `proposed_end_date`, `terms`, `status`, `parent_negotiation_id`, `created_at`) VALUES
+('0ad2922f-d191-4ae3-aeb4-c5cf015a4faa', 'adc2bc3c-65c9-42ec-8a52-a267e9b6ea6c', '056e9e40-5ade-4d48-be1b-0b340dabf82d', '2026-01-20', '2026-01-21', 'Sheeeee', 'accepted', NULL, '2026-01-20 09:53:46'),
+('0ffd1ede-2e07-4579-baf5-388ee1f93f31', 'adc2bc3c-65c9-42ec-8a52-a267e9b6ea6c', 'cc20f470-d0fa-4e78-a1bb-d28df5a4f5a4', '2026-01-22', '2026-01-27', 'What about this one?', 'rejected', 'b6ced461-6547-4f64-8d16-794acb3e3d9d', '2026-01-20 09:32:21'),
+('4502ed2d-357c-4221-9282-c8d4c26a5895', 'adc2bc3c-65c9-42ec-8a52-a267e9b6ea6c', 'cc20f470-d0fa-4e78-a1bb-d28df5a4f5a4', '2026-01-20', '2026-01-21', 'Sheeee', 'accepted', NULL, '2026-01-20 09:54:19'),
+('6c8b0af3-9a85-4899-9ca6-7c878785a584', 'adc2bc3c-65c9-42ec-8a52-a267e9b6ea6c', 'cc20f470-d0fa-4e78-a1bb-d28df5a4f5a4', '2026-01-20', '2026-01-22', 'mdkemdkemdkemdkemdkdmkedme', 'accepted', NULL, '2026-01-20 09:57:39'),
+('b6ced461-6547-4f64-8d16-794acb3e3d9d', 'adc2bc3c-65c9-42ec-8a52-a267e9b6ea6c', '056e9e40-5ade-4d48-be1b-0b340dabf82d', '2026-01-21', '2026-01-29', 'DMKDAKMDKMADKMDKMAKDMAKSMDKAMDKMDKAMDKAMKMDKAMDKAMDKAMDKMDKAMKM', 'countered', NULL, '2026-01-20 09:31:05');
+
 -- --------------------------------------------------------
 
 --
@@ -2099,6 +2129,23 @@ CREATE TABLE `notification` (
   `is_read` tinyint(1) DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `notification`
+--
+
+INSERT INTO `notification` (`id`, `user_id`, `message`, `type`, `is_read`, `created_at`) VALUES
+('49d1a8ac-f5e6-11f0-98cc-10e18e7e3ea2', 128, 'Your proposal was accepted.', 'success', 1, '2026-01-20 09:56:27'),
+('748987dc-f5e6-11f0-98cc-10e18e7e3ea2', 127, 'You have received a new negotiation proposal.', 'info', 1, '2026-01-20 09:57:39'),
+('78fda83c-f5e6-11f0-98cc-10e18e7e3ea2', 128, 'Your proposal was accepted.', 'success', 1, '2026-01-20 09:57:46'),
+('87146998-f5da-11f0-98cc-10e18e7e3ea2', 127, 'Your document verification was rejected. Please re-upload.', 'error', 1, '2026-01-20 08:32:16'),
+('b06e2e2c-f5de-11f0-98cc-10e18e7e3ea2', 128, 'Your account has been approved!', 'success', 1, '2026-01-20 09:02:04'),
+('be6d970b-f5e2-11f0-98cc-10e18e7e3ea2', 128, 'You have received a new negotiation proposal.', 'info', 1, '2026-01-20 09:31:05'),
+('e9e4748f-f5e5-11f0-98cc-10e18e7e3ea2', 128, 'You have received a new negotiation proposal.', 'info', 1, '2026-01-20 09:53:46'),
+('eb8aaebc-f5e2-11f0-98cc-10e18e7e3ea2', 127, 'You have received a counter-proposal.', 'info', 1, '2026-01-20 09:32:21'),
+('f34bcc50-f5e5-11f0-98cc-10e18e7e3ea2', 127, 'Your proposal was accepted.', 'success', 1, '2026-01-20 09:54:02'),
+('fd9ea953-f5e5-11f0-98cc-10e18e7e3ea2', 127, 'You have received a new negotiation proposal.', 'info', 1, '2026-01-20 09:54:19'),
+('ff250419-f5e2-11f0-98cc-10e18e7e3ea2', 128, 'Your proposal was rejected.', 'error', 1, '2026-01-20 09:32:54');
 
 -- --------------------------------------------------------
 
@@ -2138,7 +2185,8 @@ CREATE TABLE `report` (
 --
 
 INSERT INTO `report` (`id`, `reporter_id`, `reported_type`, `reported_id`, `reason`, `description`, `status`, `created_at`, `resolved_at`, `resolved_by`) VALUES
-('86c3f237-08e3-4432-9117-ea2f6770942f', '056e9e40-5ade-4d48-be1b-0b340dabf82d', 'listing', '5e12538e-bfd8-11f0-9b66-3c11a3fd0c43', 'spam', 'dsq qdj qdnq nq dq dnq dn', 'pending', '2026-01-19 16:09:13', NULL, NULL);
+('86c3f237-08e3-4432-9117-ea2f6770942f', '056e9e40-5ade-4d48-be1b-0b340dabf82d', 'listing', '5e12538e-bfd8-11f0-9b66-3c11a3fd0c43', 'spam', 'dsq qdj qdnq nq dq dnq dn', 'pending', '2026-01-19 16:09:13', NULL, NULL),
+('f79518f2-7b8d-4eb2-8f50-e9442423467e', '056e9e40-5ade-4d48-be1b-0b340dabf82d', 'listing', '5e1246d2-bfd8-11f0-9b66-3c11a3fd0c43', 'other', 'adjnadjandjadjandjnjdnajdnaj', 'pending', '2026-01-20 09:29:38', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2187,6 +2235,7 @@ INSERT INTO `user_document` (`id`, `account_id`, `document_type_id`, `document_p
 ('02ddbefa-8e34-44d7-90a6-c557ef4ee280', 123, 1, '/uploads/documents/id/ff5d4754-52a5-48c3-997e-c2086f2e9d5f.jpeg', '2025-12-17 15:55:02', NULL, 'pending'),
 ('05adc3fc-823c-43e8-b19e-02598a512c37', 113, 1, '/uploads/documents/id/af09866a-1970-45c4-979f-e9f8d5b7f915.png', '2025-12-10 10:15:40', NULL, 'pending'),
 ('130ae3e4-9fdf-4bf0-8608-60454b407689', 119, 2, '/uploads/documents/student/54eba0f2-becb-4cf6-b9eb-f367b7841e46.png', '2025-12-17 10:39:05', NULL, 'pending'),
+('18481cb1-3b3a-4d5d-ac87-0932b094d6da', 128, 2, '/uploads/documents/student/f81aae07-d5e7-4dde-b27c-7de496c2164d.pdf', '2026-01-20 09:01:56', NULL, 'pending'),
 ('264b6cd8-0b75-4a0a-badc-36d443adc037', 122, 2, '/uploads/documents/student/1bd89b5b-aca6-4608-9adf-f2c736a0a09a.png', '2025-12-17 14:20:21', NULL, 'pending'),
 ('32641faf-efeb-4689-8b31-2efabf175435', 111, 2, '/uploads/documents/student/65535308-c4cf-48d3-b2b6-71b38ecd4613.png', '2025-12-08 01:03:26', NULL, 'pending'),
 ('3b49a2ee-379b-411c-9668-f24dd4d58ccb', 118, 1, '/uploads/documents/id/6e83f23a-18b4-4994-9428-fe996217decc.png', '2025-12-17 10:38:16', NULL, 'pending'),
@@ -2201,14 +2250,15 @@ INSERT INTO `user_document` (`id`, `account_id`, `document_type_id`, `document_p
 ('8efed709-6b6f-42cb-8a26-b13cc6f67561', 121, 2, '/uploads/documents/student/f9adc59a-e4da-4397-806b-48e332e3ccfe.png', '2025-12-17 10:44:52', NULL, 'pending'),
 ('99dde6d8-5966-4aa7-9d7c-b00807ecddfb', 117, 2, '/uploads/documents/student/c9b6f8bb-4fe0-4578-8141-9814a5e7bf48.pdf', '2025-12-14 23:08:05', NULL, 'pending'),
 ('9c516aef-89bd-4a99-ae25-ff6ebcc2f6be', 121, 1, '/uploads/documents/id/7206ff04-c182-4e0f-8dbe-d77e923fbd80.png', '2025-12-17 10:44:52', NULL, 'pending'),
-('a25977b8-6d14-4580-8b37-671f34ee2c68', 127, 1, '/uploads/documents/id/b65c8fea-4780-49dc-bdee-927fa5bd060c.pdf', '2026-01-14 08:15:32', NULL, 'pending'),
+('a25977b8-6d14-4580-8b37-671f34ee2c68', 127, 1, '/uploads/documents/id/b65c8fea-4780-49dc-bdee-927fa5bd060c.pdf', '2026-01-14 08:15:32', '2026-01-20 08:18:09', 'rejected'),
+('aac2eb0f-8a34-413d-b129-391fe4d7865a', 128, 1, '/uploads/documents/id/df37debd-d9b9-4a50-886d-699b0286a97a.pdf', '2026-01-20 09:01:56', NULL, 'pending'),
 ('b18f7911-e0c7-49ba-a9a4-2bde740e046b', 112, 2, '/uploads/documents/student/d291f6e9-f442-4452-97e8-3021ea6c238c.png', '2025-12-09 21:57:18', NULL, 'pending'),
 ('b5f5a005-52b3-40ba-b9ad-e149ec9ffa25', 125, 1, '/uploads/documents/id/7a650534-e289-41d6-91e9-0b3a23dae7bf.pdf', '2026-01-13 11:39:02', NULL, 'pending'),
 ('c004712c-be92-4c40-92d0-f552ba795074', 125, 2, '/uploads/documents/student/63d582b3-056d-4f62-bbd9-a3fb98e2396d.pdf', '2026-01-13 11:39:02', NULL, 'pending'),
 ('c55b696d-a7c0-4016-87da-60f3d6c56c15', 120, 1, '/uploads/documents/id/5c6db159-6b24-42a4-9eda-e9c492495d27.png', '2025-12-17 10:39:45', NULL, 'pending'),
 ('c7763c06-ebf1-4871-a59b-0498a840b2a1', 118, 2, '/uploads/documents/student/88ba3b51-0f5f-4b82-8339-0ee9c3dd74bc.png', '2025-12-17 10:38:16', NULL, 'pending'),
 ('c7b05432-f871-47f1-ba00-04ccc4364f06', 116, 2, '/uploads/documents/student/139fcd16-8bc6-48d8-a053-1b3db36d40d5.png', '2025-12-11 14:12:29', NULL, 'pending'),
-('ca310656-04ea-4878-a36e-4c20bd052904', 127, 2, '/uploads/documents/student/e8f38901-a56e-4ddc-a767-ac0ebab33340.jpg', '2026-01-14 08:15:32', NULL, 'pending'),
+('ca310656-04ea-4878-a36e-4c20bd052904', 127, 2, '/uploads/documents/student/e8f38901-a56e-4ddc-a767-ac0ebab33340.jpg', '2026-01-14 08:15:32', '2026-01-20 08:17:58', 'rejected'),
 ('d396fb13-8232-4a17-86d9-3f8dd8074c8f', 4, 2, 'user_docs/0101010010110.jpg', '2025-12-07 17:55:16', NULL, 'pending'),
 ('e2a175b0-6050-42a6-8b81-bde02d7f18ad', 126, 1, '/uploads/documents/id/95f18f7f-4ba3-4c76-8fff-adaabcbec4da.jpeg', '2026-01-13 11:41:10', NULL, 'pending'),
 ('ebcf9172-dd65-414f-b0e2-1b364f6e4ca7', 3, 1, 'user_docs/110101001.png', '2025-12-07 17:55:16', NULL, 'pending'),
@@ -2271,7 +2321,7 @@ INSERT INTO `user_profile` (`id`, `account_id`, `first_name`, `last_name`, `prof
 ('3fb74c36-eb37-4d36-8bf7-38118ba0e12a', 79, 'Ryan', 'Ross', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
 ('407b7b25-d201-4e49-8084-52f0a9ab633a', 68, 'Ryan', 'Cunningham', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
 ('40d6c7e2-37cb-437a-90c9-fbb4b2fb1661', 60, 'Edward', 'Moore', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
-('425d7131-0854-4437-853c-59f2cee9cafb', 124, 'test', 'test', '/uploads/profile_pictures/c497a997-b540-4d23-bd79-c2ce8e8d37db.jpg', NULL, NULL, NULL, NULL, '2026-01-11 10:20:35', '2026-01-11 10:20:35', NULL, NULL),
+('425d7131-0854-4437-853c-59f2cee9cafb', 124, 'test', 'test', 'avatars/696e9c9a4ad24.jpg', NULL, '', '', '', '2026-01-11 10:20:35', '2026-01-19 21:05:30', '', ''),
 ('42c9a0c7-be34-4375-a6ae-5006be89ea8f', 49, 'Jacob', 'Morgan', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
 ('4437f3e7-cfb9-4df0-8704-357504968741', 66, 'Kelsey', 'Craig', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
 ('4454ecc1-cc49-419d-9c3c-75c9257b23ec', 70, 'Daisy', 'Russell', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
@@ -2339,6 +2389,7 @@ INSERT INTO `user_profile` (`id`, `account_id`, `first_name`, `last_name`, `prof
 ('c2bc6777-4f25-4e2b-bf67-86726508a709', 90, 'Garry', 'Jones', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
 ('c6b62737-c60d-4a17-98d4-2af851a9279c', 18, 'Adison', 'Barnes', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
 ('c8633364-e226-4946-ae0c-2c33b7e4681e', 29, 'Catherine', 'Lloyd', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
+('cc20f470-d0fa-4e78-a1bb-d28df5a4f5a4', 128, 'mal', 'mal', NULL, NULL, NULL, NULL, NULL, '2026-01-20 09:01:56', '2026-01-20 09:01:56', NULL, NULL),
 ('cc59fea3-0f51-4734-8912-497ad38c2df1', 13, 'Amy', 'Higgins', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
 ('cdd6f3ec-bb8e-4b29-9741-cd360a352181', 32, 'Spike', 'Farrell', NULL, NULL, NULL, NULL, NULL, '2025-12-07 17:55:16', '2025-12-07 17:55:16', NULL, NULL),
 ('ce913a09-7bf9-45b0-a507-8e51d35d0be7', 126, 'kakakl', 'opop', '/uploads/profile_pictures/725c6601-c1c0-4a96-a102-5a7618e3547c.jpeg', NULL, NULL, NULL, NULL, '2026-01-13 11:41:10', '2026-01-13 11:41:10', NULL, NULL),
@@ -2558,7 +2609,7 @@ ALTER TABLE `user_profile`
 -- AUTO_INCREMENT for table `account`
 --
 ALTER TABLE `account`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=129;
 
 --
 -- AUTO_INCREMENT for table `attribute`

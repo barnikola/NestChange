@@ -7,15 +7,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Check if elements exist
     if (!badge || !bellIcon) return;
 
-    // --- Helper to get Base URL (Simple version) ---
-    function getBaseUrl() {
-        const homeLink = document.querySelector('a[href].nav-link');
-        if (homeLink) {
-            return new URL(homeLink.href).origin + new URL(homeLink.href).pathname.replace(/\/$/, "");
-        }
-        return '/';
-    }
-    const BASE_URL = getBaseUrl();
+    // Use global base URL injected from layout
+    const BASE_URL = (typeof APP_BASE_URL !== 'undefined') ? APP_BASE_URL : '/';
 
     // --- 3.4 Auto-Refresh Logic ---
     function updateNotificationCount() {

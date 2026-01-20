@@ -14,17 +14,7 @@ ob_start();
             <span class="form-title-main">Register</span>
         </h1>
         
-        <div class="form-box">
-            <?php if (isset($errors) && !empty($errors)): ?>
-                <div class="alert alert-error">
-                    <?php foreach ($errors as $fieldErrors): ?>
-                        <?php foreach ($fieldErrors as $error): ?>
-                            <p><?= htmlspecialchars($error) ?></p>
-                        <?php endforeach; ?>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-
+            <div class="form-box">
             <?php if (isset($_SESSION['_flash']['error'])): ?>
                 <div class="alert alert-error">
                     <p><?= htmlspecialchars($_SESSION['_flash']['error']) ?></p>
@@ -40,7 +30,7 @@ ob_start();
             <?php endif; ?>
 
             <!-- DEBUG: Form tag should have method="POST" action="/register" enctype="multipart/form-data" -->
-            <form class="auth-form" method="POST" action="/register" enctype="multipart/form-data">
+            <form class="auth-form" method="POST" action="/register" enctype="multipart/form-data" data-no-loading="true">
                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
                 
                 <div class="form-group">
@@ -145,10 +135,15 @@ ob_start();
                             id="profile-picture" 
                             name="profile_picture" 
                             class="form-input file-input" 
-                            accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                            accept=".jpg, .jpeg, image/jpg, image/jpeg"
                         >
                         <span class="file-icon">📎</span>
                     </div>
+                    <?php if (isset($errors['profile_picture'])): ?>
+                        <?php foreach ($errors['profile_picture'] as $error): ?>
+                            <span class="form-error"><?= htmlspecialchars($error) ?></span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
                 
                 <div class="form-group">
@@ -164,6 +159,11 @@ ob_start();
                         >
                         <span class="file-icon">📎</span>
                     </div>
+                    <?php if (isset($errors['id-document'])): ?>
+                        <?php foreach ($errors['id-document'] as $error): ?>
+                            <span class="form-error"><?= htmlspecialchars($error) ?></span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
                 
                 <div class="form-group">
@@ -179,6 +179,11 @@ ob_start();
                         >
                         <span class="file-icon">📎</span>
                     </div>
+                    <?php if (isset($errors['student-id'])): ?>
+                        <?php foreach ($errors['student-id'] as $error): ?>
+                            <span class="form-error"><?= htmlspecialchars($error) ?></span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
                 
                 <div class="form-group">
@@ -217,7 +222,9 @@ ob_start();
             </form>
         </div>
     </div>
+    </div>
 </section>
+<script src="/js/register-validation.js"></script>
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/main.php';

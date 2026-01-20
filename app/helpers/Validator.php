@@ -88,11 +88,11 @@ class Validator
         $value = $this->getValue($field);
         
         if ($value) {
-            // At least 8 characters, 1 uppercase, 1 lowercase, 1 number
-            $pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/';
+            // At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special char
+            $pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/';
             
             if (!preg_match($pattern, $value)) {
-                $this->addError($field, $message ?: "Password must be at least 8 characters with uppercase, lowercase, and a number.");
+                $this->addError($field, $message ?: "Password must be at least 8 characters with uppercase, lowercase, number, and special char.");
             }
         }
         
@@ -193,6 +193,25 @@ class Validator
         
         if ($value && !filter_var($value, FILTER_VALIDATE_URL)) {
             $this->addError($field, $message ?: "Please enter a valid URL.");
+        }
+        
+        return $this;
+    }
+
+    /**
+     * Validate date is in the future
+     */
+    public function future_date(string $field, string $format = 'Y-m-d', string $message = ''): self
+    {
+        $value = $this->getValue($field);
+        
+        if ($value) {
+            $date = \DateTime::createFromFormat($format, $value);
+            $today = new \DateTime('today');
+            
+            if (!$date || $date < $today) {
+                $this->addError($field, $message ?: "Date must be in the future.");
+            }
         }
         
         return $this;
@@ -307,8 +326,6 @@ class Validator
             $mimeMap = [
                 'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg',
                 'png' => 'image/png',
-                'gif' => 'image/gif',
-                'webp' => 'image/webp',
                 'pdf' => 'application/pdf',
             ];
 
