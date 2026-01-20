@@ -34,7 +34,7 @@
 }
 
 .user-info {
-    display: flex;
+    display: none;
     flex-direction: column;
 }
 
@@ -117,7 +117,13 @@
     margin-left: auto;
 }
 
-/* Notification Bell Icon */
+@media (min-width: 768px) {
+    .user-info {
+        display: flex;
+    }
+}
+
+/* User Notification Bell Styles */
 .notification-bell-wrapper {
     position: relative;
     display: flex;

@@ -14,17 +14,7 @@ ob_start();
             <span class="form-title-main">Register</span>
         </h1>
         
-        <div class="form-box">
-            <?php if (isset($errors) && !empty($errors)): ?>
-                <div class="alert alert-error">
-                    <?php foreach ($errors as $fieldErrors): ?>
-                        <?php foreach ($fieldErrors as $error): ?>
-                            <p><?= htmlspecialchars($error) ?></p>
-                        <?php endforeach; ?>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-
+            <div class="form-box">
             <?php if (isset($_SESSION['_flash']['error'])): ?>
                 <div class="alert alert-error">
                     <p><?= htmlspecialchars($_SESSION['_flash']['error']) ?></p>
@@ -40,7 +30,7 @@ ob_start();
             <?php endif; ?>
 
             <!-- DEBUG: Form tag should have method="POST" action="/register" enctype="multipart/form-data" -->
-            <form class="auth-form" method="POST" action="/register" enctype="multipart/form-data">
+            <form class="auth-form" method="POST" action="/register" enctype="multipart/form-data" data-no-loading="true">
                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
                 
                 <div class="form-group">
@@ -49,11 +39,17 @@ ob_start();
                         type="text" 
                         id="name" 
                         name="name" 
-                        class="form-input" 
-                        placeholder="Value" 
+                        class="form-input<?php echo isset($errors['name']) ? ' is-invalid' : ''; ?>" 
+                        placeholder="John" 
                         value="<?= htmlspecialchars($old['name'] ?? '') ?>"
+                        <?php echo isset($errors['name']) ? 'aria-invalid="true"' : ''; ?>
                         required
                     >
+                    <?php if (isset($errors['name'])): ?>
+                        <?php foreach ($errors['name'] as $error): ?>
+                            <span class="form-error"><?= htmlspecialchars($error) ?></span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
                 
                 <div class="form-group">
@@ -62,11 +58,17 @@ ob_start();
                         type="text" 
                         id="surname" 
                         name="surname" 
-                        class="form-input" 
-                        placeholder="Value" 
+                        class="form-input<?php echo isset($errors['surname']) ? ' is-invalid' : ''; ?>" 
+                        placeholder="Doe" 
                         value="<?= htmlspecialchars($old['surname'] ?? '') ?>"
+                        <?php echo isset($errors['surname']) ? 'aria-invalid="true"' : ''; ?>
                         required
                     >
+                    <?php if (isset($errors['surname'])): ?>
+                        <?php foreach ($errors['surname'] as $error): ?>
+                            <span class="form-error"><?= htmlspecialchars($error) ?></span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
                 
                 <div class="form-group">
@@ -75,11 +77,17 @@ ob_start();
                         type="email" 
                         id="email" 
                         name="email" 
-                        class="form-input" 
-                        placeholder="Value" 
+                        class="form-input<?php echo isset($errors['email']) ? ' is-invalid' : ''; ?>" 
+                        placeholder="your@email.com" 
                         value="<?= htmlspecialchars($old['email'] ?? '') ?>"
+                        <?php echo isset($errors['email']) ? 'aria-invalid="true"' : ''; ?>
                         required
                     >
+                    <?php if (isset($errors['email'])): ?>
+                        <?php foreach ($errors['email'] as $error): ?>
+                            <span class="form-error"><?= htmlspecialchars($error) ?></span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
                 
                 <div class="form-group">
@@ -88,10 +96,17 @@ ob_start();
                         type="password" 
                         id="password" 
                         name="password" 
-                        class="form-input" 
-                        placeholder="Value" 
+                        class="form-input<?php echo isset($errors['password']) ? ' is-invalid' : ''; ?>" 
+                        placeholder="••••••••"
+                        <?php echo isset($errors['password']) ? 'aria-invalid="true"' : ''; ?>
                         required
                     >
+                    <?php if (isset($errors['password'])): ?>
+                        <?php foreach ($errors['password'] as $error): ?>
+                            <span class="form-error"><?= htmlspecialchars($error) ?></span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                    <span class="form-help">At least 8 characters</span>
                 </div>
                 
                 <div class="form-group">
@@ -100,10 +115,16 @@ ob_start();
                         type="password" 
                         id="confirm-password" 
                         name="password_confirm" 
-                        class="form-input" 
-                        placeholder="Value" 
+                        class="form-input<?php echo isset($errors['password_confirm']) ? ' is-invalid' : ''; ?>" 
+                        placeholder="••••••••"
+                        <?php echo isset($errors['password_confirm']) ? 'aria-invalid="true"' : ''; ?>
                         required
                     >
+                    <?php if (isset($errors['password_confirm'])): ?>
+                        <?php foreach ($errors['password_confirm'] as $error): ?>
+                            <span class="form-error"><?= htmlspecialchars($error) ?></span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
                 
                 <div class="form-group">
@@ -114,10 +135,15 @@ ob_start();
                             id="profile-picture" 
                             name="profile_picture" 
                             class="form-input file-input" 
-                            accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                            accept=".jpg, .jpeg, image/jpg, image/jpeg"
                         >
                         <span class="file-icon">📎</span>
                     </div>
+                    <?php if (isset($errors['profile_picture'])): ?>
+                        <?php foreach ($errors['profile_picture'] as $error): ?>
+                            <span class="form-error"><?= htmlspecialchars($error) ?></span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
                 
                 <div class="form-group">
@@ -133,6 +159,11 @@ ob_start();
                         >
                         <span class="file-icon">📎</span>
                     </div>
+                    <?php if (isset($errors['id-document'])): ?>
+                        <?php foreach ($errors['id-document'] as $error): ?>
+                            <span class="form-error"><?= htmlspecialchars($error) ?></span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
                 
                 <div class="form-group">
@@ -148,6 +179,11 @@ ob_start();
                         >
                         <span class="file-icon">📎</span>
                     </div>
+                    <?php if (isset($errors['student-id'])): ?>
+                        <?php foreach ($errors['student-id'] as $error): ?>
+                            <span class="form-error"><?= htmlspecialchars($error) ?></span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
                 
                 <div class="form-group">
@@ -163,12 +199,22 @@ ob_start();
                     >
                 </div>
 
-                <div class="captcha-box">
-                    <label class="form-label"> Verify you are a human: </label>
-                    <div style="gap: 10px ; margin: 10px 0 0 10px; align-items:center; display: flex; flex-direction: row">
-                    <label style="text-wrap: nowrap" class="form-label"><?= $_SESSION['captcha_x']?> + <?= $_SESSION['captcha_y']?> =</label>
-                    <input type="number" class="form-input" style="width: 6vw; " name="captcha">
+                <div class="form-group">
+                    <label class="form-label">Verify you are a human</label>
+                    <div class="form-row">
+                        <span class="form-label" style="white-space: nowrap; flex: 0 0 auto;"><?= $_SESSION['captcha_x']?> + <?= $_SESSION['captcha_y']?> =</span>
+                        <input 
+                            type="number" 
+                            class="form-input<?php echo isset($errors['captcha']) ? ' is-invalid' : ''; ?>" 
+                            name="captcha"
+                            <?php echo isset($errors['captcha']) ? 'aria-invalid="true"' : ''; ?>
+                        >
                     </div>
+                    <?php if (isset($errors['captcha'])): ?>
+                        <?php foreach ($errors['captcha'] as $error): ?>
+                            <span class="form-error"><?= htmlspecialchars($error) ?></span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
 
 
@@ -176,7 +222,9 @@ ob_start();
             </form>
         </div>
     </div>
+    </div>
 </section>
+<script src="/js/register-validation.js"></script>
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/main.php';

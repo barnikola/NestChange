@@ -16,6 +16,7 @@ ob_start();
                 <!-- CSRF Token if applicable - controller requires verification? base controller checks verifyCsrf() usually if enforced -->
                 <!-- Assuming AdminController doesn't enforce strict CSRF on this route yet but good practice -->
                 
+                <input type="hidden" name="csrf_token" value="<?= Session::getCsrfToken() ?>">
                 <input type="hidden" name="type" value="<?php echo htmlspecialchars($doc['type']); ?>">
 
                 <div>

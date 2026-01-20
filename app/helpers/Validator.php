@@ -88,11 +88,11 @@ class Validator
         $value = $this->getValue($field);
         
         if ($value) {
-            // At least 8 characters, 1 uppercase, 1 lowercase, 1 number
-            $pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/';
+            // At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special char
+            $pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/';
             
             if (!preg_match($pattern, $value)) {
-                $this->addError($field, $message ?: "Password must be at least 8 characters with uppercase, lowercase, and a number.");
+                $this->addError($field, $message ?: "Password must be at least 8 characters with uppercase, lowercase, number, and special char.");
             }
         }
         
@@ -199,6 +199,25 @@ class Validator
     }
 
     /**
+     * Validate date is in the future
+     */
+    public function future_date(string $field, string $format = 'Y-m-d', string $message = ''): self
+    {
+        $value = $this->getValue($field);
+        
+        if ($value) {
+            $date = \DateTime::createFromFormat($format, $value);
+            $today = new \DateTime('today');
+            
+            if (!$date || $date < $today) {
+                $this->addError($field, $message ?: "Date must be in the future.");
+            }
+        }
+        
+        return $this;
+    }
+
+    /**
      * Validate date format
      */
     public function date(string $field, string $format = 'Y-m-d', string $message = ''): self
@@ -264,7 +283,7 @@ class Validator
         $fileData = $_FILES[$field];
         
         // Helper function to validate a single file
-        $validateSingleFile = function($error, $size, $tmpName) use ($field, $message, $options) {
+        $validateSingleFile = function($error, $size, $tmpName, $originalName) use ($field, $message, $options) {
              if ($error === UPLOAD_ERR_NO_FILE) {
                 if (isset($options['required']) && $options['required']) {
                      $this->addError($field, $message ?: "Please upload a file.");
@@ -273,24 +292,49 @@ class Validator
             }
 
             if ($error !== UPLOAD_ERR_OK) {
-                $this->addError($field, "File upload failed.");
+                $this->addError($field, "File upload failed (Error code: $error).");
                 return;
             }
 
             // Check file size
             if (isset($options['maxSize']) && $size > $options['maxSize']) {
-                $maxMb = $options['maxSize'] / 1024 / 1024;
-                $this->addError($field, $message ?: "File size must be less than {$maxMb}MB.");
+                $maxMb = round($options['maxSize'] / 1024 / 1024, 2);
+                $this->addError($field, "File size must be less than {$maxMb}MB.");
+                return;
             }
 
-            // Check mime type
-            if (isset($options['mimeTypes'])) {
-                $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                $mimeType = finfo_file($finfo, $tmpName);
-                
-                if (!in_array($mimeType, $options['mimeTypes'])) {
-                    $this->addError($field, $message ?: "Invalid file type.");
-                }
+            // Secure MIME type check
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $realMimeType = finfo_file($finfo, $tmpName);
+            finfo_close($finfo);
+
+            if (isset($options['mimeTypes']) && !in_array($realMimeType, $options['mimeTypes'])) {
+                $this->addError($field, "Invalid file type. Detected: $realMimeType.");
+                return;
+            }
+
+            // Extension Validation (Double Check)
+            $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+            
+            // Whitelist extensions
+            if (isset($options['extensions']) && !in_array($ext, $options['extensions'])) {
+                 $this->addError($field, "Invalid file extension. Allowed: " . implode(', ', $options['extensions']));
+                 return;
+            }
+
+            // Verify Extension Matches MIME (Basic Map)
+            $mimeMap = [
+                'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg',
+                'png' => 'image/png',
+                'pdf' => 'application/pdf',
+            ];
+
+            if (isset($mimeMap[$ext]) && $mimeMap[$ext] !== $realMimeType) {
+                 // Allow jpeg/jpg mismatch or octet-stream issues if necessary, but be strict for now
+                 if (!($realMimeType === 'image/jpeg' && ($ext === 'jpg' || $ext === 'jpeg'))) {
+                      $this->addError($field, "File content does not match extension.");
+                      return;
+                 }
             }
         };
 
@@ -319,7 +363,8 @@ class Validator
                 $validateSingleFile(
                     $fileData['error'][$i],
                     $fileData['size'][$i],
-                    $fileData['tmp_name'][$i]
+                    $fileData['tmp_name'][$i],
+                    $fileData['name'][$i]
                 );
             }
         } else {
@@ -327,7 +372,8 @@ class Validator
             $validateSingleFile(
                 $fileData['error'],
                 $fileData['size'],
-                $fileData['tmp_name']
+                $fileData['tmp_name'],
+                $fileData['name']
             );
         }
 

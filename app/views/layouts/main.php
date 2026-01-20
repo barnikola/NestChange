@@ -14,9 +14,14 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
+    <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/variables.css?v=<?= time() ?>">
     <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/theme.css?v=<?= time() ?>">
     <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/dropdown.css?v=<?= time() ?>">
     <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/star-rating.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="<?php echo rtrim(BASE_URL, '/'); ?>/css/star-rating.css?v=<?= time() ?>">
+    <script>
+        const APP_BASE_URL = '<?php echo rtrim(BASE_URL, '/'); ?>';
+    </script>
     <?php echo $extraHead; ?>
 </head>
 <body<?php echo $bodyAttr; ?>>
@@ -44,7 +49,7 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                     <!-- Chat link visible only if logged in or allow access to login via it -->
                     <a href="<?php echo rtrim(BASE_URL, '/'); ?>/chat" class="nav-link<?php echo $activeNav === 'chat' ? ' nav-link-active' : ''; ?>">Chat</a>
                     <a href="<?php echo rtrim(BASE_URL, '/'); ?>/favorites" class="nav-link">Favorites</a>
-                    <a href="#" class="nav-link">Contact</a>
+                    <a href="<?php echo rtrim(BASE_URL, '/'); ?>/contact" class="nav-link<?php echo $activeNav === 'contact' ? ' nav-link-active' : ''; ?>">Contact</a>
                 </nav>
                 <div class="header-right">
                     <?php if ($navContext['is_logged_in']): ?>
@@ -80,9 +85,6 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                                 <a href="<?php echo rtrim(BASE_URL, '/'); ?>/profile/edit" class="dropdown-item">Settings</a>
                                 <a href="<?php echo rtrim(BASE_URL, '/'); ?>/notifications" class="dropdown-item">
                                     Notifications
-                                    <?php if ($navContext['notification_count'] > 0): ?>
-                                        <span class="notification-badge"><?= $navContext['notification_count'] ?></span>
-                                    <?php endif; ?>
                                 </a>
                                 <a href="<?php echo rtrim(BASE_URL, '/'); ?>/auth/logout" class="dropdown-item">Sign Out</a>
                             </div>
@@ -118,31 +120,78 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
         </nav>
     <?php endif; ?>
 
+
     <?php echo $content ?? ''; ?>
+    <?php include dirname(__DIR__) . '/partials/report_modal.php'; ?>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
-            <div class="footer-left">
-                <a href="<?php echo rtrim(BASE_URL, '/'); ?>">
+            <div class="footer-brand">
+                <a href="<?php echo rtrim(BASE_URL, '/'); ?>" class="footer-logo-link">
                     <img src="<?php echo rtrim(BASE_URL, '/'); ?>/assets/logo.png" alt="NestChange Logo" class="footer-logo">
                 </a>
+                <p class="footer-tagline">Exchange homes with students worldwide. Live like a local, save money, and make unforgettable connections.</p>
+                <div class="footer-social">
+                    <a href="#" class="footer-social-link" aria-label="Facebook">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                    </a>
+                    <a href="#" class="footer-social-link" aria-label="Twitter">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+                    </a>
+                    <a href="#" class="footer-social-link" aria-label="Instagram">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    </a>
+                    <a href="#" class="footer-social-link" aria-label="LinkedIn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                    </a>
+                </div>
             </div>
-            <div class="footer-nav">
+            
+            <div class="footer-links">
                 <div class="footer-nav-column">
-                    <h4 class="footer-nav-title">Resources</h4>
+                    <h4 class="footer-nav-title">Product</h4>
                     <ul class="footer-nav-links">
-                        <li><a href="/legal/terms">Terms of Service</a></li>
-                        <li><a href="/legal/privacy">Privacy Policy</a></li>
-                        <li><a href="/legal/cookie_policy">Cookie Policy</a></li>
-                        <li><a href="/support">Support</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/listings">Browse Listings</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/listings/create">List Your Place</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>#how-it-works">How It Works</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/faq">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-nav-column">
+                    <h4 class="footer-nav-title">Company</h4>
+                    <ul class="footer-nav-links">
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/about">About Us</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/contact">Contact</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/blog">Blog</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/careers">Careers</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-nav-column">
+                    <h4 class="footer-nav-title">Legal</h4>
+                    <ul class="footer-nav-links">
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/legal/terms">Terms of Service</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/legal/privacy">Privacy Policy</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/legal/cookie_policy">Cookie Policy</a></li>
+                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/support">Support</a></li>
                     </ul>
                 </div>
             </div>
         </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-bottom-container">
+                <p class="footer-copyright">&copy; <?php echo date('Y'); ?> NestChange. All rights reserved.</p>
+                <p class="footer-made-with">Made with <span style="color: #FFD700;">❤</span> for students</p>
+            </div>
+        </div>
     </footer>
+    <script src="<?php echo rtrim(BASE_URL, '/'); ?>/js/ui.js?v=<?= time() ?>" defer></script>
     <script src="<?php echo rtrim(BASE_URL, '/'); ?>/js/navigation.js?v=<?= time() ?>" defer></script>
     <script src="<?php echo rtrim(BASE_URL, '/'); ?>/js/stars.js?v=<?= time() ?>" defer></script>
+    <script src="<?php echo rtrim(BASE_URL, '/'); ?>/js/notifications.js?v=<?= time() ?>" defer></script>
     </body>
 
 </html>

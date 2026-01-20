@@ -67,6 +67,70 @@ class EmailService
     }
 
     /**
+     * Send "Report Status Updated" email
+     */
+    public function sendReportStatusUpdate(array $report, string $newStatus): void
+    {
+        if (empty($report['reporter_email'])) {
+            return; // No email to send to
+        }
+
+        $to = $report['reporter_email'];
+        $reporterName = trim($report['reporter_name'] ?? 'User');
+        if (empty($reporterName)) {
+            $reporterName = 'User';
+        }
+
+        $statusLabels = [
+            'pending' => 'Pending Review',
+            'reviewed' => 'Under Review',
+            'resolved' => 'Resolved'
+        ];
+        
+        $statusLabel = $statusLabels[$newStatus] ?? ucfirst($newStatus);
+        
+        $reportedItem = '';
+        if ($report['reported_type'] === 'listing') {
+            $reportedItem = "Listing #{$report['reported_id']}";
+        } elseif ($report['reported_type'] === 'user') {
+            $reportedItem = "User Profile #{$report['reported_id']}";
+        } elseif ($report['reported_type'] === 'message') {
+            $reportedItem = "Message #{$report['reported_id']}";
+        } else {
+            $reportedItem = "Item #{$report['reported_id']}";
+        }
+
+        $subject = "Report Status Update: {$statusLabel}";
+        $body = "Hi {$reporterName},\n\n" .
+                "Your report regarding {$reportedItem} has been updated.\n\n" .
+                "Report ID: {$report['id']}\n" .
+                "Reason: {$report['reason']}\n" .
+                "New Status: {$statusLabel}\n\n" .
+                "Thank you for helping us maintain a safe community.\n\n" .
+                "Best regards,\n" .
+                "NestChange Team";
+
+        $this->logEmail($to, $subject, $body);
+    }
+
+    /**
+     * Send "Password Reset" email
+     */
+    public function sendPasswordReset(string $email, string $token): void
+    {
+        $resetUrl = BASE_URL . '/reset-password?token=' . $token;
+        $subject = 'Password Reset Request';
+        $body = "Hi,\n\n" .
+                "You requested a password reset for your NestChange account.\n" .
+                "Click the link below to verify your email and set a new password:\n\n" .
+                "{$resetUrl}\n\n" .
+                "If you didn't make this request, please ignore receive this email.\n\n" .
+                "This link will expire in 1 hour.";
+        
+        $this->logEmail($email, $subject, $body);
+    }
+
+    /**
      * Log email to file
      */
     private function logEmail(string $to, string $subject, string $body): void

@@ -12,10 +12,9 @@ if (file_exists($envPath)) {
             list($name, $value) = explode('=', $line, 2);
             $name = trim($name);
             $value = trim($value);
-            if (!array_key_exists($name, $_ENV)) {
-                putenv("$name=$value");
-                $_ENV[$name] = $value;
-            }
+            putenv("$name=$value");
+            $_ENV[$name] = $value;
+            $_SERVER[$name] = $value;
         }
     }
 }
@@ -23,6 +22,9 @@ if (file_exists($envPath)) {
 // Application Environment
 define('APP_ENV', getenv('APP_ENV') ?: 'development');
 define('APP_DEBUG', APP_ENV === 'development');
+
+ini_set('log_errors', 1);
+ini_set('error_log', dirname(__DIR__) . '/app/storage/logs/php_error.log');
 
 // Timezone (used for formatting/display)
 define('APP_TIMEZONE', getenv('APP_TIMEZONE') ?: 'Europe/Paris');
@@ -67,4 +69,4 @@ define('PASSWORD_COST', 12);
 
 // File Upload Configuration
 define('UPLOAD_MAX_SIZE', 5 * 1024 * 1024); // 5MB
-define('ALLOWED_IMAGE_TYPES', ['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
+define('ALLOWED_IMAGE_TYPES', ['image/jpeg', 'image/png', 'image/jpg']);

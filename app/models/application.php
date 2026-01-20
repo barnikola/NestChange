@@ -63,6 +63,19 @@ class Application extends Model
     }
 
     /**
+     * Check if user has an active application for a listing
+     */
+    public function hasActiveApplication(string $userId, string $listingId): bool
+    {
+        $sql = "SELECT 1 FROM {$this->table} 
+                WHERE applicant_id = ? 
+                AND listing_id = ? 
+                AND status NOT IN ('cancelled', 'rejected', 'withdrawn')
+                LIMIT 1";
+        return $this->db->fetchOne($sql, [$userId, $listingId]) !== false;
+    }
+
+    /**
      * Get applications by applicant ID
      */
     public function getByApplicantId(string $userId): array
@@ -74,6 +87,20 @@ class Application extends Model
                 ORDER BY a.created_at DESC";
         
         return $this->db->fetchAll($sql, [$userId]);
+    }
+
+    /**
+     * Get active application ID if exists
+     */
+    public function getActiveApplicationId(string $userId, string $listingId): ?string
+    {
+        $sql = "SELECT id FROM {$this->table} 
+                WHERE applicant_id = ? 
+                AND listing_id = ? 
+                AND status NOT IN ('cancelled', 'rejected', 'withdrawn')
+                LIMIT 1";
+        $result = $this->db->fetchOne($sql, [$userId, $listingId]);
+        return $result['id'] ?? null;
     }
 
     /**

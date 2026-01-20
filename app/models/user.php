@@ -262,6 +262,11 @@ class User extends Model
         return $this->db->update('user_document', $data, 'id = ?', [$documentId]) > 0;
     }
 
+    public function getDocument(string $documentId): array|false
+    {
+        return $this->db->fetchOne("SELECT * FROM user_document WHERE id = ?", [$documentId]);
+    }
+
     public function countPendingDocuments(int|string $userId): int
     {
         $sql = "SELECT COUNT(*) as count FROM user_document WHERE account_id = ? AND status = 'pending'";

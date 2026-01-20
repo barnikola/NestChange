@@ -53,20 +53,39 @@ class ModeratorController extends Controller
     {
         $this->requireModerator();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request.');
+                header('Location: /moderator/documents');
+                exit;
+            }
             $documentId = $_POST['document_id'];
             $userId = $_POST['user_id'] ?? null;
             $action = $_POST['action']; // 'approve' or 'reject'
             
             $userModel = $this->model('User');
+            $document = $userModel->getDocument($documentId);
+            $userId = $document['account_id'] ?? $userId; // Ensure we have userId
+
+            $docLabel = match ((int)($document['document_type_id'] ?? 0)) {
+                1 => 'Passport / ID',
+                2 => 'Student ID',
+                default => 'Document',
+            };
             
             if ($action === 'approve') {
                 if ($userModel->updateDocumentStatus($documentId, 'approved')) {
                     $this->setFlash('success', 'Document verified successfully.');
+                    if ($userId) {
+                        $this->model('Notification')->add($userId, "Your {$docLabel} has been verified successfully.", 'success');
+                    }
                 } else {
                      $this->setFlash('error', 'Failed to update document status.');
                 }
             } elseif ($action === 'reject') {
                 $userModel->updateDocumentStatus($documentId, 'rejected');
+                 if ($userId) {
+                    $this->model('Notification')->add($userId, "Your {$docLabel} verification was rejected. Please re-upload.", 'error');
+                }
                  $this->setFlash('success', 'Document rejected.');
             }
         }
@@ -78,6 +97,11 @@ class ModeratorController extends Controller
     {
         $this->requireModerator();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request.');
+                header('Location: /moderator/listings');
+                exit;
+            }
             $id = $_POST['listing_id'];
             $this->model('Listing')->update($id, ['status' => 'published']);
             $this->setFlash('success', 'Listing published.');
@@ -90,6 +114,11 @@ class ModeratorController extends Controller
     {
          $this->requireModerator();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request.');
+                header('Location: /moderator/listings');
+                exit;
+            }
             $id = $_POST['listing_id'];
              $this->model('Listing')->update($id, ['status' => 'paused']);
              $this->setFlash('success', 'Listing paused.');
@@ -102,6 +131,11 @@ class ModeratorController extends Controller
     {
          $this->requireModerator();
         if ($this->isPost()) {
+            if (!$this->verifyCsrf()) {
+                $this->setFlash('error', 'Invalid request.');
+                header('Location: /moderator/listings');
+                exit;
+            }
             $id = $_POST['listing_id'];
              $this->model('Listing')->delete($id);
              $this->setFlash('success', 'Listing deleted.');

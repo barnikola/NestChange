@@ -114,6 +114,20 @@ $averageRating = $reviewCount > 0
     ? round(array_sum(array_map(fn($review) => (int) ($review['rating'] ?? 0), $reviews)) / $reviewCount, 1)
     : null;
 ?>
+<!-- Listing Status Banner for Owner/Admin/Moderator -->
+<?php 
+$currentUser = Session::getUser();
+$userProfileId = $currentUser['profile_id'] ?? null;
+$isOwner = $userProfileId && $userProfileId === $listing['host_profile_id'];
+$canViewStatus = $isOwner || AuthMiddleware::hasAnyRole(['admin', 'moderator']);
+?>
+
+<?php if ($canViewStatus): ?>
+    <div style="background: #e3f2fd; color: #0d47a1; padding: 15px; text-align: center; border-bottom: 1px solid #bbdefb; margin-bottom: 20px; font-size: 16px;">
+        Listing Status: <span style="text-transform: uppercase; font-weight: 700; color: #1565c0;"><?= htmlspecialchars($listing['status']) ?></span>
+    </div>
+<?php endif; ?>
+
 <!-- Listing Header with Carousel -->
 <section class="holder">
     <div class="listing-carousel">
@@ -122,7 +136,7 @@ $averageRating = $reviewCount > 0
             <?php if (!empty($listing['images'])): ?>
                 <?php foreach ($listing['images'] as $index => $img): ?>
                     <img
-                        src="/<?php echo ltrim($img['image'], '/'); ?>"
+                        src="/<?php echo htmlspecialchars(ltrim($img['image'], '/')); ?>"
                         alt="<?php echo htmlspecialchars($listing['title']); ?> photo <?php echo $index + 1; ?>"
                         class="carousel-slide<?php echo $index === 0 ? ' active' : ''; ?>">
                 <?php endforeach; ?>
@@ -156,7 +170,7 @@ $averageRating = $reviewCount > 0
     <div class="host-panel-header">
         <div class="host-avatar">
             <?php if (!empty($listing['host']['profile_picture'])): ?>
-                <img src="/<?php echo ltrim($listing['host']['profile_picture'], '/'); ?>" 
+                <img src="/<?php echo htmlspecialchars(ltrim($listing['host']['profile_picture'], '/')); ?>" 
                      alt="<?php echo htmlspecialchars($listing['host']['first_name'] ?? 'Host'); ?>">
             <?php else: ?>
                 <div class="host-avatar-placeholder">
@@ -171,8 +185,10 @@ $averageRating = $reviewCount > 0
                     <?php echo htmlspecialchars(($listing['host']['first_name'] ?? 'Anonymous') . ' ' . ($listing['host']['last_name'] ?? '')); ?>
                 </a>
             </h3>
-            
-            </div>
+            <!-- Report Button for Listing -->
+            <?php if (Session::isLoggedIn()): ?>
+                <button onclick="openReportModal('listing', '<?php echo htmlspecialchars($listing['id']); ?>')" style="margin-top:8px;" class="btn-report">Report Listing</button>
+            <?php endif; ?>
         </div>
     </div>
     
@@ -189,7 +205,7 @@ $averageRating = $reviewCount > 0
         <a href="<?php echo BASE_URL; ?>/profile/<?php echo htmlspecialchars($listing['host_profile_id']); ?>" class="host-action-btn">
             View Profile
         </a>
-        <a href="<?php echo BASE_URL; ?>/chat/<?php echo htmlspecialchars($listing['host_profile_id']); ?>?listing_id=<?php echo htmlspecialchars($listing['id']); ?>" class="host-action-btn primary">
+        <a href="<?php echo BASE_URL; ?>/chat" class="host-action-btn primary">
             Contact Host
         </a>
     </div>
@@ -341,11 +357,27 @@ $averageRating = $reviewCount > 0
         <?php if (!$isOwner): ?>
             <?php if (AuthMiddleware::hasAnyRole(['admin', 'moderator'])): ?>
                 <button class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/edit'" style="background: #2196F3;">Edit Listing (Mod)</button>
+                <?php if ($listing['status'] === 'draft'): ?>
+                    <form method="POST" action="/listings/<?php echo $listing['id']; ?>/publish" style="display:inline; margin-left:10px;">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(Session::getCsrfToken()); ?>">
+                        <button type="submit" class="listing" style="background: #4CAF50; color: #fff;">Publish Listing</button>
+                    </form>
+                <?php endif; ?>
             <?php else: ?>
-                <a href="/listings/<?php echo $listing['id']; ?>/apply" class="listing" id="apply-listing-btn" style="display: block; text-align: center; text-decoration: none;">Apply for listing</a>
+                <?php if (!empty($activeApplicationId)): ?>
+                    <a href="/applications/<?php echo $activeApplicationId; ?>" class="listing" id="view-application-btn" style="display: block; text-align: center; text-decoration: none; background-color: #2196F3;">View Application</a>
+                <?php else: ?>
+                    <a href="/listings/<?php echo $listing['id']; ?>/apply" class="listing" id="apply-listing-btn" style="display: block; text-align: center; text-decoration: none;">Apply for listing</a>
+                <?php endif; ?>
             <?php endif; ?>
         <?php else: ?>
-             <button class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/edit'">Edit Listing</button>
+            <button class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/edit'">Edit Listing</button>
+            <?php if (AuthMiddleware::hasAnyRole(['admin', 'moderator']) && $listing['status'] === 'draft'): ?>
+                <form method="POST" action="/listings/<?php echo $listing['id']; ?>/publish" style="display:inline; margin-left:10px;">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(Session::getCsrfToken()); ?>">
+                    <button type="submit" class="listing" style="background: #4CAF50; color: #fff;">Publish Listing</button>
+                </form>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </section>
@@ -461,7 +493,8 @@ $listingConfig = [
 <script id="listing-config" type="application/json">
 <?php echo json_encode($listingConfig, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>
 </script>
-<script src="/js/listing.js" defer></script>
+<script src="/js/listing.js?v=<?= time() ?>" defer></script>
+<script src="/js/favorites.js?v=<?= time() ?>" defer></script>
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/main.php';

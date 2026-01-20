@@ -50,11 +50,17 @@ ob_start();
                         type="email" 
                         id="email" 
                         name="email" 
-                        class="form-input" 
+                        class="form-input<?php echo isset($errors['email']) ? ' is-invalid' : ''; ?>" 
                         placeholder="your@email.com" 
                         value="<?= htmlspecialchars($old['email'] ?? '') ?>"
+                        <?php echo isset($errors['email']) ? 'aria-invalid="true"' : ''; ?>
                         required
                     >
+                    <?php if (isset($errors['email'])): ?>
+                        <?php foreach ($errors['email'] as $error): ?>
+                            <span class="form-error"><?= htmlspecialchars($error) ?></span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
                 
                 <div class="form-group">
@@ -63,10 +69,16 @@ ob_start();
                         type="password" 
                         id="password" 
                         name="password" 
-                        class="form-input" 
-                        placeholder="••••••••" 
+                        class="form-input<?php echo isset($errors['password']) ? ' is-invalid' : ''; ?>" 
+                        placeholder="••••••••"
+                        <?php echo isset($errors['password']) ? 'aria-invalid="true"' : ''; ?>
                         required
                     >
+                    <?php if (isset($errors['password'])): ?>
+                        <?php foreach ($errors['password'] as $error): ?>
+                            <span class="form-error"><?= htmlspecialchars($error) ?></span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
 
                 <div class="form-group">
@@ -76,12 +88,22 @@ ob_start();
                     </label>
                 </div>
 
-                <div class="captcha-box">
-                    <label class="form-label"> Verify you are a human: </label>
-                    <div style="gap: 10px ; margin: 10px 0 0 10px; align-items:center; display: flex; flex-direction: row">
-                        <label style="text-wrap: nowrap" class="form-label"><?= $_SESSION['captcha_x']?> + <?= $_SESSION['captcha_y']?> =</label>
-                        <input type="number" class="form-input" style="width: 6vw; " name="captcha">
+                <div class="form-group">
+                    <label class="form-label">Verify you are a human</label>
+                    <div class="form-row">
+                        <span class="form-label" style="white-space: nowrap; flex: 0 0 auto;"><?= $_SESSION['captcha_x']?> + <?= $_SESSION['captcha_y']?> =</span>
+                        <input 
+                            type="number" 
+                            class="form-input<?php echo isset($errors['captcha']) ? ' is-invalid' : ''; ?>" 
+                            name="captcha"
+                            <?php echo isset($errors['captcha']) ? 'aria-invalid="true"' : ''; ?>
+                        >
                     </div>
+                    <?php if (isset($errors['captcha'])): ?>
+                        <?php foreach ($errors['captcha'] as $error): ?>
+                            <span class="form-error"><?= htmlspecialchars($error) ?></span>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
 
                 <button type="submit" class="btn-submit">Sign In</button>

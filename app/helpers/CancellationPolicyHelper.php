@@ -28,9 +28,9 @@ class CancellationPolicyHelper
     public static function getDescription(string $policy): string
     {
         return match ($policy) {
-            self::POLICY_FLEXIBLE => 'Free cancellation until 24 hours before check-in.',
-            self::POLICY_MODERATE => 'Full refund 5 days prior to arrival.',
-            self::POLICY_STRICT => 'Full refund 14 days prior to arrival.',
+            self::POLICY_FLEXIBLE => 'Cancellation allowed until 24 hours before check-in.',
+            self::POLICY_MODERATE => 'Cancellation allowed up to 5 days prior.',
+            self::POLICY_STRICT => 'Cancellation allowed up to 14 days prior.',
             default => '',
         };
     }
@@ -39,18 +39,18 @@ class CancellationPolicyHelper
     {
         return match ($policy) {
             self::POLICY_FLEXIBLE => [
-                'Full refund if cancelled at least 24 hours before the local check-in time.',
-                'No refund if cancelled less than 24 hours before check-in.'
+                'Cancellation allowed if cancelled at least 24 hours before the local check-in time.',
+                'Late cancellation if cancelled less than 24 hours before check-in.'
             ],
             self::POLICY_MODERATE => [
-                'Full refund if cancelled at least 5 days before check-in.',
-                '50% refund if cancelled between 5 days and 24 hours before check-in.',
-                'No refund if cancelled less than 24 hours before check-in.'
+                'Cancellation allowed if cancelled at least 5 days before check-in.',
+                'Late cancellation warning if cancelled between 5 days and 24 hours before check-in.',
+                'Strict restrictions apply if cancelled less than 24 hours before check-in.'
             ],
             self::POLICY_STRICT => [
-                'Full refund if cancelled at least 14 days before check-in.',
-                '50% refund if cancelled between 14 days and 7 days before check-in.',
-                'No refund if cancelled less than 7 days before check-in.'
+                'Cancellation allowed if cancelled at least 14 days before check-in.',
+                'Late cancellation warning if cancelled between 14 days and 7 days before check-in.',
+                'Strict restrictions apply if cancelled less than 7 days before check-in.'
             ],
             default => [],
         };
@@ -79,59 +79,49 @@ class CancellationPolicyHelper
 
         switch ($policy) {
             case self::POLICY_FLEXIBLE:
-                // Full refund if cancelled at least 24 hours before
-                // Diffs: if days > 0, it means at least 24h. 
-                // Actually, DateTime::diff returns days as complete 24h periods.
-                // If it's the same day, days=0. If it's tomorrow, days=1 (if >24h).
-                // Let's rely on hours or just day difference.
-                // "Until 24 hours before check-in"
-                
-                // Deadlines
+                // Deadline: 24 hours before check-in
                 $deadlineFull = (clone $start)->modify('-1 day');
                 
                 if ($interval->days >= 1) {
-                    $refund = 'Full';
-                    $message = 'Full refund applied. (Deadline: ' . $deadlineFull->format('d M Y, H:i') . ')';
+                    $refund = 'Allowed';
+                    $message = 'Cancellation allowed. (Deadline: ' . $deadlineFull->format('d M Y, H:i') . ')';
                 } else {
-                    $refund = 'None';
-                    // Passed deadline
-                    $message = 'No refund. (Deadline was ' . $deadlineFull->format('d M Y, H:i') . ')';
+                    $refund = 'Restricted';
+                    $message = 'Late cancellation. (Deadline was ' . $deadlineFull->format('d M Y, H:i') . ')';
                 }
                 break;
 
             case self::POLICY_MODERATE:
-                // Full refund 5 days prior
-                // 50% between 5 days and 24 hours
+                // Deadline: 5 days prior
                 $deadlineFull = (clone $start)->modify('-5 days');
                 $deadlinePartial = (clone $start)->modify('-1 day');
 
                 if ($daysBefore >= 5) {
-                    $refund = 'Full';
-                    $message = 'Full refund applied. (Deadline: ' . $deadlineFull->format('d M Y, H:i') . ')';
+                    $refund = 'Allowed';
+                    $message = 'Cancellation allowed. (Deadline: ' . $deadlineFull->format('d M Y, H:i') . ')';
                 } elseif ($daysBefore >= 1) {
-                    $refund = '50%';
-                    $message = '50% refund applied. (Next deadline: ' . $deadlinePartial->format('d M Y, H:i') . ')';
+                    $refund = 'Warning';
+                    $message = 'Late cancellation warning. (Next deadline: ' . $deadlinePartial->format('d M Y, H:i') . ')';
                 } else {
-                    $refund = 'None';
-                    $message = 'No refund. (Deadline was ' . $deadlinePartial->format('d M Y, H:i') . ')';
+                    $refund = 'Restricted';
+                    $message = 'Cancellation restricted. (Deadline was ' . $deadlinePartial->format('d M Y, H:i') . ')';
                 }
                 break;
 
             case self::POLICY_STRICT:
-                // Full refund 14 days prior
-                // 50% between 14 days and 7 days
+                // Deadline: 14 days prior
                 $deadlineFull = (clone $start)->modify('-14 days');
                 $deadlinePartial = (clone $start)->modify('-7 days');
                 
                 if ($daysBefore >= 14) {
-                    $refund = 'Full';
-                    $message = 'Full refund applied. (Deadline: ' . $deadlineFull->format('d M Y, H:i') . ')';
+                    $refund = 'Allowed';
+                    $message = 'Cancellation allowed. (Deadline: ' . $deadlineFull->format('d M Y, H:i') . ')';
                 } elseif ($daysBefore >= 7) {
-                    $refund = '50%';
-                    $message = '50% refund applied. (Next deadline: ' . $deadlinePartial->format('d M Y, H:i') . ')';
+                    $refund = 'Warning';
+                    $message = 'Late cancellation warning. (Next deadline: ' . $deadlinePartial->format('d M Y, H:i') . ')';
                 } else {
-                    $refund = 'None';
-                    $message = 'No refund. (Deadline was ' . $deadlinePartial->format('d M Y, H:i') . ')';
+                    $refund = 'Restricted';
+                    $message = 'Cancellation restricted. (Deadline was ' . $deadlinePartial->format('d M Y, H:i') . ')';
                 }
                 break;
         }

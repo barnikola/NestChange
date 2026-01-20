@@ -21,44 +21,57 @@ class ChatController extends Controller
         AuthMiddleware::requireAuth();
         
         $user = $this->currentUser();
+        if (!$user) {
+            $this->flash('error', 'Please log in to access chat.');
+            $this->redirect(BASE_URL . '/auth/signin');
+            return;
+        }
+        
         $profileId = $this->getUserProfileId();
         
         if (!$profileId) {
             $this->flash('error', 'Please complete your profile first.');
             $this->redirect(BASE_URL . '/profile');
+            return;
         }
         
-        // Get all chats for the user
-        $chats = $this->chatModel->getUserChats($user['id'], $profileId);
-        
-        // Get selected chat ID from query param
-        $selectedChatId = $this->getInput('chat');
-        
-        // Default to first chat if none selected
-        $selectedChat = null;
-        $messages = [];
-        
-        if ($selectedChatId) {
-            $selectedChat = $this->chatModel->getChatDetails($selectedChatId, $profileId);
-            if ($selectedChat) {
-                $messages = $this->chatModel->getMessages($selectedChatId);
+        try {
+            // Get all chats for the user
+            $chats = $this->chatModel->getUserChats($user['id'], $profileId);
+            
+            // Get selected chat ID from query param
+            $selectedChatId = $this->getInput('chat');
+            
+            // Default to first chat if none selected
+            $selectedChat = null;
+            $messages = [];
+            
+            if ($selectedChatId) {
+                $selectedChat = $this->chatModel->getChatDetails($selectedChatId, $profileId);
+                if ($selectedChat) {
+                    $messages = $this->chatModel->getMessages($selectedChatId);
+                }
+            } elseif (!empty($chats)) {
+                $selectedChatId = $chats[0]['chat_id'];
+                $selectedChat = $this->chatModel->getChatDetails($selectedChatId, $profileId);
+                if ($selectedChat) {
+                    $messages = $this->chatModel->getMessages($selectedChatId);
+                }
             }
-        } elseif (!empty($chats)) {
-            $selectedChatId = $chats[0]['chat_id'];
-            $selectedChat = $this->chatModel->getChatDetails($selectedChatId, $profileId);
-            if ($selectedChat) {
-                $messages = $this->chatModel->getMessages($selectedChatId);
-            }
+            
+            $this->data['chats'] = $chats ?? [];
+            $this->data['selectedChat'] = $selectedChat;
+            $this->data['selectedChatId'] = $selectedChatId;
+            $this->data['messages'] = $messages ?? [];
+            $this->data['currentProfileId'] = $profileId;
+            $this->data['csrf_token'] = $this->getCsrfToken();
+            
+            $this->view('chat/index', $this->data);
+        } catch (Exception $e) {
+            error_log('Chat index error: ' . $e->getMessage());
+            $this->flash('error', 'Unable to load chat. Please try again.');
+            $this->redirect(BASE_URL . '/');
         }
-        
-        $this->data['chats'] = $chats;
-        $this->data['selectedChat'] = $selectedChat;
-        $this->data['selectedChatId'] = $selectedChatId;
-        $this->data['messages'] = $messages;
-        $this->data['currentProfileId'] = $profileId;
-        $this->data['csrf_token'] = $this->getCsrfToken();
-        
-        $this->view('chat/index', $this->data);
     }
 
     /**
@@ -70,6 +83,12 @@ class ChatController extends Controller
         
         if (!$this->isPost()) {
             $this->json(['success' => false, 'error' => 'Invalid request method.'], 400);
+            return;
+        }
+
+        if (!$this->verifyCsrf()) {
+            $this->json(['success' => false, 'error' => 'Invalid request (CSRF mismatch).'], 400);
+            return;
         }
         
         $user = $this->currentUser();
@@ -89,6 +108,26 @@ class ChatController extends Controller
         
         // Send message
         $messageId = $this->chatModel->sendMessage($chatId, $user['id'], $profileId, $content);
+        
+        // Notify Recipient
+        try {
+            $chat = $this->chatModel->getChatDetails($chatId, $profileId);
+            if ($chat && isset($chat['other_profile_id'])) {
+                $db = Database::getInstance();
+                $recipient = $db->fetchOne("SELECT account_id FROM user_profile WHERE id = ?", [$chat['other_profile_id']]);
+                if ($recipient) {
+                    // Fetch sender name for nicer message
+                    $senderName = isset($profile['first_name']) ? $profile['first_name'] : 'User';
+                    $msg = "New message from {$senderName}";
+                    
+                    // Smart Notification: Only send if they don't already have an unread one from this user
+                    $notifModel = $this->model('Notification');
+                    if (!$notifModel->hasUnreadNotification($recipient['account_id'], $msg)) {
+                        $notifModel->add($recipient['account_id'], $msg, 'info');
+                    }
+                }
+            }
+        } catch (Exception $e) { /* Ignore notification error */ }
         
         // Get user name for response
         $db = Database::getInstance();

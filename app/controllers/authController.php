@@ -47,6 +47,9 @@ class AuthController extends Controller
         }
 
         $data = $this->allPost();
+        if (isset($data['email'])) {
+            $data['email'] = strtolower($data['email']);
+        }
         
         // Validate input
         $validator = Validator::make($data)
@@ -58,16 +61,37 @@ class AuthController extends Controller
             ->password('password', 'Password must be at least 8 characters with uppercase, lowercase, and a number.')
             ->required('password_confirm', 'Please confirm your password.')
             ->matches('password_confirm', 'password', 'Passwords do not match.')
-            ->required('student_status_until', 'Student status end date is required.');
+            ->required('student_status_until', 'Student status end date is required.')
+            ->future_date('student_status_until', 'Y-m-d', 'You are not a student (Date must be in the future).');
 
         if(!$this->captcha()){
-            $validator->addError('error', 'Invalid captcha');
+            $validator->addError('captcha', 'Invalid captcha');
         }
         $this->setCaptcha();
 
         // Check if email already exists
         if ($this->userModel->emailExists($data['email'] ?? '')) {
             $validator->addError('email', 'An account with this email already exists.');
+        }
+
+        // Validate required file uploads
+        if (!isset($_FILES['id-document']) || $_FILES['id-document']['error'] === UPLOAD_ERR_NO_FILE) {
+             $validator->addError('id-document', 'ID Document is required.');
+        } elseif ($_FILES['id-document']['size'] > 5 * 1024 * 1024 || $_FILES['id-document']['error'] === UPLOAD_ERR_INI_SIZE) {
+             $validator->addError('id-document', 'ID Document must be less than 5MB.');
+        }
+
+        if (!isset($_FILES['student-id']) || $_FILES['student-id']['error'] === UPLOAD_ERR_NO_FILE) {
+             $validator->addError('student-id', 'Student ID is required.');
+        } elseif ($_FILES['student-id']['size'] > 5 * 1024 * 1024 || $_FILES['student-id']['error'] === UPLOAD_ERR_INI_SIZE) {
+             $validator->addError('student-id', 'Student ID must be less than 5MB.');
+        }
+
+        // Validate optional profile picture if present
+        if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] !== UPLOAD_ERR_NO_FILE) {
+            if ($_FILES['profile_picture']['size'] > 5 * 1024 * 1024 || $_FILES['profile_picture']['error'] === UPLOAD_ERR_INI_SIZE) {
+                $validator->addError('profile_picture', 'Profile picture must be less than 5MB.');
+            }
         }
 
         if ($validator->fails()) {
@@ -154,6 +178,15 @@ class AuthController extends Controller
 
     public function login(): void
     {
+        require_once dirname(__DIR__) . '/helpers/RateLimiter.php';
+        $ip = $_SERVER['REMOTE_ADDR'];
+
+        try {
+            RateLimiter::check($ip);
+        } catch (Exception $e) {
+            $this->flash('error', $e->getMessage());
+            $this->redirect('/signin');
+        }
 
         if (!$this->isPost()) {
             $this->redirect('/signin');
@@ -165,7 +198,7 @@ class AuthController extends Controller
             $this->redirect('/signin');
         }
 
-        $email = $this->postInput('email');
+        $email = strtolower($this->postInput('email'));
         $password = $this->postInput('password');
         $remember = $this->postInput('remember') === 'on';
 
@@ -176,7 +209,8 @@ class AuthController extends Controller
             ->required('password', 'Password is required.');
 
         if(!$this->captcha()){
-            $validator->addError('error', 'Invalid captcha');
+            $attempts = RateLimiter::increment($ip);
+            $validator->addError('error', "Invalid captcha (Attempt: $attempts)");
         }
         $this->setCaptcha();
 
@@ -188,16 +222,20 @@ class AuthController extends Controller
             return;
         }
 
-        // Find user by email
+        // Check if user exists and verify password
         $user = $this->userModel->findByEmail($email);
 
         if (!$user || !$this->userModel->verifyPassword($user, $password)) {
-            $this->flash('error', 'Invalid email or password.');
+            $attempts = RateLimiter::increment($ip);
+            $this->flash('error', "Invalid email or password. (Attempt: $attempts)");
             $this->data['old'] = ['email' => $email];
             $this->data['csrf_token'] = $this->getCsrfToken();
             $this->view('auth/signin', $this->data);
             return;
         }
+
+        // Login successful - Clear rate limit
+        RateLimiter::clear($ip);
 
         // Check if account is approved
         if ($user['status'] !== 'approved') {
@@ -281,7 +319,7 @@ class AuthController extends Controller
             $this->redirect('/forgot-password');
         }
 
-        $email = $this->postInput('email');
+        $email = strtolower($this->postInput('email'));
 
         $validator = Validator::make(['email' => $email])
             ->required('email', 'Email is required.')
@@ -432,12 +470,12 @@ class AuthController extends Controller
      */
     private function sendResetEmail(string $email, string $token): void
     {
-        $resetUrl = '/reset-password?token=' . $token;
+        require_once dirname(__DIR__) . '/services/EmailService.php';
+        $emailService = new EmailService();
+        $emailService->sendPasswordReset($email, $token);
         
-        // TODO: Implement actual email sending
-        // For now, log the reset URL in development
         if (APP_DEBUG) {
-            error_log("Password reset URL for {$email}: {$resetUrl}");
+            error_log("Password reset email sent to {$email}");
         }
     }
 
@@ -501,13 +539,13 @@ class AuthController extends Controller
             return null;
         }
 
-        // Validate file type - only images allowed
-        if (!in_array($file['type'], ALLOWED_IMAGE_TYPES)) {
+        $allowedProfileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        if (!in_array($file['type'], $allowedProfileTypes)) {
             return null;
         }
 
         // Validate file size
-        if ($file['size'] > UPLOAD_MAX_SIZE) {
+        if ($file['size'] > 5 * 1024 * 1024) {
             return null;
         }
 
@@ -523,9 +561,7 @@ class AuthController extends Controller
             // Determine extension from mime type if not provided
             $extensions = [
                 'image/jpeg' => 'jpg',
-                'image/png' => 'png',
-                'image/gif' => 'gif',
-                'image/webp' => 'webp'
+                'image/png' => 'png'
             ];
             $extension = $extensions[$file['type']] ?? 'jpg';
         }

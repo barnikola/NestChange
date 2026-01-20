@@ -43,7 +43,7 @@ ob_start();
     <aside class="profile-sidebar">
         <div class="profile-avatar">
             <?php if (!empty($avatar)): ?>
-                <img src="/<?= htmlspecialchars($avatar) ?>" alt="<?= htmlspecialchars($fullName) ?> avatar">
+                <img src="<?= htmlspecialchars($avatar) ?>" alt="<?= htmlspecialchars($fullName) ?> avatar">
             <?php else: ?>
                 <div class="profile-avatar-fallback" aria-hidden="true"><?= htmlspecialchars($initials) ?></div>
             <?php endif; ?>
@@ -127,12 +127,12 @@ ob_start();
             <article class="profile-card">
                 <h3>Favorite stays</h3>
                 <p>Jump back into homes you have saved.</p>
-                <a href="/favorites" class="profile-card-btn">View favorites</a>
+                <a href="<?= rtrim(BASE_URL, '/') ?>/favorites" class="profile-card-btn">View favorites</a>
             </article>
             <article class="profile-card">
                 <h3>Messages</h3>
                 <p>Continue conversations with other students.</p>
-                <a href="/chat" class="profile-card-btn">Open chat</a>
+                <a href="<?= rtrim(BASE_URL, '/') ?>/chat" class="profile-card-btn">Open chat</a>
             </article>
         </section>
 
@@ -152,13 +152,18 @@ ob_start();
                             2 => 'Student ID',
                             default => 'Document',
                         };
-                        $uploadedAt = !empty($doc['uploaded_at'])
-                            ? date('M d, Y', strtotime($doc['uploaded_at']))
+                        $uploadedAt = !empty($doc['created_at'])
+                            ? date('M d, Y', strtotime($doc['created_at']))
                             : 'Pending';
                         ?>
                         <li class="profile-document-item">
                             <div>
-                                <p class="profile-doc-label"><?= htmlspecialchars($label) ?></p>
+                                <p class="profile-doc-label">
+                                    <?= htmlspecialchars($label) ?>
+                                    <span class="status-badge status-<?= htmlspecialchars($doc['status'] ?? 'pending') ?>">
+                                        <?= htmlspecialchars(ucfirst($doc['status'] ?? 'pending')) ?>
+                                    </span>
+                                </p>
                                 <span class="profile-doc-date"><?= htmlspecialchars($uploadedAt) ?></span>
                             </div>
                             <a href="<?= htmlspecialchars($doc['document_path'] ?? '#') ?>" target="_blank" rel="noopener" class="profile-panel-link">

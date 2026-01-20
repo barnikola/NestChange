@@ -67,7 +67,7 @@ $endValue = $isValidYmd($rawEnd) ? $rawEnd : $today;
                 <p style="font-size: 14px; color:#666;">Beautiful apartment in central location...</p>
             </div>
 
-            <form method="post" action="/listings/<?php echo $listingId; ?>/apply" class="auth-form">
+            <form method="post" action="/listings/<?php echo htmlspecialchars($listingId); ?>/apply" class="auth-form">
                 <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                 
                 <div class="form-group">

@@ -3,6 +3,24 @@
  * Handles AJAX toggling of favorites without page reload
  */
 
+// Get BASE_URL from config if available
+let BASE_URL = '';
+const configScript = document.getElementById('favorites-config');
+if (configScript) {
+    try {
+        const config = JSON.parse(configScript.textContent);
+        BASE_URL = config.baseUrl || '';
+    } catch (e) {
+        console.warn('Could not parse favorites config');
+    }
+}
+
+// Fallback: detect base URL from current location
+if (!BASE_URL) {
+    // If we're running at root (localhost:8081/), BASE_URL is just the origin
+    BASE_URL = window.location.origin;
+}
+
 /**
  * Toggle favorite status for a listing
  * @param {HTMLElement} button - The heart button element
@@ -15,8 +33,8 @@ function toggleFavorite(button, listingId) {
 
     const isFavorited = button.classList.contains('favorited');
     const endpoint = isFavorited
-        ? `/listings/${listingId}/unfavorite`
-        : `/listings/${listingId}/favorite`;
+        ? `${BASE_URL}/listings/${listingId}/unfavorite`
+        : `${BASE_URL}/listings/${listingId}/favorite`;
 
     fetch(endpoint, {
         method: 'POST',
@@ -31,7 +49,7 @@ function toggleFavorite(button, listingId) {
                 // User not logged in
                 return response.json().then(data => {
                     if (data.login_required) {
-                        window.location.href = '/login';
+                        window.location.href = BASE_URL + '/auth/signin';
                     }
                     throw new Error(data.error || 'Please log in to save favorites.');
                 });

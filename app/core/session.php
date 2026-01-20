@@ -35,7 +35,8 @@ class Session
             ini_set('session.use_only_cookies', 1);
             ini_set('session.cookie_httponly', 1);
             
-            if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+            if ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ||
+                (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) {
                 ini_set('session.cookie_secure', 1);
             }
             
@@ -44,21 +45,52 @@ class Session
             session_set_cookie_params([
                 'lifetime' => SESSION_LIFETIME,
                 'path' => '/',
-                'domain' => '',
-                'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+                'domain' => '', // Current domain
+                'secure' => (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || 
+                            (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'),
                 'httponly' => true,
                 'samesite' => 'Lax'
             ]);
             
             session_start();
             
-            // Regenerate session ID periodically for security
+            // 1. Validate User Agent (Prevent Session Hijacking)
+            if (!isset($_SESSION['_user_agent'])) {
+                $_SESSION['_user_agent'] = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
+            } elseif ($_SESSION['_user_agent'] !== ($_SERVER['HTTP_USER_AGENT'] ?? 'Unknown')) {
+                // Possible Session Hijacking - destroy session
+                session_unset();
+                session_destroy();
+                session_start();
+                $_SESSION['_user_agent'] = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
+            }
+
+            // 2. Server-side Inactivity Timeout
+            if (isset($_SESSION['_last_activity']) && (time() - $_SESSION['_last_activity'] > SESSION_LIFETIME)) {
+                session_unset();
+                session_destroy();
+                session_start();
+            }
+            $_SESSION['_last_activity'] = time();
+            
+            // 3. Regenerate session ID periodically for security
             if (!isset($_SESSION['_created'])) {
                 $_SESSION['_created'] = time();
             } elseif (time() - $_SESSION['_created'] > 1800) {
                 session_regenerate_id(true);
                 $_SESSION['_created'] = time();
             }
+        } else {
+             // Session already started by PHP auto-start or elsewhere
+             // Still need to enforce timeout
+             if (isset($_SESSION['_last_activity']) && (time() - $_SESSION['_last_activity'] > SESSION_LIFETIME)) {
+                if (session_status() === PHP_SESSION_ACTIVE) {
+                    session_unset();
+                    session_destroy();
+                    session_start();
+                }
+            }
+            $_SESSION['_last_activity'] = time();
         }
         
         self::$started = true;

@@ -17,6 +17,18 @@ abstract class Controller
     {
         // Initialize session
         Session::start();
+
+        // Check verification status if logged in
+        if (Session::isLoggedIn()) {
+            $userModel = $this->model('User');
+            $user = $userModel->find(Session::getUserId());
+
+            if (!$user || $user['status'] === 'suspended') {
+                Session::logout();
+                Session::setFlash('error', 'Your account has been suspended.');
+                $this->redirect('/signin');
+            }
+        }
     }
 
     /**
@@ -212,6 +224,19 @@ abstract class Controller
     {
         if (!Session::isLoggedIn()) {
             $this->flash('error', 'Please log in to access this page.');
+            $this->redirect(BASE_URL . '/login');
+        }
+    }
+
+    /**
+     * Require user to be admin
+     * 
+     * @return void
+     */
+    protected function requireAdmin(): void
+    {
+        if (!Session::isLoggedIn() || !Session::get('is_admin')) {
+            $this->flash('error', 'Admin access required.');
             $this->redirect(BASE_URL . '/login');
         }
     }

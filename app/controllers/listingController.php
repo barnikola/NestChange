@@ -142,6 +142,12 @@ class ListingController extends Controller
         $listing['attributes'] = $this->attributeModel->getForListingWithDescriptions($id);
         $listing['services'] = $this->serviceModel->getForListingWithDescriptions($id);
         
+        $currentUser = $this->currentUser();
+        $this->data['activeApplicationId'] = null;
+        if ($currentUser) {
+            $this->data['activeApplicationId'] = $this->model('Application')->getActiveApplicationId($currentUser['id'], $id);
+        }
+        
         $this->data['listing'] = $listing;
         $this->data['listingReviews'] = $this->reviewModel->getListingReviews($id);
         $this->data['reviewForm'] = $this->buildReviewFormState($id);
@@ -609,11 +615,15 @@ class ListingController extends Controller
     public function myListings(): void
     {
         AuthMiddleware::requireAuth();
-        
+
         $profileId = $this->getUserProfileId();
-        $listings = $this->listingModel->getByHostProfile($profileId);
-        
-        $this->data['listings'] = $listings;
+        if ($profileId === null) {
+            $this->data['listings'] = [];
+            $this->data['no_profile'] = true;
+        } else {
+            $this->data['listings'] = $this->listingModel->getByHostProfile($profileId);
+            $this->data['no_profile'] = false;
+        }
         $this->data['csrf_token'] = $this->getCsrfToken();
         $this->view('listings/my-listings', $this->data);
     }
@@ -751,17 +761,16 @@ class ListingController extends Controller
                 continue;
             }
             
-            // Generate unique filename
-            $extension = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
-            if (!$extension) {
-                $extensions = [
-                    'image/jpeg' => 'jpg',
-                    'image/png' => 'png',
-                    'image/webp' => 'webp',
-                    'image/gif' => 'gif'
-                ];
-                $extension = $extensions[$mimeType] ?? 'jpg';
-            }
+            // Generate unique filename with SAFE extension derived from MIME type
+            $extensionMap = [
+                'image/jpeg' => 'jpg',
+                'image/png' => 'png',
+                'image/webp' => 'webp',
+                'image/gif' => 'gif'
+            ];
+            
+            // Fallback or strict check
+            $extension = $extensionMap[$mimeType] ?? 'jpg';
             
             $filename = $listingId . '_' . uniqid() . '.' . $extension;
             $targetPath = $uploadDir . $filename;

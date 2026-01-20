@@ -114,7 +114,7 @@ ob_start();
             flex-direction: column;
             align-items: center;
             gap: 8px;
-            background: white; /* Hide line behind circle */
+            background: white;
             padding: 0 10px;
         }
 
@@ -208,11 +208,10 @@ ob_start();
                 <?php
                     $status = strtolower($application['status'] ?? 'pending');
                     
-                    // Logic to determine active step
-                    $step1Class = 'completed'; // Submitted is always done
+                    $step1Class = 'completed';
                     $step2Class = '';
                     $step3Class = '';
-                    $progressWidth = '33%'; // Default at step 1
+                    $progressWidth = '33%';
 
                     if ($status === 'pending') {
                         $step2Class = 'active';
@@ -304,14 +303,23 @@ ob_start();
                     <form method="post" class="action-bar">
                         <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
                         
+                        <a href="/applications/<?php echo htmlspecialchars($application['id']); ?>/negotiate" class="btn-outline" style="text-decoration:none; color:#333; display:flex; align-items:center; justify-content:center;">
+                            Negotiate Terms
+                        </a>
+
                         <?php if ($isHost): ?>
-                            <button formaction="/applications/<?php echo $application['id']; ?>/accept" class="btn-submit" onclick="return confirm('Accept this application?')">Accept</button>
-                            <button formaction="/applications/<?php echo $application['id']; ?>/reject" class="btn-outline btn-danger" onclick="return confirm('Reject this application?')">Reject</button>
+                            <button formaction="/applications/<?php echo htmlspecialchars($application['id']); ?>/accept" class="btn-submit" onclick="return confirm('Accept this application?')">Accept</button>
+                            <button formaction="/applications/<?php echo htmlspecialchars($application['id']); ?>/reject" class="btn-outline btn-danger" onclick="return confirm('Reject this application?')">Reject</button>
                         <?php elseif ($isApplicant): ?>
-                            <button formaction="/applications/<?php echo $application['id']; ?>/withdraw" class="btn-outline" onclick="return confirm('Withdraw application?')">Withdraw</button>
+                            <button formaction="/applications/<?php echo htmlspecialchars($application['id']); ?>/withdraw" class="btn-outline" onclick="return confirm('Withdraw application?')">Withdraw</button>
                         <?php endif; ?>
                     </form>
                 <?php elseif ($status === 'accepted'): ?>
+                    <div class="action-bar" style="justify-content: flex-end; gap: 15px; margin-bottom: 20px; border-top: none; padding-top: 0;">
+                         <a href="/applications/<?php echo htmlspecialchars($application['id']); ?>/negotiate" class="btn-outline" style="text-decoration:none; color:#333; display:flex; align-items:center; justify-content:center;">
+                            View Negotiation History
+                        </a>
+                    </div>
                     <?php if ($isApplicant): ?>
                         <!-- APPLICANT VIEW -->
                         <?php if($cancelEligibility): ?>
@@ -333,7 +341,7 @@ ob_start();
                             </form>
                         <?php else: ?>
                             <!-- Fallback -->
-                             <form method="post" class="action-bar" action="/applications/<?php echo $application['id']; ?>/cancel">
+                             <form method="post" class="action-bar" action="/applications/<?php echo htmlspecialchars($application['id']); ?>/cancel">
                                 <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
                                 <button type="submit" class="btn-outline btn-danger" onclick="return confirm('Are you sure you want to cancel?')">Cancel Booking</button>
                             </form>
@@ -344,7 +352,7 @@ ob_start();
                         <div class="meta-group" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
                             <span class="meta-label">Actions</span>
                             <div class="meta-value">
-                                <form id="cancelFormHost" method="post" action="/applications/<?php echo $application['id']; ?>/cancel">
+                                <form id="cancelFormHost" method="post" action="/applications/<?php echo htmlspecialchars($application['id']); ?>/cancel">
                                     <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
                                     <button type="button" class="btn-outline btn-danger" onclick="openCancelModalHost()">
                                         Cancel Booking (Host)
