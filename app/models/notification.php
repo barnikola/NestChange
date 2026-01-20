@@ -1,22 +1,14 @@
 <?php
 
+require_once dirname(__DIR__) . '/core/database.php';
+
 class Notification
 {
-    private string $storageFile;
+    private Database $db;
 
     public function __construct()
     {
-        // Store in temp directory
-        $this->storageFile = dirname(__DIR__, 2) . '/temp/notifications.json';
-        
-        // Initialize file if needed
-        if (!file_exists($this->storageFile)) {
-            $dir = dirname($this->storageFile);
-            if (!is_dir($dir)) {
-                mkdir($dir, 0777, true);
-            }
-            file_put_contents($this->storageFile, json_encode([]));
-        }
+        $this->db = Database::getInstance();
     }
 
     /**
@@ -24,18 +16,37 @@ class Notification
      */
     public function add(int $userId, string $message, string $type = 'info'): void
     {
-        $notifications = $this->load();
-        
-        $notifications[] = [
-            'id' => uniqid('notif_', true),
+        $this->db->insert('notification', [
             'user_id' => $userId,
             'message' => $message,
             'type' => $type,
-            'created_at' => date('Y-m-d H:i:s'),
-            'read' => false
-        ];
-        
-        $this->save($notifications);
+            'is_read' => 0,
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    /**
+     * Get unread notification count for a user
+     */
+    public function getUnreadCount(int $userId): int
+    {
+        $result = $this->db->fetchOne(
+            "SELECT COUNT(*) as count FROM notification WHERE user_id = ? AND is_read = 0",
+            [$userId]
+        );
+        return (int)($result['count'] ?? 0);
+    }
+
+    /**
+     * Check if a specific unread notification already exists
+     */
+    public function hasUnreadNotification(int $userId, string $message): bool
+    {
+        $result = $this->db->fetchOne(
+            "SELECT id FROM notification WHERE user_id = ? AND message = ? AND is_read = 0 LIMIT 1",
+            [$userId, $message]
+        );
+        return !empty($result);
     }
 
     /**
@@ -43,41 +54,53 @@ class Notification
      */
     public function getByUserId(int $userId): array
     {
-        $notifications = $this->load();
+        $sql = "SELECT id, user_id, message, type, is_read as `read`, created_at 
+                FROM notification 
+                WHERE user_id = ? 
+                ORDER BY created_at DESC";
         
-        // Filter by user_id
-        $userNotifications = array_filter($notifications, function($n) use ($userId) {
-            return isset($n['user_id']) && $n['user_id'] == $userId;
-        });
-        
-        // Sort by date desc
-        usort($userNotifications, function($a, $b) {
-            return strtotime($b['created_at']) - strtotime($a['created_at']);
-        });
-        
-        return array_values($userNotifications);
-    }
-    
-    /**
-     * Load notifications from file
-     */
-    private function load(): array
-    {
-        if (!file_exists($this->storageFile)) {
-            return [];
-        }
-        
-        $json = file_get_contents($this->storageFile);
-        $data = json_decode($json, true);
-        
-        return is_array($data) ? $data : [];
+        $results = $this->db->fetchAll($sql, [$userId]);
+        return $results;
     }
 
     /**
-     * Save notifications to file
+     * Get latest notifications for a user
      */
-    private function save(array $data): void
+    public function getLatest(int $userId, int $limit = 5): array
     {
-        file_put_contents($this->storageFile, json_encode($data, JSON_PRETTY_PRINT));
+        $sql = "SELECT id, user_id, message, type, is_read as `read`, created_at 
+                FROM notification 
+                WHERE user_id = ? 
+                ORDER BY created_at DESC 
+                LIMIT " . (int)$limit;
+        
+        return $this->db->fetchAll($sql, [$userId]);
+    }
+
+    /**
+     * Mark a specific notification as read
+     */
+    public function markAsRead(string $id, int $userId): bool
+    {
+        $count = $this->db->update(
+            'notification',
+            ['is_read' => 1],
+            "id = ? AND user_id = ?",
+            [$id, $userId]
+        );
+        return $count > 0;
+    }
+
+    /**
+     * Mark all notifications as read for a user
+     */
+    public function markAllAsRead(int $userId): void
+    {
+        $this->db->update(
+            'notification',
+            ['is_read' => 1],
+            "user_id = ? AND is_read = 0",
+            [$userId]
+        );
     }
 }

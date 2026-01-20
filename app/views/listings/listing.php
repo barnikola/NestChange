@@ -350,7 +350,11 @@ $averageRating = $reviewCount > 0
                     </form>
                 <?php endif; ?>
             <?php else: ?>
-                <a href="/listings/<?php echo $listing['id']; ?>/apply" class="listing" id="apply-listing-btn" style="display: block; text-align: center; text-decoration: none;">Apply for listing</a>
+                <?php if (!empty($activeApplicationId)): ?>
+                    <a href="/applications/<?php echo $activeApplicationId; ?>" class="listing" id="view-application-btn" style="display: block; text-align: center; text-decoration: none; background-color: #2196F3;">View Application</a>
+                <?php else: ?>
+                    <a href="/listings/<?php echo $listing['id']; ?>/apply" class="listing" id="apply-listing-btn" style="display: block; text-align: center; text-decoration: none;">Apply for listing</a>
+                <?php endif; ?>
             <?php endif; ?>
         <?php else: ?>
             <button class="listing" onclick="window.location.href='/listings/<?php echo $listing['id']; ?>/edit'">Edit Listing</button>

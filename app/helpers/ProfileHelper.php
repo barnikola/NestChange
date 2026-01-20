@@ -43,8 +43,9 @@ class ProfileHelper
             $initials .= strtoupper(substr($lastName, 0, 1));
         }
 
-        // Mock notification count for now
-        $notificationCount = 0;
+        require_once dirname(__DIR__) . '/models/notification.php';
+        $notifModel = new Notification();
+        $notificationCount = $notifModel->getUnreadCount($user['id']);
 
         return [
             'is_logged_in' => true,

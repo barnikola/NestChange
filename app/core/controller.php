@@ -189,13 +189,7 @@ abstract class Controller
      */
     protected function flash(string $type, string $message): void
     {
-        if ($type === 'success') {
-            $_SESSION['flash_success'] = $message;
-        } elseif ($type === 'error') {
-            $_SESSION['flash_error'] = $message;
-        } else {
-            Session::setFlash($type, $message);
-        }
+        Session::setFlash($type, $message);
     }
 
     /**

@@ -252,6 +252,23 @@ class Chat extends Model
         return $chatId;
     }
 
+    public function ensureChatExists(string $applicationId): string
+    {
+        $existing = $this->db->fetchOne("SELECT id FROM chat WHERE application_id = ?", [$applicationId]);
+        if ($existing) {
+            return $existing['id'];
+        }
+        
+        $chatId = $this->generateUuid();
+        $this->db->insert('chat', [
+            'id' => $chatId,
+            'application_id' => $applicationId,
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+        
+        return $chatId;
+    }
+
     public function getMessageCount(string $chatId): int
     {
         $result = $this->db->fetchOne(

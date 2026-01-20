@@ -14,7 +14,7 @@ ob_start();
         <?php else: ?>
             <div class="notification-list" style="display: flex; flex-direction: column; gap: 15px;">
                 <?php foreach ($notifications as $notif): ?>
-                    <div class="notification-item" data-id="<?= $notif['id'] ?>" style="
+                    <div class="notification-item" style="
                         padding: 20px; 
                         border-left: 4px solid #333; 
                         background: #fff;

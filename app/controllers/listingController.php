@@ -142,6 +142,12 @@ class ListingController extends Controller
         $listing['attributes'] = $this->attributeModel->getForListingWithDescriptions($id);
         $listing['services'] = $this->serviceModel->getForListingWithDescriptions($id);
         
+        $currentUser = $this->currentUser();
+        $this->data['activeApplicationId'] = null;
+        if ($currentUser) {
+            $this->data['activeApplicationId'] = $this->model('Application')->getActiveApplicationId($currentUser['id'], $id);
+        }
+        
         $this->data['listing'] = $listing;
         $this->data['listingReviews'] = $this->reviewModel->getListingReviews($id);
         $this->data['reviewForm'] = $this->buildReviewFormState($id);

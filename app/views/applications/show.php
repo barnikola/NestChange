@@ -303,6 +303,10 @@ ob_start();
                     <form method="post" class="action-bar">
                         <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
                         
+                        <a href="/applications/<?php echo htmlspecialchars($application['id']); ?>/negotiate" class="btn-outline" style="text-decoration:none; color:#333; display:flex; align-items:center; justify-content:center;">
+                            Negotiate Terms
+                        </a>
+
                         <?php if ($isHost): ?>
                             <button formaction="/applications/<?php echo htmlspecialchars($application['id']); ?>/accept" class="btn-submit" onclick="return confirm('Accept this application?')">Accept</button>
                             <button formaction="/applications/<?php echo htmlspecialchars($application['id']); ?>/reject" class="btn-outline btn-danger" onclick="return confirm('Reject this application?')">Reject</button>
@@ -311,6 +315,11 @@ ob_start();
                         <?php endif; ?>
                     </form>
                 <?php elseif ($status === 'accepted'): ?>
+                    <div class="action-bar" style="justify-content: flex-end; gap: 15px; margin-bottom: 20px; border-top: none; padding-top: 0;">
+                         <a href="/applications/<?php echo htmlspecialchars($application['id']); ?>/negotiate" class="btn-outline" style="text-decoration:none; color:#333; display:flex; align-items:center; justify-content:center;">
+                            View Negotiation History
+                        </a>
+                    </div>
                     <?php if ($isApplicant): ?>
                         <!-- APPLICANT VIEW -->
                         <?php if($cancelEligibility): ?>

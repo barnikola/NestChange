@@ -109,6 +109,26 @@ class ChatController extends Controller
         // Send message
         $messageId = $this->chatModel->sendMessage($chatId, $user['id'], $profileId, $content);
         
+        // Notify Recipient
+        try {
+            $chat = $this->chatModel->getChatDetails($chatId, $profileId);
+            if ($chat && isset($chat['other_profile_id'])) {
+                $db = Database::getInstance();
+                $recipient = $db->fetchOne("SELECT account_id FROM user_profile WHERE id = ?", [$chat['other_profile_id']]);
+                if ($recipient) {
+                    // Fetch sender name for nicer message
+                    $senderName = isset($profile['first_name']) ? $profile['first_name'] : 'User';
+                    $msg = "New message from {$senderName}";
+                    
+                    // Smart Notification: Only send if they don't already have an unread one from this user
+                    $notifModel = $this->model('Notification');
+                    if (!$notifModel->hasUnreadNotification($recipient['account_id'], $msg)) {
+                        $notifModel->add($recipient['account_id'], $msg, 'info');
+                    }
+                }
+            }
+        } catch (Exception $e) { /* Ignore notification error */ }
+        
         // Get user name for response
         $db = Database::getInstance();
         $profile = $db->fetchOne("SELECT first_name, last_name FROM user_profile WHERE id = ?", [$profileId]);

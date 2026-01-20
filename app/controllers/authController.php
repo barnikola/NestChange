@@ -154,6 +154,15 @@ class AuthController extends Controller
 
     public function login(): void
     {
+        require_once dirname(__DIR__) . '/helpers/RateLimiter.php';
+        $ip = $_SERVER['REMOTE_ADDR'];
+
+        try {
+            RateLimiter::check($ip);
+        } catch (Exception $e) {
+            $this->flash('error', $e->getMessage());
+            $this->redirect('/signin');
+        }
 
         if (!$this->isPost()) {
             $this->redirect('/signin');
@@ -176,7 +185,8 @@ class AuthController extends Controller
             ->required('password', 'Password is required.');
 
         if(!$this->captcha()){
-            $validator->addError('error', 'Invalid captcha');
+            $attempts = RateLimiter::increment($ip);
+            $validator->addError('error', "Invalid captcha (Attempt: $attempts)");
         }
         $this->setCaptcha();
 
@@ -188,16 +198,20 @@ class AuthController extends Controller
             return;
         }
 
-        // Find user by email
+        // Check if user exists and verify password
         $user = $this->userModel->findByEmail($email);
 
         if (!$user || !$this->userModel->verifyPassword($user, $password)) {
-            $this->flash('error', 'Invalid email or password.');
+            $attempts = RateLimiter::increment($ip);
+            $this->flash('error', "Invalid email or password. (Attempt: $attempts)");
             $this->data['old'] = ['email' => $email];
             $this->data['csrf_token'] = $this->getCsrfToken();
             $this->view('auth/signin', $this->data);
             return;
         }
+
+        // Login successful - Clear rate limit
+        RateLimiter::clear($ip);
 
         // Check if account is approved
         if ($user['status'] !== 'approved') {
@@ -432,12 +446,12 @@ class AuthController extends Controller
      */
     private function sendResetEmail(string $email, string $token): void
     {
-        $resetUrl = '/reset-password?token=' . $token;
+        require_once dirname(__DIR__) . '/services/EmailService.php';
+        $emailService = new EmailService();
+        $emailService->sendPasswordReset($email, $token);
         
-        // TODO: Implement actual email sending
-        // For now, log the reset URL in development
         if (APP_DEBUG) {
-            error_log("Password reset URL for {$email}: {$resetUrl}");
+            error_log("Password reset email sent to {$email}");
         }
     }
 

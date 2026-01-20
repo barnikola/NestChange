@@ -119,10 +119,18 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
     $router->post('/applications/{id}/cancel', ['ApplicationController', 'cancel']);
     $router->get('/applications/list.json', ['ApplicationController', 'listJson']);
 
+    // ====== Negotiation Routes ======
+    $router->get('/applications/{id}/negotiate', ['NegotiationController', 'index']);
+    $router->post('/applications/{id}/negotiate', ['NegotiationController', 'propose']);
+    $router->post('/negotiations/{id}/respond', ['NegotiationController', 'respond']);
+
     // ====== API/AJAX Routes ======
     $router->get('/api/listings/search', ['ListingController', 'search']);
     $router->post('/notifications/trigger-approval', ['NotificationController', 'triggerApproval']);
     $router->get('/notifications', ['NotificationController', 'index']);
+    $router->get('/notifications/count', ['NotificationController', 'unreadCount']);
+    $router->get('/notifications/latest', ['NotificationController', 'latest']);
+    $router->post('/notifications/{id}/read', ['NotificationController', 'read']);
 
     // ====== Chat Routes ======
     $router->get('/chat', ['ChatController', 'index']);

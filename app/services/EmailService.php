@@ -114,6 +114,23 @@ class EmailService
     }
 
     /**
+     * Send "Password Reset" email
+     */
+    public function sendPasswordReset(string $email, string $token): void
+    {
+        $resetUrl = BASE_URL . '/reset-password?token=' . $token;
+        $subject = 'Password Reset Request';
+        $body = "Hi,\n\n" .
+                "You requested a password reset for your NestChange account.\n" .
+                "Click the link below to verify your email and set a new password:\n\n" .
+                "{$resetUrl}\n\n" .
+                "If you didn't make this request, please ignore receive this email.\n\n" .
+                "This link will expire in 1 hour.";
+        
+        $this->logEmail($email, $subject, $body);
+    }
+
+    /**
      * Log email to file
      */
     private function logEmail(string $to, string $subject, string $body): void

@@ -156,17 +156,18 @@ class AdminController extends Controller
                 if ($userModel->updateDocumentStatus($documentId, 'approved')) {
                     $this->setFlash('success', 'Document verified successfully.');
                     
-                    // Optional: Notify user
-                   if ($userId) {
-                       // We can send a generic notification "A document was verified"
-                       // But avoiding "Account Approved" email here to prevent confusion.
-                   }
+                    if ($userId) {
+                        $this->model('Notification')->add($userId, "Your document has been verified successfully.", 'success');
+                    }
 
                 } else {
                      $this->setFlash('error', 'Failed to update document status.');
                 }
             } elseif ($action === 'reject') {
                 $userModel->updateDocumentStatus($documentId, 'rejected');
+                 if ($userId) {
+                    $this->model('Notification')->add($userId, "Your document verification was rejected. Please re-upload.", 'error');
+                }
                  $this->setFlash('success', 'Document rejected.');
             }
         }

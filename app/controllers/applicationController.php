@@ -139,7 +139,29 @@ class ApplicationController extends Controller
         ];
 
         $appModel = $this->model('Application');
+
+        // Check for existing active application
+        $existingAppId = $appModel->getActiveApplicationId($user['id'], $listingId);
+        if ($existingAppId) {
+            $this->flash('info', 'You already have an active application for this listing.');
+            $this->redirect(BASE_URL . '/applications/' . $existingAppId);
+        }
+
         $appModel->createApplication($data);
+        
+        // Notify the Host
+        try {
+            $listingModel = $this->model('Listing');
+            $listing = $listingModel->find($listingId);
+            if ($listing) {
+                $db = Database::getInstance();
+                $owner = $db->fetchOne("SELECT account_id FROM user_profile WHERE id = ?", [$listing['profile_id']]);
+                if ($owner) {
+                    $this->model('Notification')->add($owner['account_id'], "New application received for '{$listing['title']}'", 'info');
+                }
+            }
+        } catch (Exception $e) { /* Ignore notification error */ }
+
         $this->flash('success', 'Application submitted successfully.');
 
         $this->redirect(BASE_URL . '/my-applications');
@@ -331,6 +353,13 @@ class ApplicationController extends Controller
 
         $appModel->setStatus($id, $status);
         
+        // Notify Applicant
+        if ($isHost && in_array($status, ['accepted', 'rejected'])) {
+             $msg = "Your application was " . $status;
+             $type = ($status === 'accepted') ? 'success' : 'error';
+             $this->model('Notification')->add($application['applicant_id'], $msg, $type);
+        }
+
         // Chat Bootstrap Hook
         if ($status === 'accepted' && class_exists('Chat') && method_exists('Chat', 'bootstrapThread')) {
             Chat::bootstrapThread($id);
