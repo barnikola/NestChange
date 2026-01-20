@@ -84,6 +84,7 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
     $router->get('/favorites', ['FavoriteController', 'index']);
     $router->post('/listings/{id}/favorite', ['FavoriteController', 'favorite']);
     $router->post('/listings/{id}/unfavorite', ['FavoriteController', 'unfavorite']);
+    $router->post('/favorites/batch', ['FavoriteController', 'batch']);
 
     // ====== Exchange Routes ======
     $router->get('/listings/my-exchanges', ['ExchangeController', 'myExchanges']);

@@ -142,6 +142,17 @@ class ListingController extends Controller
         $listing['attributes'] = $this->attributeModel->getForListingWithDescriptions($id);
         $listing['services'] = $this->serviceModel->getForListingWithDescriptions($id);
         
+        // Add favorite status for logged-in users
+        $listing['is_favorited'] = false;
+        if (Session::isLoggedIn()) {
+            $profileId = $this->getUserProfileId();
+            if ($profileId) {
+                require_once dirname(__DIR__) . '/models/Favorite.php';
+                $favoriteModel = new Favorite();
+                $listing['is_favorited'] = $favoriteModel->isFavorited($profileId, $id);
+            }
+        }
+        
         $currentUser = $this->currentUser();
         $this->data['activeApplicationId'] = null;
         if ($currentUser) {

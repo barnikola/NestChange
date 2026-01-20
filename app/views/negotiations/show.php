@@ -3,7 +3,7 @@ $pageTitle = 'Negotiate Application - NestChange';
 ob_start();
 
 // Identify roles
-$isHost = ($listing['profile_id'] === $currentUserProfileId);
+$isHost = ($listing['host_profile_id'] === $currentUserProfileId);
 $roleLabel = $isHost ? 'Host' : 'Guest';
 ?>
 
