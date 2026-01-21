@@ -33,6 +33,15 @@ class Notification extends Model
     }
 
     /**
+     * Get latest notifications for a user
+     */
+    public function getLatest(int $userId, int $limit = 5): array
+    {
+        $sql = "SELECT * FROM {$this->table} WHERE user_id = ? ORDER BY created_at DESC LIMIT $limit";
+        return $this->db->fetchAll($sql, [$userId]);
+    }
+
+    /**
      * Mark a notification as read
      */
     public function markAsRead(string $notificationId): bool
