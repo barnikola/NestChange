@@ -217,8 +217,8 @@ ob_start();
                     </a>
                 </li>
                 <li>
-                    <a href="/auth/forgot-password" class="profile-settings-item">
-                        <span>Reset or change password</span>
+                    <a href="/auth/change-password" class="profile-settings-item">
+                        <span>Change password</span>
                         <span class="profile-settings-chevron">›</span>
                     </a>
                 </li>

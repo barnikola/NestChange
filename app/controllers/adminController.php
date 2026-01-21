@@ -193,12 +193,25 @@ class AdminController extends Controller
                 exit;
             }
             $id = $_POST['listing_id']; // or from route param
-            // Assuming Listing model has updateStatus or similar. 
-            // Previous code used delete/update logic directly in view? No, Listing model exists.
-            // Let's assume generic update for now or check listing model.
-            // Need to implement updateStatus in Listing model if missing.
-            $this->model('Listing')->update($id, ['status' => 'published']);
-            $this->setFlash('success', 'Listing published.');
+            
+            $listingModel = $this->model('Listing');
+            if ($listingModel->update($id, ['status' => 'published'])) {
+                 // Send notification to owner
+                 $listing = $listingModel->find($id);
+                 if ($listing && isset($listing['host_profile_id'])) {
+                     $host = $listingModel->getHost($listing['host_profile_id']);
+                     if ($host && isset($host['account_id'])) {
+                         $this->model('Notification')->add(
+                             $host['account_id'], 
+                             "Your listing '{$listing['title']}' has been approved and published!", 
+                             'success'
+                         );
+                     }
+                 }
+                 $this->setFlash('success', 'Listing published.');
+            } else {
+                 $this->setFlash('error', 'Failed to publish listing.');
+            }
         }
         header('Location: /admin/listings');
         exit;

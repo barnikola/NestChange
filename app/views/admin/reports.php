@@ -20,7 +20,7 @@ $reports = $reports ?? [];
     <?php endif; ?>
     <h1 style="font-size:2.2rem;font-weight:700;color:#222;margin-bottom:18px;letter-spacing:-1px;">🚩 Reports</h1>
     <p style="color:#666;font-size:1.1rem;margin-bottom:28px;">View and manage abuse, dispute, and inappropriate content reports submitted by users.</p>
-    <form method="GET" action="/admin/reports" style="margin-bottom:18px;">
+    <form method="GET" action="" style="margin-bottom:18px;">
             <div class="status-row-filter">
                 <input type="hidden" name="status" id="status-input" value="<?= htmlspecialchars($status ?? '') ?>">
                 <button type="button" class="status-btn<?= ($status ?? '') === '' ? ' active' : '' ?>" onclick="setStatus('')">All</button>
@@ -164,7 +164,13 @@ $reports = $reports ?? [];
                         <?php endif; ?>
                     </td>
                     <td style="padding:10px 8px;"><?= htmlspecialchars($report['reason']) ?></td>
-                    <td style="padding:10px 8px;max-width:250px;word-break:break-word;font-size:0.9em;"><?= htmlspecialchars($report['description'] ?? 'N/A') ?></td>
+                    <td style="padding:10px 8px;max-width:250px;word-break:break-word;font-size:0.9em;">
+                        <?php 
+                            // Display plain text description (now standard for all types including contact)
+                            // Use nl2br to preserve line breaks
+                            echo nl2br(htmlspecialchars(substr($report['description'] ?? '', 0, 150) . (strlen($report['description'] ?? '') > 150 ? '...' : '')));
+                        ?>
+                    </td>
                     <td style="padding:10px 8px;">
                         <span class="badge badge-<?= htmlspecialchars($report['status']) ?>">
                             <?= htmlspecialchars(ucfirst($report['status'])) ?>

@@ -21,11 +21,11 @@ require_once dirname(__DIR__, 2) . '/config.php';
                 <label for="reason" class="report-label">Reason <span class="required">*</span></label>
                 <select name="reason" id="reason" class="report-select" required>
                     <option value="">Select a reason</option>
-                    <option value="Inappropriate content">Inappropriate content</option>
-                    <option value="Spam">Spam</option>
-                    <option value="Fraud">Fraud</option>
-                    <option value="Harassment">Harassment</option>
-                    <option value="Other">Other</option>
+                    <option value="inappropriate">Inappropriate content</option>
+                    <option value="spam">Spam</option>
+                    <option value="scam">Fraud / Scam</option>
+                    <option value="harassment">Harassment</option>
+                    <option value="other">Other</option>
                 </select>
             </div>
             

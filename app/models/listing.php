@@ -668,6 +668,19 @@ class Listing extends Model
         return $this->db->fetchOne($sql, [$listingId]);
     }
 
+
+    /**
+     * Check if a listing has any accepted applications
+     * 
+     * @param string $listingId
+     * @return bool
+     */
+    public function hasAcceptedApplications(string $listingId): bool
+    {
+        $sql = "SELECT id FROM listing_application WHERE listing_id = ? AND status IN ('accepted', 'cancel_requested') LIMIT 1";
+        return (bool)$this->db->fetchOne($sql, [$listingId]);
+    }
+
     private function generateUuid(): string
     {
         $data = random_bytes(16);

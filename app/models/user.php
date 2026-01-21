@@ -48,7 +48,7 @@ class User extends Model
     }
 
 
-    public function updatePassword(int|string $table, $userId, string $newPassword): bool
+    public function updatePassword($userId, string $newPassword): bool
     {
         $hash = password_hash($newPassword, PASSWORD_ALGO, ['cost' => PASSWORD_COST]);
         return $this->update($userId, ['password_hash' => $hash]) > 0;
@@ -272,6 +272,24 @@ class User extends Model
         $sql = "SELECT COUNT(*) as count FROM user_document WHERE account_id = ? AND status = 'pending'";
         $result = $this->db->fetchOne($sql, [$userId]);
         return (int)($result['count'] ?? 0);
+    }
+
+    public function uploadDocument(int|string $userId, int|string $typeId, string $path): bool
+    {
+        // 1 = ID/Passport, 2 = Student ID
+        // If string 'identity_proof' is passed, assume 1. If 'student_id', assume 2.
+        if (!is_numeric($typeId)) {
+            $typeId = ($typeId === 'student_id') ? 2 : 1;
+        }
+
+        return $this->db->insert('user_document', [
+            'id' => $this->generateUuid(),
+            'account_id' => $userId,
+            'document_type_id' => $typeId,
+            'document_path' => $path,
+            'status' => 'pending',
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
     }
 
     private function generateUuid(): string

@@ -1,6 +1,6 @@
 <?php
 require_once dirname(__DIR__) . '/core/controller.php';
-require_once dirname(__DIR__) . '/models/Report.php';
+require_once dirname(__DIR__) . '/models/report.php';
 require_once dirname(__DIR__) . '/middleware/AuthMiddleware.php';
 require_once dirname(__DIR__) . '/services/EmailService.php';
 require_once dirname(__DIR__) . '/core/database.php';
@@ -16,18 +16,48 @@ class ReportController extends Controller
                 return;
             }
             $reporterId = $this->getUserProfileId();
-            // If no profile, fallback to account id
+
+            // If no profile, we cannot set reporter_id because it references user_profile.
+            // But we can still allow the report as anonymous or handle it. 
+            // However, the schema allows NULL.
+            // Falling back to account id ($user['id']) causes FK constraint violation.
+            
+            // So, do NOT fallback to account ID if profile is missing.
+            // Just leave it as null or handle the error.
             if (!$reporterId) {
-                $user = $this->currentUser();
-                $reporterId = $user['id'] ?? null;
+                 // Try to find profile one more time or just proceed as anonymous/system
+                 // For now, let's keep it null if not found to avoid 500 error
+                 $reporterId = null; 
             }
+            $reporterId = $this->getUserProfileId();
+            
+            // If no profile found, we used to fallback to account ID, but that causes FK violation.
+            // If we want to strictly require a profile:
             if (!$reporterId) {
-                $this->json(['success' => false, 'error' => 'Unable to identify reporter. Please log in again.']);
-                return;
+                // Try to see if we can just log it as anonymous (null) or if we strictly require profile.
+                // For now, let's allow NULL if the database allows it (it does: DEFAULT NULL).
+                // But wait, createReport() signature might expect something.
+                 $reporterId = null;
             }
+            
+            // Re-check valid input
             $reportedType = $this->postInput('reported_type');
             $reportedId = $this->postInput('reported_id');
-            $reason = $this->postInput('reason');
+            
+            // Normalize reason input to match ENUMs
+            $rawReason = strtolower($this->postInput('reason') ?? '');
+            $reasonMap = [
+                'fraud' => 'scam',
+                'inappropriate content' => 'inappropriate',
+                'other' => 'other',
+                'spam' => 'spam',
+                'harassment' => 'harassment',
+                'scam' => 'scam',
+                'inappropriate' => 'inappropriate',
+                'contact' => 'contact'
+            ];
+            $reason = $reasonMap[$rawReason] ?? $rawReason;
+            
             $description = trim($this->postInput('description') ?? '');
             // Validation
             if (empty($reportedType) || empty($reportedId)) {
@@ -48,7 +78,7 @@ class ReportController extends Controller
                 $this->json(['success' => true, 'message' => 'Report submitted successfully.']);
             } catch (Exception $e) {
                 error_log('Report creation error: ' . $e->getMessage());
-                $this->json(['success' => false, 'error' => 'Failed to submit report. Please try again.']);
+                $this->json(['success' => false, 'error' => 'Error: ' . $e->getMessage()]);
             }
             return;
         }
@@ -57,7 +87,7 @@ class ReportController extends Controller
 
     public function index(): void
     {
-        AuthMiddleware::requireAdmin();
+        AuthMiddleware::requireModerator();
         $status = $this->getInput('status') ?? null;
         $model = new Report();
         $reports = $model->getReports($status);
@@ -79,7 +109,7 @@ class ReportController extends Controller
 
     public function update(): void
     {
-        AuthMiddleware::requireAdmin();
+        AuthMiddleware::requireModerator();
         if ($this->isPost()) {
             if (!$this->verifyCsrf()) {
                 $this->json(['success' => false, 'error' => 'Invalid request (CSRF mismatch).']);
@@ -104,7 +134,15 @@ class ReportController extends Controller
             }
             
             // Update status
-            if ($model->updateStatus($id, $status)) {
+            $extraData = [];
+            if ($status === 'resolved') {
+                $extraData = [
+                    'resolved_by' => $this->currentUser()['id'] ?? null,
+                    'resolved_at' => date('Y-m-d H:i:s')
+                ];
+            }
+
+            if ($model->updateStatus($id, $status, $extraData)) {
                 // Send email notification to reporter
                 try {
                     $emailService = new EmailService();

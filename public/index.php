@@ -117,6 +117,8 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
     $router->post('/applications/{id}/reject', ['ApplicationController', 'reject']);
     $router->post('/applications/{id}/withdraw', ['ApplicationController', 'withdraw']);
     $router->post('/applications/{id}/cancel', ['ApplicationController', 'cancel']);
+    $router->post('/applications/{id}/approve-cancel', ['ApplicationController', 'approveCancellation']);
+    $router->post('/applications/{id}/reject-cancel', ['ApplicationController', 'rejectCancellation']);
     $router->get('/applications/list.json', ['ApplicationController', 'listJson']);
 
     // ====== Negotiation Routes ======
@@ -178,6 +180,11 @@ if (file_exists($cacheFile) && getenv('APP_ENV') !== 'development') {
     // Moderator: Documents
     $router->get('/moderator/documents', ['ModeratorController', 'documents']);
     $router->post('/moderator/documents/approve', ['ModeratorController', 'approveDocument']);
+    
+    // Moderator: Reports
+    // Use ReportController for consolidated reports view
+    $router->get('/moderator/reports', ['ReportController', 'index']);
+    $router->post('/moderator/reports/update', ['ReportController', 'update']);
 
     // ====== Static Pages ======
     $router->get('/faq', ['StaticController', 'faq']);

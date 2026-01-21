@@ -53,6 +53,16 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                 </nav>
                 <div class="header-right">
                     <?php if ($navContext['is_logged_in']): ?>
+                        <?php if (in_array($navContext['role'] ?? '', ['admin', 'moderator'])): ?>
+                            <a href="<?php echo rtrim(BASE_URL, '/'); ?>/<?= htmlspecialchars($navContext['role']) ?>/dashboard" 
+                               style="padding: 8px 16px; background-color: #2c3e50; color: #fff; border-radius: 20px; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: opacity 0.2s;"
+                               onmouseover="this.style.opacity='0.9'"
+                               onmouseout="this.style.opacity='1'">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                                <?= ucfirst($navContext['role']) ?> Dashboard
+                            </a>
+                        <?php endif; ?>
+                        
                         <div class="notification-wrapper" style="position: relative;">
                             <a href="<?php echo rtrim(BASE_URL, '/'); ?>/notifications" class="notification-bell-wrapper" id="notification-bell-wrapper">
                                 <svg class="notification-bell-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -77,7 +87,13 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                         <div class="user-dropdown" tabindex="0">
                             <div class="user-avatar-btn">
                                 <?php if ($navContext['avatar']): ?>
-                                    <img src="<?= htmlspecialchars($navContext['avatar']) ?>" alt="Avatar" class="user-avatar-img">
+                                    <?php 
+                                        $avatarUrl = $navContext['avatar'];
+                                        if (!preg_match('/^http/', $avatarUrl) && !preg_match('/^\//', $avatarUrl)) {
+                                            $avatarUrl = rtrim(BASE_URL, '/') . '/' . $avatarUrl;
+                                        }
+                                    ?>
+                                    <img src="<?= htmlspecialchars($avatarUrl) ?>" alt="Avatar" class="user-avatar-img">
                                 <?php else: ?>
                                     <?= htmlspecialchars($navContext['initials']) ?>
                                 <?php endif; ?>
@@ -187,7 +203,7 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                         <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/legal/terms">Terms of Service</a></li>
                         <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/legal/privacy">Privacy Policy</a></li>
                         <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/legal/cookie_policy">Cookie Policy</a></li>
-                        <li><a href="<?php echo rtrim(BASE_URL, '/'); ?>/support">Support</a></li>
+
                     </ul>
                 </div>
             </div>

@@ -47,9 +47,11 @@ class Favorite extends Model
      */
     public function remove(string $profileId, string $listingId): bool
     {
-        $sql = "DELETE FROM {$this->table} WHERE profile_id = ? AND listing_id = ?";
-        $result = $this->db->execute($sql, [$profileId, $listingId]);
-        return $result > 0;
+        return $this->db->delete(
+            $this->table, 
+            "profile_id = ? AND listing_id = ?", 
+            [$profileId, $listingId]
+        ) > 0;
     }
 
     /**

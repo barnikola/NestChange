@@ -58,7 +58,7 @@ class AuthController extends Controller
             ->required('email', 'Email is required.')
             ->email('email', 'Please enter a valid email address.')
             ->required('password', 'Password is required.')
-            ->password('password', 'Password must be at least 8 characters with uppercase, lowercase, and a number.')
+            ->password('password', 'Password must be at least 8 characters with uppercase, lowercase, number, and special character.')
             ->required('password_confirm', 'Please confirm your password.')
             ->matches('password_confirm', 'password', 'Passwords do not match.')
             ->required('student_status_until', 'Student status end date is required.')
@@ -259,6 +259,9 @@ class AuthController extends Controller
         $safeUser = $this->userModel->getSafeUserData($sessionUser);
         Session::login($safeUser);
 
+        // Auto-complete expired exchanges
+        $this->autoCompleteExpiredExchanges();
+
         // Handle remember me
         if ($remember) {
             // Extend session lifetime
@@ -395,7 +398,7 @@ class AuthController extends Controller
             'password_confirm' => $passwordConfirm
         ])
             ->required('password', 'Password is required.')
-            ->password('password', 'Password must be at least 8 characters with uppercase, lowercase, and a number.')
+            ->password('password', 'Password must be at least 8 characters with uppercase, lowercase, number, and special character.')
             ->required('password_confirm', 'Please confirm your password.')
             ->matches('password_confirm', 'password', 'Passwords do not match.');
 
@@ -600,6 +603,45 @@ class AuthController extends Controller
                 'document_type_id' => 2,
                 'document_path' => $studentIdPath,
             ]);
+        }
+    }
+
+    /**
+     * Auto-complete expired exchanges and send notifications
+     * Called after successful login
+     */
+    private function autoCompleteExpiredExchanges(): void
+    {
+        try {
+            $appModel = $this->model('Application');
+            $notifModel = $this->model('Notification');
+            
+            $completedCount = $appModel->markExpiredAsCompleted();
+            
+            if ($completedCount > 0) {
+                $completed = $appModel->getRecentlyCompleted();
+                
+                foreach ($completed as $exchange) {
+                    if (!empty($exchange['applicant_id'])) {
+                        $notifModel->add(
+                            $exchange['applicant_id'],
+                            "Your exchange for '{$exchange['listing_title']}' is complete! Leave a review.",
+                            'success'
+                        );
+                    }
+                    
+                    if (!empty($exchange['host_id'])) {
+                        $notifModel->add(
+                            $exchange['host_id'],
+                            "Exchange for '{$exchange['listing_title']}' is complete! Leave a review.",
+                            'success'
+                        );
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            // Silent fail - don't interrupt login flow
+            error_log("Auto-completion error: " . $e->getMessage());
         }
     }
 }

@@ -7,11 +7,12 @@ ob_start();
 <style>
 .legal-table-container {
     max-width: 900px;
-    margin: 40px auto 0 auto;
+    margin: 40px auto 40px auto;
     background: #fff;
     border-radius: 16px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.07);
     padding: 32px 32px 24px 32px;
+    min-height: 70vh;
 }
 .legal-table-title {
     font-size: 2.2rem;

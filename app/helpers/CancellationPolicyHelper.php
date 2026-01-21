@@ -63,30 +63,29 @@ class CancellationPolicyHelper
         $daysBefore = $interval->days; // integer total days
         
         // If start date is in the past or today (and we assume check-in is effectively "now" or earlier),
-        // we might handle differently. For simplicity, if today > start, no refund.
         if ($now > $start) {
              return [
                 'allowed' => false,
-                'refund' => 'None',
+                'penalty' => 'Restricted',
                 'message' => 'Cannot cancel after start date.'
             ];
         }
 
         // Default
         $allowed = true;
-        $refund = 'None';
+        $penalty = 'None';
         $message = 'Cancellation allowed.';
 
-        switch ($policy) {
+        switch (strtolower($policy)) {
             case self::POLICY_FLEXIBLE:
                 // Deadline: 24 hours before check-in
                 $deadlineFull = (clone $start)->modify('-1 day');
                 
                 if ($interval->days >= 1) {
-                    $refund = 'Allowed';
+                    $penalty = 'None';
                     $message = 'Cancellation allowed. (Deadline: ' . $deadlineFull->format('d M Y, H:i') . ')';
                 } else {
-                    $refund = 'Restricted';
+                    $penalty = 'Restricted';
                     $message = 'Late cancellation. (Deadline was ' . $deadlineFull->format('d M Y, H:i') . ')';
                 }
                 break;
@@ -97,13 +96,13 @@ class CancellationPolicyHelper
                 $deadlinePartial = (clone $start)->modify('-1 day');
 
                 if ($daysBefore >= 5) {
-                    $refund = 'Allowed';
+                    $penalty = 'None';
                     $message = 'Cancellation allowed. (Deadline: ' . $deadlineFull->format('d M Y, H:i') . ')';
                 } elseif ($daysBefore >= 1) {
-                    $refund = 'Warning';
+                    $penalty = 'Warning';
                     $message = 'Late cancellation warning. (Next deadline: ' . $deadlinePartial->format('d M Y, H:i') . ')';
                 } else {
-                    $refund = 'Restricted';
+                    $penalty = 'Restricted';
                     $message = 'Cancellation restricted. (Deadline was ' . $deadlinePartial->format('d M Y, H:i') . ')';
                 }
                 break;
@@ -114,21 +113,27 @@ class CancellationPolicyHelper
                 $deadlinePartial = (clone $start)->modify('-7 days');
                 
                 if ($daysBefore >= 14) {
-                    $refund = 'Allowed';
+                    $penalty = 'None';
                     $message = 'Cancellation allowed. (Deadline: ' . $deadlineFull->format('d M Y, H:i') . ')';
                 } elseif ($daysBefore >= 7) {
-                    $refund = 'Warning';
+                    $penalty = 'Warning';
                     $message = 'Late cancellation warning. (Next deadline: ' . $deadlinePartial->format('d M Y, H:i') . ')';
                 } else {
-                    $refund = 'Restricted';
+                    $penalty = 'Restricted';
                     $message = 'Cancellation restricted. (Deadline was ' . $deadlinePartial->format('d M Y, H:i') . ')';
                 }
                 break;
+                
+            default:
+                $penalty = 'Restricted';
+                $message = 'Unknown cancellation policy: ' . $policy;
+                break;
         }
 
+
         return [
-            'allowed' => $allowed,
-            'refund' => $refund,
+            'allowed' => ($allowed && $penalty === 'None'),
+            'penalty' => $penalty,
             'message' => $message
         ];
     }

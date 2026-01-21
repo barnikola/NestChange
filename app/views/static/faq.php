@@ -84,7 +84,7 @@
         </div>
     </div>
      <div style="margin-top: 20px; text-align: center;">
-        <a href="/NestChange/public/" style="color: #007bff; text-decoration: none;">&larr; Back to Home</a>
+        <a href="<?= rtrim(BASE_URL, '/') ?>/" style="color: #007bff; text-decoration: none;">&larr; Back to Home</a>
     </div>
 </div>
 

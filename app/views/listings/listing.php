@@ -122,6 +122,15 @@ $isOwner = $userProfileId && $userProfileId === $listing['host_profile_id'];
 $canViewStatus = $isOwner || AuthMiddleware::hasAnyRole(['admin', 'moderator']);
 ?>
 
+<?php 
+            if (isset($_SESSION['_flash']['error'])): 
+            ?>
+                <div class="alert alert-error">
+                    <p><?= htmlspecialchars($_SESSION['_flash']['error']) ?></p>
+                </div>
+                <?php unset($_SESSION['_flash']['error']); ?>
+            <?php endif; ?>
+
 <?php if ($canViewStatus): ?>
     <div style="background: #e3f2fd; color: #0d47a1; padding: 15px; text-align: center; border-bottom: 1px solid #bbdefb; margin-bottom: 20px; font-size: 16px;">
         Listing Status: <span style="text-transform: uppercase; font-weight: 700; color: #1565c0;"><?= htmlspecialchars($listing['status']) ?></span>
@@ -435,7 +444,7 @@ $canViewStatus = $isOwner || AuthMiddleware::hasAnyRole(['admin', 'moderator']);
         </div>
     <?php endif; ?>
 
-    <div class="review-section-header">
+    <div class="review-section-header" id="leave-review">
         <h4>Share your experience</h4>
         <p class="review-hint"><?php echo htmlspecialchars($reviewForm['message']); ?></p>
     </div>
@@ -446,8 +455,20 @@ $canViewStatus = $isOwner || AuthMiddleware::hasAnyRole(['admin', 'moderator']);
               class="review-form">
             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($reviewForm['csrf_token']); ?>">
 
+            <?php 
+                $isGuest = ($reviewForm['role'] ?? 'guest') === 'guest';
+                $labelRating = $isGuest ? 'Overall rating' : 'Rate your guest';
+                $labelText = $isGuest ? 'Tell us about your stay (optional)' : 'Tell us about your guest (optional)';
+                $placeholder = $isGuest 
+                    ? 'Highlights, host communication, anything future guests should know.' 
+                    : 'Communication, cleanliness, adherence to house rules, etc.';
+                $note = $isGuest
+                    ? 'Your review helps other students decide if this place is right for them.'
+                    : 'Your review helps other hosts know what to expect from this guest.';
+            ?>
+
             <div class="review-rating">
-                <div class="review-label">Overall rating</div>
+                <div class="review-label"><?php echo htmlspecialchars($labelRating); ?></div>
                 <div class="star-input" role="radiogroup" aria-label="Select a star rating">
                     <?php for ($star = 5; $star >= 1; $star--): ?>
                         <input type="radio"
@@ -461,15 +482,15 @@ $canViewStatus = $isOwner || AuthMiddleware::hasAnyRole(['admin', 'moderator']);
             </div>
 
             <label class="review-field" for="review-text">
-                <span class="review-label">Tell us about your stay (optional)</span>
+                <span class="review-label"><?php echo htmlspecialchars($labelText); ?></span>
                 <textarea id="review-text"
                           name="review"
                           rows="4"
                           maxlength="2000"
-                          placeholder="Highlights, host communication, anything future guests should know."></textarea>
+                          placeholder="<?php echo htmlspecialchars($placeholder); ?>"></textarea>
             </label>
 
-            <small class="review-note">Your review helps other students decide if this place is right for them.</small>
+            <small class="review-note"><?php echo htmlspecialchars($note); ?></small>
 
             <button type="submit" class="review-submit">
                 Submit review

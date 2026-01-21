@@ -1140,6 +1140,8 @@ body.nav-open {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
+
+
 .auth-form {
     display: flex;
     flex-direction: column;
@@ -2186,6 +2188,7 @@ body.chat-page {
     /* Space for scrollbar */
     scrollbar-width: thin;
     scrollbar-color: #d0d0d0 transparent;
+    margin: 10px;
 }
 
 .chat-messages::-webkit-scrollbar {

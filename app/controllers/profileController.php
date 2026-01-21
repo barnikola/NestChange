@@ -55,7 +55,14 @@ class ProfileController extends Controller
             $listingStats['draft'] = max(0, $listingStats['total'] - $listingStats['published']);
 
             $recentExchanges = $this->exchangeModel->getExchangesForUser($user['id'], $fullUser['profile_id']);
-            foreach ($recentExchanges as $exchange) {
+        
+        // Filter out cancelled/withdrawn status
+        $recentExchanges = array_filter($recentExchanges, function($exchange) {
+            $status = strtolower($exchange['status'] ?? '');
+            return !in_array($status, ['cancelled', 'withdrawn', 'rejected'], true);
+        });
+
+        foreach ($recentExchanges as $exchange) {
                 $status = $exchange['status'] ?? 'upcoming';
                 if (isset($exchangeStats[$status])) {
                     $exchangeStats[$status]++;
@@ -159,6 +166,11 @@ class ProfileController extends Controller
         // Handle File Uploads (ID/Proof)
         // Storing in temp/uploads/ as requested
         $idDocPath = $this->handleFileUpload('id_document', 'temp/uploads/');
+        
+        if ($idDocPath) {
+            // Record in database
+            $this->userModel->uploadDocument($user['id'], 'identity_proof', $idDocPath);
+        }
 
         // Update Profile Data
         $updateData = [

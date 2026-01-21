@@ -70,30 +70,17 @@ $endValue = $isValidYmd($rawEnd) ? $rawEnd : $today;
             <form method="post" action="/listings/<?php echo htmlspecialchars($listingId); ?>/apply" class="auth-form">
                 <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                 
-                <div class="form-group">
-                    <label class="form-label">Check-in Date</label>
-                    <input
-                        type="date"
-                        name="startdate"
-                        class="form-input"
-                        required
-                        min="<?php echo htmlspecialchars($today); ?>"
-                        value="<?php echo htmlspecialchars($startValue); ?>"
-                        placeholder="<?php echo htmlspecialchars($today); ?>"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Check-out Date</label>
-                    <input
-                        type="date"
-                        name="enddate"
-                        class="form-input"
-                        required
-                        min="<?php echo htmlspecialchars($today); ?>"
-                        value="<?php echo htmlspecialchars($endValue); ?>"
-                        placeholder="<?php echo htmlspecialchars($today); ?>"
-                    >
+                <div class="form-group" style="display: flex; gap: 20px; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                    <div style="flex: 1;">
+                        <label class="form-label" style="color: #666; font-size: 12px; margin-bottom: 4px;">Check-in</label>
+                        <div style="font-weight: 600; font-size: 16px;"><?php echo date('M j, Y', strtotime($startValue)); ?></div>
+                        <input type="hidden" name="startdate" value="<?php echo htmlspecialchars($startValue); ?>">
+                    </div>
+                    <div style="flex: 1; border-left: 1px solid #ddd; padding-left: 20px;">
+                        <label class="form-label" style="color: #666; font-size: 12px; margin-bottom: 4px;">Check-out</label>
+                        <div style="font-weight: 600; font-size: 16px;"><?php echo date('M j, Y', strtotime($endValue)); ?></div>
+                        <input type="hidden" name="enddate" value="<?php echo htmlspecialchars($endValue); ?>">
+                    </div>
                 </div>
 
                 <div class="form-group">

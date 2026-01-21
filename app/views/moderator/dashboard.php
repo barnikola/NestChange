@@ -100,6 +100,16 @@ ob_start();
                     <p>Verify user uploaded ID proofs.</p>
                 </a>
             </div>
+
+            <!-- Reports & Messages -->
+            <div class="card">
+                <a href="/moderator/reports" style="text-decoration:none; color:inherit; display:block; height:100%;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">
+                        🚩 Reports & Messages
+                    </h3>
+                    <p>View user reports and contact form messages.</p>
+                </a>
+            </div>
         </div>
         
     </div>

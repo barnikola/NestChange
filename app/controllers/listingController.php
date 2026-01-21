@@ -356,6 +356,11 @@ class ListingController extends Controller
             $this->flash('error', 'You do not have permission to edit this listing.');
             $this->redirect(BASE_URL . '/listings/' . $id);
         }
+
+        if ($this->listingModel->hasAcceptedApplications($id)) {
+            $this->flash('error', 'You have active exchange.');
+            $this->redirect(BASE_URL . '/listings/' . $id);
+        }
         
         $this->data['listing'] = $listing;
         $this->data['csrf_token'] = $this->getCsrfToken();
@@ -393,6 +398,11 @@ class ListingController extends Controller
         $profileId = $this->getUserProfileId();
         if ($listing['host_profile_id'] !== $profileId && !AuthMiddleware::hasAnyRole(['admin', 'moderator'])) {
             $this->flash('error', 'You do not have permission to edit this listing.');
+            $this->redirect(BASE_URL . '/listings/' . $id);
+        }
+
+        if ($this->listingModel->hasAcceptedApplications($id)) {
+            $this->flash('error', 'You have active exchange.');
             $this->redirect(BASE_URL . '/listings/' . $id);
         }
         
@@ -684,12 +694,11 @@ class ListingController extends Controller
                 continue;
             }
 
-            if (($exchange['role'] ?? '') !== 'guest') {
-                continue;
-            }
+            // Allow both guest and host to review
+            // Role is determined by who is logged in relative to the exchange
 
             if (!($exchange['is_exchange'] ?? false)) {
-                $state['message'] = 'Reviews unlock once your stay is complete.';
+                $state['message'] = 'Reviews unlock once the exchange is complete.';
                 continue;
             }
 
@@ -698,16 +707,22 @@ class ListingController extends Controller
                 continue;
             }
 
+            // Determine effective role for this user in this exchange
+            // getExchangesForUser returns role 'guest' if they are the applicant, 'host' if they are the host
+            $role = $exchange['role'] ?? 'guest';
+
             $review = $this->reviewModel->getBookingReview($bookingId);
-            if ($this->hasSubmittedReview($review, 'guest')) {
-                $state['message'] = 'Thanks! You already reviewed this listing.';
+            if ($this->hasSubmittedReview($review, $role)) {
+                $state['message'] = 'Thanks! You already submitted your review.';
                 continue;
             }
 
             $state['eligible'] = true;
             $state['booking_id'] = $bookingId;
-            $state['role'] = 'guest';
-            $state['message'] = 'Share feedback from your completed exchange.';
+            $state['role'] = $role;
+            $state['message'] = $role === 'guest' 
+                ? 'Share feedback from your completed exchange.'
+                : 'Share feedback about your guest.';
             return $state;
         }
 
