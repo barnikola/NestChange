@@ -18,7 +18,7 @@ class Exchange extends Model
 
         $sql = "SELECT 
                     b.id AS booking_id,
-                    b.application_id,
+                    la.id AS application_id,
                     la.listing_id,
                     la.applicant_id,
                     la.applicant_profile_id,
@@ -34,9 +34,9 @@ class Exchange extends Model
                     hp.last_name AS host_last_name,
                     ap.first_name AS guest_first_name,
                     ap.last_name AS guest_last_name
-                FROM booking b
-                INNER JOIN listing_application la ON b.application_id = la.id
+                FROM listing_application la
                 INNER JOIN listing l ON la.listing_id = l.id
+                LEFT JOIN booking b ON la.id = b.application_id
                 LEFT JOIN user_profile hp ON l.host_profile_id = hp.id
                 LEFT JOIN user_profile ap ON la.applicant_profile_id = ap.id
                 WHERE la.applicant_id = ? OR l.host_profile_id = ?
@@ -57,9 +57,14 @@ class Exchange extends Model
         $statusClass = 'active';
 
         $isCancelled = in_array($row['application_status'], ['cancelled', 'withdrawn', 'rejected'], true);
+        $isCompleted = strtolower($row['application_status'] ?? '') === 'completed';
+
         if ($isCancelled) {
             $status = 'cancelled';
             $statusClass = 'cancelled';
+        } elseif ($isCompleted) {
+            $status = 'completed';
+            $statusClass = 'done';
         } elseif ($end && $end < $today) {
             $status = 'completed';
             $statusClass = 'done';
@@ -68,8 +73,8 @@ class Exchange extends Model
             $statusClass = 'active';
         }
 
-        // An exchange is considered valid once its start date has passed (or it has already ended)
-        $isExchange = ($start && $start <= $today) || ($end && $end < $today);
+        $isExchange = ($start && $start <= $today) || ($end && $end < $today) || $status === 'completed';
+        
         $role = ($row['applicant_profile_id'] ?? '') === $profileId ? 'guest' : 'host';
         $otherName = $role === 'guest'
             ? trim(($row['host_first_name'] ?? '') . ' ' . ($row['host_last_name'] ?? ''))

@@ -2,6 +2,7 @@
 $pageTitle = 'Application Details - NestChange';
 ob_start();
 ?>
+<?php ?>
 <style>
         .detail-section {
             padding: 60px 40px;
@@ -204,10 +205,21 @@ ob_start();
             <a href="javascript:history.back()" style="display:inline-block; margin-bottom:20px; color:#666;">&larr; Back</a>
 
             <div class="detail-card">
-                <!-- Visual Timeline -->
                 <?php
                     $status = strtolower($application['status'] ?? 'pending');
+                    $isHost = $isHost ?? false; // Fallback if not passed
+                    $isApplicant = $isApplicant ?? false;
+
+                    // CANCELLATION INFO
+                    require_once __DIR__ . '/../../helpers/CancellationPolicyHelper.php';
+                    $cancelPolicy = $application['cancellation_policy'] ?? null;
+                    $startDate = $application['start_date'] ?? null;
+                    $cancelEligibility = null;
                     
+                    if ($startDate && $cancelPolicy) {
+                         $cancelEligibility = CancellationPolicyHelper::checkEligibility($cancelPolicy, $startDate);
+                    }
+
                     $step1Class = 'completed';
                     $step2Class = '';
                     $step3Class = '';
@@ -216,7 +228,7 @@ ob_start();
                     if ($status === 'pending') {
                         $step2Class = 'active';
                         $progressWidth = '50%';
-                    } elseif ($status === 'accepted') {
+                    } elseif ($status === 'accepted' || $status === 'cancel_requested') {
                         $step2Class = 'completed';
                         $step3Class = 'completed';
                         $progressWidth = '100%';
@@ -229,16 +241,10 @@ ob_start();
                         $step3Class = 'active';
                         $progressWidth = '100%'; 
                     }
-                    
-                    // CANCELLATION INFO
-                    require_once __DIR__ . '/../../helpers/CancellationPolicyHelper.php';
-                    $cancelPolicy = $application['cancellation_policy'] ?? 'flexible';
-                    $startDate = $application['start_date'] ?? null;
-                    $cancelEligibility = null;
-                    if ($startDate && $status === 'accepted') {
-                         $cancelEligibility = CancellationPolicyHelper::checkEligibility($cancelPolicy, $startDate);
-                    }
                 ?>
+
+
+                <!-- Visual Timeline -->
                 <div class="timeline-container">
                     <div class="timeline">
                         <div class="timeline-progress" style="width: <?php echo $progressWidth; ?>;"></div>
@@ -274,9 +280,41 @@ ob_start();
                         <p style="color:#666;">Applied on <?php echo date('j F , Y', strtotime($application['created_at'])); ?></p>
                     </div>
                     <span class="status-badge status-<?php echo $status; ?>" style="font-size:16px; padding:10px 20px; background:#f0f0f0;">
-                        <?php echo ucfirst($status); ?>
+                        <?php echo $status === 'cancel_requested' ? 'Cancellation Pending' : ucfirst($status); ?>
                     </span>
                 </div>
+
+                <?php if ($status === 'cancel_requested'): ?>
+                    <?php 
+                        $requesterId = $application['cancel_requester_id'] ?? null;
+                        $currentUserAccountId = Session::getUserId();
+                        $isRequester = ($currentUserAccountId == $requesterId);
+                        $otherSideLabel = $isApplicant ? "Host" : "Guest";
+                    ?>
+                    <div style="background: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                        <h4 style="margin-top: 0;">Cancellation Request Pending</h4>
+                        <p>A request to cancel this booking has been initiated. 
+                        <?php if (!$isRequester): ?>
+                            Please review the request and decide whether to approve or reject it.
+                        <?php else: ?>
+                            Waiting for the <?php echo $otherSideLabel; ?> to approve your cancellation request.
+                        <?php endif; ?>
+                        </p>
+                        
+                        <?php if (!$isRequester): ?>
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <form method="post" action="/applications/<?php echo $application['id']; ?>/approve-cancel">
+                                <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
+                                <button type="submit" class="btn-submit" onclick="return confirm('Approve cancellation? This will cancel the booking.')">Approve Cancellation</button>
+                            </form>
+                            <form method="post" action="/applications/<?php echo $application['id']; ?>/reject-cancel">
+                                <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
+                                <button type="submit" class="btn-outline" onclick="return confirm('Reject cancellation request? Booking will remain active.')">Reject Request</button>
+                            </form>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
 
                 <div class="meta-info">
                     <div class="detail-row">
@@ -301,20 +339,19 @@ ob_start();
                 <!-- Actions -->
                 <?php if ($status === 'pending'): ?>
                     <form method="post" class="action-bar">
-                        <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
-                        
+                    <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
                         <a href="/applications/<?php echo htmlspecialchars($application['id']); ?>/negotiate" class="btn-outline" style="text-decoration:none; color:#333; display:flex; align-items:center; justify-content:center;">
                             Negotiate Terms
                         </a>
 
                         <?php if ($isHost): ?>
-                            <button formaction="/applications/<?php echo htmlspecialchars($application['id']); ?>/accept" class="btn-submit" onclick="return confirm('Accept this application?')">Accept</button>
-                            <button formaction="/applications/<?php echo htmlspecialchars($application['id']); ?>/reject" class="btn-outline btn-danger" onclick="return confirm('Reject this application?')">Reject</button>
+                            <button formaction="/applications/<?php echo htmlspecialchars($application['id']); ?>/accept" formmethod="post" class="btn-submit" onclick="return confirm('Accept this application?')">Accept</button>
+                            <button formaction="/applications/<?php echo htmlspecialchars($application['id']); ?>/reject" formmethod="post" class="btn-outline btn-danger" onclick="return confirm('Reject this application?')">Reject</button>
                         <?php elseif ($isApplicant): ?>
-                            <button formaction="/applications/<?php echo htmlspecialchars($application['id']); ?>/withdraw" class="btn-outline" onclick="return confirm('Withdraw application?')">Withdraw</button>
+                            <button formaction="/applications/<?php echo htmlspecialchars($application['id']); ?>/withdraw" formmethod="post" class="btn-outline" onclick="return confirm('Withdraw application?')">Withdraw</button>
                         <?php endif; ?>
                     </form>
-                <?php elseif ($status === 'accepted'): ?>
+                <?php elseif ($status === 'accepted' || $status === 'cancel_requested'): ?>
                     <div class="action-bar" style="justify-content: flex-end; gap: 15px; margin-bottom: 20px; border-top: none; padding-top: 0;">
                          <a href="/applications/<?php echo htmlspecialchars($application['id']); ?>/negotiate" class="btn-outline" style="text-decoration:none; color:#333; display:flex; align-items:center; justify-content:center;">
                             View Negotiation History
@@ -322,50 +359,77 @@ ob_start();
                     </div>
                     <?php if ($isApplicant): ?>
                         <!-- APPLICANT VIEW -->
-                        <?php if($cancelEligibility): ?>
-                            <div class="meta-group" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
-                                <span class="meta-label">Cancellation Policy</span>
-                                <div class="meta-value">
-                                    <?php echo ucfirst($cancelPolicy); ?> 
-                                    <span style="font-size: 14px; color: #666; font-weight: normal;">
-                                        (<?php echo $cancelEligibility['message']; ?>)
-                                    </span>
+                        <?php if ($status === 'accepted'): ?>
+                            <?php if($cancelEligibility): ?>
+                                <div class="meta-group" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+                                    <span class="meta-label">Cancellation Policy</span>
+                                    <div class="meta-value">
+                                        <?php echo ucfirst($cancelPolicy); ?> 
+                                        <span style="font-size: 14px; color: <?php echo ($cancelEligibility['penalty'] === 'Restricted') ? '#dc3545' : '#666'; ?>; font-weight: <?php echo ($cancelEligibility['penalty'] === 'Restricted') ? 'bold' : 'normal'; ?>;">
+                                            (<?php echo $cancelEligibility['message']; ?>)
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <form id="cancelForm" method="post" class="action-bar" action="/applications/<?php echo $application['id']; ?>/cancel">
-                                <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
-                                <button type="button" class="btn-outline btn-danger" onclick="openCancelModal()">
-                                    Cancel Booking
-                                </button>
-                            </form>
-                        <?php else: ?>
-                            <!-- Fallback -->
-                             <form method="post" class="action-bar" action="/applications/<?php echo htmlspecialchars($application['id']); ?>/cancel">
-                                <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
-                                <button type="submit" class="btn-outline btn-danger" onclick="return confirm('Are you sure you want to cancel?')">Cancel Booking</button>
-                            </form>
+                                
+                                <form id="cancelForm" method="post" class="action-bar" action="/applications/<?php echo $application['id']; ?>/cancel">
+                                    <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
+                                    <?php if ($cancelEligibility['allowed']): ?>
+                                        <button type="button" class="btn-outline btn-danger" onclick="openCancelModal()">
+                                            Cancel Booking
+                                        </button>
+                                    <?php else: ?>
+                                        <button type="button" class="btn-outline btn-danger" onclick="openCancelModal()">
+                                            Request Cancellation
+                                        </button>
+                                    <?php endif; ?>
+                                </form>
+                            <?php else: ?>
+                                <!-- Fallback: If we cannot determine eligibility, assume restricted for safety -->
+                                 <form id="cancelFormFallback" method="post" class="action-bar" action="/applications/<?php echo htmlspecialchars($application['id']); ?>/cancel">
+                                    <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
+                                    <button type="button" class="btn-outline btn-danger" onclick="openCancelModalFallback()">Request Cancellation</button>
+                                </form>
+                                <script>
+                                    function openCancelModalFallback() {
+                                        alert("Cancellation policy details are currently unavailable. Any cancellation request will require host approval.");
+                                        document.getElementById('cancelFormFallback').submit();
+                                    }
+                                </script>
+                            <?php endif; ?>
                         <?php endif; ?>
 
                     <?php elseif ($isHost): ?>
                         <!-- HOST VIEW -->
+                        <?php if ($status === 'accepted'): ?>
                         <div class="meta-group" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
                             <span class="meta-label">Actions</span>
                             <div class="meta-value">
                                 <form id="cancelFormHost" method="post" action="/applications/<?php echo htmlspecialchars($application['id']); ?>/cancel">
                                     <input type="hidden" name="csrf_token" value="<?php echo Session::getCsrfToken(); ?>">
                                     <button type="button" class="btn-outline btn-danger" onclick="openCancelModalHost()">
-                                        Cancel Booking (Host)
+                                        Request Cancellation
                                     </button>
                                 </form>
                             </div>
                         </div>
+                        <?php endif; ?>
                     <?php endif; ?>
+                <?php elseif ($status === 'completed'): ?>
+                    <!-- COMPLETED EXCHANGE - REVIEW PROMPT -->
+                    <div class="action-bar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 30px; border-radius: 12px; text-align: center; color: white; margin-bottom: 20px;">
+                        <div style="font-size: 24px; font-weight: 700; margin-bottom: 10px;">🎉 Exchange Completed!</div>
+                        <p style="font-size: 16px; margin-bottom: 20px; opacity: 0.95;">How was your experience? Help the community by leaving a review.</p>
+                        <a href="/listings/<?php echo htmlspecialchars($application['listing_id']); ?>" 
+                           class="btn-submit" 
+                           style="background: white; color: #667eea; font-weight: 600; padding: 12px 30px; text-decoration: none; display: inline-block; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                            ⭐ Leave Your Review
+                        </a>
+                    </div>
                 <?php endif; ?>
 
             </div>
         </div>
-    </section>
+    </div>
 
     <!-- Cancellation Modal structure -->
     <?php if (isset($cancelEligibility) && $cancelEligibility): ?>
@@ -379,14 +443,16 @@ ob_start();
                 
                 <div class="policy-highlight">
                     <p><strong>Cancellation Policy:</strong> <?php echo ucfirst($cancelPolicy); ?></p>
-                    <p class="refund-text"><?php echo $cancelEligibility['message']; ?></p>
+                    <p><?php echo $cancelEligibility['message']; ?></p>
                 </div>
                 
                 <p>This action cannot be undone.</p>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-modal-cancel" onclick="closeCancelModal()">Keep Application</button>
-                <button type="button" class="btn-modal-confirm" onclick="confirmCancel()">Confirm Cancel</button>
+                <button type="button" class="btn-modal-confirm" onclick="confirmCancel()">
+                    <?php echo $cancelEligibility['allowed'] ? 'Confirm Cancel' : 'Send Request'; ?>
+                </button>
             </div>
         </div>
     </div>
@@ -403,7 +469,7 @@ ob_start();
                 <p>Are you sure you want to cancel this booking for <strong><?php echo htmlspecialchars($application['applicant_name'] ?? 'Guest'); ?></strong>?</p>
                 
                 <div class="policy-highlight">
-                    <p><strong>Note:</strong> Cancelling a confirmed booking will trigger a <strong>Full Refund</strong> to the guest.</p>
+                    <p><strong>Note:</strong> Cancelling a confirmed booking may be subject to the listing's cancellation policy.</p>
                 </div>
                 
                 <p>Please ensure you have communicated with the guest before proceeding.</p>

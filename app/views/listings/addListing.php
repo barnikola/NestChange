@@ -42,6 +42,15 @@ ob_start();
             <span class="form-title-main">New Listing</span>
         </h1>
 
+    <?php 
+            if (isset($_SESSION['_flash']['error'])): 
+            ?>
+                <div class="alert alert-error">
+                    <p><?= htmlspecialchars($_SESSION['_flash']['error']) ?></p>
+                </div>
+                <?php unset($_SESSION['_flash']['error']); ?>
+            <?php endif; ?>
+
         <div class="form-box">
 
             <?php if (isset($_SESSION['flash_success'])): ?>
@@ -122,13 +131,15 @@ ob_start();
                              <?= getError('city', $errors ?? []) ?>
                         </div>
                     </div>
-                    <!-- Coordinates optional -->
-                    <!-- Coordinates automatically fetched -->
+
                 </div>
 
                 <div class="new-form-group <?= hasError('images', $errors ?? []) ?>">
                     <label>Upload images</label>
                     <input type="file" name="images[]" multiple accept="image/*">
+                    <small style="color:#666; display:block; margin-top:5px;">
+                        Tip: Hold <strong>CTRL</strong> (Windows) or <strong>CMD</strong> (Mac) to select multiple images at once.
+                    </small>
                     <?= getError('images', $errors ?? []) ?>
                 </div>
 

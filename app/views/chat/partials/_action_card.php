@@ -53,13 +53,13 @@ if (!isset($actionCard) || empty($actionCard)) {
                 $primaryAction = $actionCard['primary_action'];
                 $primaryUrl = $primaryAction['url'] ?? '#';
                 $primaryLabel = $primaryAction['label'] ?? 'Confirm';
-                $primaryOnClick = !empty($primaryAction['url']) 
-                    ? "window.location.href='" . htmlspecialchars($primaryUrl) . "'" 
-                    : ($primaryAction['action'] ?? '');
             ?>
-            <button class="chat-action-btn primary" <?= $primaryOnClick ? 'onclick="' . htmlspecialchars($primaryOnClick) . '"' : '' ?>>
-                <?= htmlspecialchars($primaryLabel) ?>
-            </button>
+            <form method="POST" action="<?= htmlspecialchars($primaryUrl) ?>" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Session::getCsrfToken()) ?>">
+                <button type="submit" class="chat-action-btn primary">
+                    <?= htmlspecialchars($primaryLabel) ?>
+                </button>
+            </form>
         <?php endif; ?>
         
         <?php if (!empty($actionCard['secondary_action'])): ?>
@@ -67,13 +67,13 @@ if (!isset($actionCard) || empty($actionCard)) {
                 $secondaryAction = $actionCard['secondary_action'];
                 $secondaryUrl = $secondaryAction['url'] ?? '#';
                 $secondaryLabel = $secondaryAction['label'] ?? 'Decline';
-                $secondaryOnClick = !empty($secondaryAction['url']) 
-                    ? "window.location.href='" . htmlspecialchars($secondaryUrl) . "'" 
-                    : ($secondaryAction['action'] ?? '');
             ?>
-            <button class="chat-action-btn ghost" <?= $secondaryOnClick ? 'onclick="' . htmlspecialchars($secondaryOnClick) . '"' : '' ?>>
-                <?= htmlspecialchars($secondaryLabel) ?>
-            </button>
+            <form method="POST" action="<?= htmlspecialchars($secondaryUrl) ?>" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Session::getCsrfToken()) ?>">
+                <button type="submit" class="chat-action-btn ghost" onclick="return confirm('<?= $secondaryLabel === 'Decline' ? 'Reject this application?' : 'Are you sure?' ?>')">
+                    <?= htmlspecialchars($secondaryLabel) ?>
+                </button>
+            </form>
         <?php endif; ?>
     </div>
 </div>

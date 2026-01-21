@@ -28,10 +28,19 @@ class ExchangeController extends Controller
         if ($user && $profileId) {
             $bookings = $this->exchangeModel->getExchangesForUser((int)$user['id'], $profileId);
 
-            // Only show bookings that have started or finished (exchange lifecycle)
+            // Show:
+            // 1. Accepted applications (upcoming)
+            // 2. Active/Completed exchanges (is_exchange=true)
+            // EXCLUDING: cancelled, withdrawn, rejected
             $exchanges = array_values(array_filter(
                 $bookings,
-                fn($exchange) => $exchange['is_exchange'] === true
+                function($exchange) {
+                    $status = strtolower($exchange['status'] ?? '');
+                    if (in_array($status, ['cancelled', 'withdrawn', 'rejected'], true)) {
+                        return false;
+                    }
+                    return $exchange['is_exchange'] === true || $status === 'accepted';
+                }
             ));
         }
 

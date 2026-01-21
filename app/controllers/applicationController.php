@@ -14,6 +14,33 @@ class ApplicationController extends Controller
         $user = $this->currentUser();
 
         $appModel = $this->model('Application');
+        
+        // Auto-complete any expired exchanges before display
+        try {
+            $completedCount = $appModel->markExpiredAsCompleted();
+            if ($completedCount > 0) {
+                // If we completed any, functionality to send notifications is in AuthController
+                // We could duplicate it here or abstract it.
+                // For now, ensuring the status is correct on screen is the priority.
+                // Notifications might be missed if they only visit this page and don't re-login,
+                // but the status will be correct.
+                // Let's trigger the notification logic too for consistency.
+                $notifModel = $this->model('Notification');
+                $completed = $appModel->getRecentlyCompleted();
+                
+                foreach ($completed as $exchange) {
+                     if (!empty($exchange['applicant_id'])) {
+                        $notifModel->add($exchange['applicant_id'], "Your exchange for '{$exchange['listing_title']}' is complete! Leave a review.", 'success');
+                    }
+                    if (!empty($exchange['host_id'])) {
+                        $notifModel->add($exchange['host_id'], "Exchange for '{$exchange['listing_title']}' is complete! Leave a review.", 'success');
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            // Silent fail
+        }
+
         $applications = $appModel->getByApplicantId($user['id']);
 
         $this->view('applications/my', [
@@ -63,8 +90,8 @@ class ApplicationController extends Controller
 
         $user = $this->currentUser();
 
-        $isHost = isset($user['profile_id']) && ($user['profile_id'] === ($application['owner_profile_id'] ?? null));
-        $isApplicant = ($user['id'] === ($application['applicant_id'] ?? null));
+        $isHost = isset($user['profile_id']) && ($user['profile_id'] == ($application['owner_profile_id'] ?? null));
+        $isApplicant = ($user['id'] == ($application['applicant_id'] ?? null));
 
         if (!$isHost && !$isApplicant) {
             $this->flash('error', 'You are not authorized to view this application.');
@@ -153,11 +180,15 @@ class ApplicationController extends Controller
         try {
             $listingModel = $this->model('Listing');
             $listing = $listingModel->find($listingId);
-            if ($listing) {
+            if ($listing && isset($listing['host_profile_id'])) {
                 $db = Database::getInstance();
-                $owner = $db->fetchOne("SELECT account_id FROM user_profile WHERE id = ?", [$listing['profile_id']]);
-                if ($owner) {
-                    $this->model('Notification')->add($owner['account_id'], "New application received for '{$listing['title']}'", 'info');
+                $owner = $db->fetchOne("SELECT account_id FROM user_profile WHERE id = ?", [$listing['host_profile_id']]);
+                if ($owner && isset($owner['account_id'])) {
+                    $this->model('Notification')->add(
+                        $owner['account_id'], 
+                        "New application received for '{$listing['title']}'", 
+                        'info'
+                    );
                 }
             }
         } catch (Exception $e) { /* Ignore notification error */ }
@@ -167,10 +198,6 @@ class ApplicationController extends Controller
         $this->redirect(BASE_URL . '/my-applications');
     }
 
-    /**
-     * Accept application
-     * POST /applications/{id}/accept
-     */
     /**
      * Accept application
      * POST /applications/{id}/accept
@@ -193,8 +220,12 @@ class ApplicationController extends Controller
                 }
             }
             
-            $this->redirect(BASE_URL . "/applications/$id");
+        } else {
+            $this->flash('error', 'Failed to approve application. Please check your permissions.');
         }
+        
+        // Always redirect to detail page
+        $this->redirect(BASE_URL . "/applications/$id");
     }
 
     /**
@@ -252,8 +283,18 @@ class ApplicationController extends Controller
 
         $user = $this->currentUser();
         
-        $isApplicant = ($user['id'] === ($application['applicant_id'] ?? null));
-        $isHost = (isset($user['profile_id']) && $user['profile_id'] === ($application['owner_profile_id'] ?? null));
+        $appApplicantId = $application['applicant_id'] ?? null;
+        $appOwnerId = null;
+        if (isset($application['owner_profile_id'])) {
+            $db = Database::getInstance();
+            $owner = $db->fetchOne("SELECT account_id FROM user_profile WHERE id = ?", [$application['owner_profile_id']]);
+            if ($owner) $appOwnerId = $owner['account_id'];
+        }
+
+        // Use loose comparison as IDs might be different types (string/int)
+        $isApplicant = ($user['id'] == $appApplicantId);
+        $isHost = (isset($user['id']) && $user['id'] == $appOwnerId);
+
 
         if (!$isApplicant && !$isHost) {
              $this->flash('error', 'You are not authorized to cancel this application.');
@@ -268,31 +309,81 @@ class ApplicationController extends Controller
 
         // Check eligibility
         if ($isHost) {
-            // Host cancellation always full refund
+            // Host cancellation - no penalty to guest
             $eligibility = [
                 'allowed' => true,
-                'refund' => 'Full',
+                'penalty' => 'None',
                 'message' => 'Application cancelled by Host.'
             ];
         } else {
             // Applicant cancellation - check policy
             require_once dirname(__DIR__) . '/helpers/CancellationPolicyHelper.php';
-            $policy = $application['cancellation_policy'] ?? 'flexible'; 
-            $startDate = $application['start_date'];
             
-            if (!$startDate) {
-                 $eligibility = ['allowed' => true, 'refund' => 'Full', 'message' => 'Cancellation allowed (No start date).'];
+            // CRITICAL: Ensure we have a policy. If missing, something went wrong with the join/data.
+            $policy = $application['cancellation_policy'] ?? null;
+            $startDate = $application['start_date'] ?? null;
+            
+            if (!$policy || !$startDate) {
+                // If we don't know the policy or date, assume restricted for safety
+                $eligibility = [
+                    'allowed' => false, 
+                    'penalty' => 'Restricted', 
+                    'message' => 'Cancellation policy or start date is missing. Please contact support.'
+                ];
             } else {
-                 $eligibility = CancellationPolicyHelper::checkEligibility($policy, $startDate);
+                $eligibility = CancellationPolicyHelper::checkEligibility($policy, $startDate);
             }
         }
-
-        if (!$eligibility['allowed']) {
-             $this->flash('error', $eligibility['message']);
-             $this->redirect(BASE_URL . "/applications/$id");
+        
+        if (!$eligibility['allowed'] && !$isHost) {
+             // For any applicant cancellation that is not allowed directly (Warning or Restricted),
+             // proceed to the mutual cancellation request logic below.
         }
 
-        // Cancel
+        // Host cancellation OR Restricted Guest cancellation - always a request
+        if ($isHost || ($isApplicant && !$eligibility['allowed'])) {
+            $reason = $this->postInput('reason', ($isHost ? 'Host' : 'Guest') . ' requested cancellation');
+            
+            if ($appModel->setStatus($id, 'cancel_requested', $user['id'])) {
+                // Record the request details
+                $appModel->recordCancellationRequest($id, $reason, $eligibility, $user['id']);
+
+                $otherParty = $isHost ? "Guest" : "Host";
+                $this->flash('success', "Cancellation request sent to {$otherParty}. They must approve it to finalize cancellation.");
+                
+                // Notify Other Party
+                $notifModel = $this->model('Notification');
+                $targetId = null;
+                if ($isHost) {
+                    $targetId = $application['applicant_id'];
+                } else {
+                    $db = Database::getInstance();
+                    $owner = $db->fetchOne("SELECT account_id FROM user_profile WHERE id = ?", [$application['owner_profile_id']]);
+                    if ($owner) $targetId = $owner['account_id'];
+                }
+
+                if ($targetId) {
+                    $senderType = $isHost ? "Host" : "Guest";
+                    $notifModel->add(
+                        $targetId,
+                        "{$senderType} has requested to cancel the booking for '{$application['listing_title']}'. Please review and approve/reject.",
+                        'info'
+                    );
+                }
+            } else {
+                $this->flash('error', 'Failed to send cancellation request.');
+            }
+            $this->redirect(BASE_URL . "/applications/$id");
+            return;
+        }
+
+        // Applicant Cancellation (Direct if allowed)
+        if (!$eligibility['allowed']) {
+             $this->flash('error', 'Direct cancellation is no longer possible for this booking. A request has been sent instead.');
+             $this->redirect(BASE_URL . "/applications/$id");
+             return;
+        }
+
         $reason = $this->postInput('reason', 'User requested cancellation');
         if ($appModel->cancelApplication($id, $reason, $eligibility)) {
              $this->flash('success', 'Application cancelled. ' . $eligibility['message']);
@@ -300,13 +391,120 @@ class ApplicationController extends Controller
              // Send Email Notifications
              require_once dirname(__DIR__) . '/services/EmailService.php';
              $emailService = new EmailService();
-             // Refetch application to get updated status if needed, but we have enough info in $application and $eligibility
-             // We just need to pass the basic info we already fetched.
-             // Note: findById was updated to include email/names, so $application has them.
              $emailService->sendCancellationNotification($application, $eligibility);
+
+             // Send System Notifications
+             $notifModel = $this->model('Notification');
+             $cancelByMsg = "the guest";
+             
+             // Notify Guest (Applicant)
+             if (!empty($application['applicant_id'])) {
+                 $notifModel->add($application['applicant_id'], "Booking for '{$application['listing_title']}' has been cancelled by the guest.", 'warning');
+             }
+
+             // Notify Host (Owner)
+             if (!empty($application['owner_profile_id'])) {
+                 $db = Database::getInstance();
+                 $owner = $db->fetchOne("SELECT account_id FROM user_profile WHERE id = ?", [$application['owner_profile_id']]);
+                 if ($owner) {
+                     $notifModel->add($owner['account_id'], "Booking for '{$application['listing_title']}' has been cancelled by the guest.", 'warning');
+                 }
+             }
              
         } else {
              $this->flash('error', 'Failed to cancel application.');
+        }
+
+        $this->redirect(BASE_URL . "/applications/$id");
+    }
+
+    /**
+     * Approve cancellation request
+     * POST /applications/{id}/approve-cancel
+     */
+    public function approveCancellation(string $id): void
+    {
+        $this->requireAuth();
+
+        if (!$this->isPost() || !$this->verifyCsrf()) {
+            $this->flash('error', 'Invalid request.');
+            $this->redirect(BASE_URL . "/applications/$id");
+        }
+
+        $appModel = $this->model('Application');
+        $application = $appModel->findById($id);
+
+        if (!$application || $application['status'] !== 'cancel_requested') {
+            $this->flash('error', 'No pending cancellation request found.');
+            $this->redirect(BASE_URL . "/applications/$id");
+        }
+
+        $user = $this->currentUser();
+        
+        // Only the party who DID NOT request can approve
+        if ($user['id'] == $application['cancel_requester_id']) {
+            $this->flash('error', 'You cannot approve your own cancellation request.');
+            $this->redirect(BASE_URL . "/applications/$id");
+            return;
+        }
+
+        // Finalize cancellation
+        $eligibility = ['allowed' => true, 'penalty' => 'None', 'message' => 'Mutual cancellation approved.'];
+        if ($appModel->cancelApplication($id, 'Mutual agreement cancellation', $eligibility)) {
+            $this->flash('success', 'Booking cancelled by mutual agreement.');
+            
+            // Notify the requester
+            $notifModel = $this->model('Notification');
+            $notifModel->add($application['cancel_requester_id'], "Your cancellation request for '{$application['listing_title']}' has been approved.", 'success');
+        } else {
+            $this->flash('error', 'Failed to approve cancellation.');
+        }
+
+        $this->redirect(BASE_URL . "/applications/$id");
+    }
+
+    /**
+     * Reject cancellation request
+     * POST /applications/{id}/reject-cancel
+     */
+    public function rejectCancellation(string $id): void
+    {
+        $this->requireAuth();
+
+        if (!$this->isPost() || !$this->verifyCsrf()) {
+            $this->flash('error', 'Invalid request.');
+            $this->redirect(BASE_URL . "/applications/$id");
+        }
+
+        $appModel = $this->model('Application');
+        $application = $appModel->findById($id);
+
+        if (!$application || $application['status'] !== 'cancel_requested') {
+            $this->flash('error', 'No pending cancellation request found.');
+            $this->redirect(BASE_URL . "/applications/$id");
+        }
+
+        $user = $this->currentUser();
+        
+        // Only the party who DID NOT request can reject
+        if ($user['id'] == $application['cancel_requester_id']) {
+            $this->flash('error', 'You cannot reject your own cancellation request.');
+            $this->redirect(BASE_URL . "/applications/$id");
+            return;
+        }
+
+        // Revert to accepted
+        if ($appModel->setStatus($id, 'accepted')) {
+            $this->flash('success', 'Cancellation request rejected. Booking remains active.');
+            
+            // Notify the requester
+            $notifModel = $this->model('Notification')->add(
+                $application['cancel_requester_id'], 
+                "Your cancellation request for '{$application['listing_title']}' has been rejected.", 
+                'warning'
+            );
+        } else {
+            $this->flash('error', 'Failed to reject cancellation.');
         }
 
         $this->redirect(BASE_URL . "/applications/$id");
@@ -335,18 +533,19 @@ class ApplicationController extends Controller
         }
 
         $user = $this->currentUser();
-        $isHost = isset($user['profile_id']) && ($user['profile_id'] === ($application['owner_profile_id'] ?? null));
-        $isApplicant = ($user['id'] === ($application['applicant_id'] ?? null));
+        $isHost = isset($user['profile_id']) && ($user['profile_id'] == ($application['owner_profile_id'] ?? null));
+        $isApplicant = ($user['id'] == ($application['applicant_id'] ?? null));
+
 
         $allowed = false;
         if (in_array($status, ['accepted', 'rejected']) && $isHost) {
             $allowed = true;
-        } elseif ($status === 'withdrawn' && $isApplicant) {
+        } elseif ($status === 'withdrawn' && $isApplicant && ($application['status'] === 'pending' || $application['status'] === 'accepted')) {
             $allowed = true;
         }
 
         if (!$allowed) {
-            $this->flash('error', 'You are not authorized to perform this action.');
+            $this->flash('error', 'You are not authorized to perform this action or application status does not allow it.');
             if ($shouldRedirect) $this->redirect(BASE_URL . "/applications/$id");
             return false;
         }

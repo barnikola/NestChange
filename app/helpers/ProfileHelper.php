@@ -19,6 +19,7 @@ class ProfileHelper
                 'avatar' => null,
                 'initials' => null,
                 'user_name' => null,
+                'role' => null,
                 'notification_count' => 0
             ];
         }
@@ -53,6 +54,7 @@ class ProfileHelper
             'avatar' => $avatar,
             'initials' => $initials,
             'user_name' => $firstName,
+            'role' => $user['role'] ?? 'student',
             'notification_count' => $notificationCount
         ];
     }

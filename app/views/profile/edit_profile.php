@@ -34,7 +34,7 @@ ob_start();
                         <img src="/assets/logo.png" id="previewImg" alt="Preview">
                     <?php endif; ?>
                 </div>
-                <input type="file" class="edit-input" name="profile_picture" accept="image/*" id="photoUpload">
+                <input type="file" class="edit-input" name="profile_picture" accept=".jpg, .jpeg, image/jpg, image/jpeg" id="photoUpload">
             </div>
 
             <div class="edit-form-grid">

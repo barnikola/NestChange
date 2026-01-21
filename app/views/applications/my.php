@@ -144,11 +144,14 @@ ob_start();
                                     </td>
                                     <td>
                                         <span class="status-badge status-<?php echo strtolower($app['status']); ?>">
-                                            <?php echo ucfirst($app['status']); ?>
+                                            <?php echo $app['status'] === 'cancel_requested' ? 'Cancellation Pending' : ucfirst($app['status']); ?>
                                         </span>
                                     </td>
                                     <td>
                                         <a href="/applications/<?php echo htmlspecialchars($app['id']); ?>" class="btn-sm">View Details</a>
+                                        <?php if (strtolower($app['status']) === 'completed'): ?>
+                                            <a href="/listings/<?php echo htmlspecialchars($app['listing_id']); ?>#leave-review" class="btn-sm" style="background: #667eea; color: white; margin-left: 5px;">⭐ Leave Review</a>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

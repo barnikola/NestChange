@@ -55,8 +55,9 @@ class Report extends Model
         return $this->db->fetchOne($sql, [$id]);
     }
 
-    public function updateStatus($id, $status) {
-        return $this->update($id, ['status' => $status]);
+    public function updateStatus($id, $status, $extraData = []) {
+        $data = array_merge(['status' => $status], $extraData);
+        return $this->update($id, $data);
     }
 
     private function generateUuid(): string {

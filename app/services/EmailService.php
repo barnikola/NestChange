@@ -47,8 +47,8 @@ class EmailService
             $subject = 'Application Cancelled: ' . ($application['listing_title'] ?? 'Listing');
             $body = "Hi " . ($application['applicant_name'] ?? 'Guest') . ",\n\n" .
                     "Your application has been cancelled.\n" .
-                    "Refund Status: " . ($refundDetails['refund'] ?? 'None') . "\n" .
-                    "Details: " . ($refundDetails['message'] ?? '') . "\n\n" .
+                    "Cancellation Status: " . ($penaltyDetails['penalty'] ?? 'None') . "\n" .
+                    "Details: " . ($penaltyDetails['message'] ?? '') . "\n\n" .
                     "We hope to see you again soon!";
             $this->logEmail($to, $subject, $body);
         }
@@ -58,9 +58,9 @@ class EmailService
             $toHost = $application['host_email'];
             $subjectHost = 'Booking Cancelled: ' . ($application['listing_title'] ?? 'Listing');
             $bodyHost = "Hi " . ($application['host_name'] ?? 'Host') . ",\n\n" .
-                        "A booking for your listing has been cancelled by the guest.\n" .
+                        "A booking for your listing has been cancelled.\n" .
                         "Guest: " . ($application['applicant_name'] ?? 'Guest') . "\n" .
-                        "Refund applied: " . ($refundDetails['refund'] ?? 'None') . "\n\n" .
+                        "Status: " . ($penaltyDetails['penalty'] ?? 'None') . "\n\n" .
                         "Your calendar has been updated.";
             $this->logEmail($toHost, $subjectHost, $bodyHost);
         }

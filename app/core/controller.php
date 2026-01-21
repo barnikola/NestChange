@@ -46,6 +46,7 @@ abstract class Controller
         $viewPath = dirname(__DIR__) . '/views/' . $view . '.php';
         
         if (!file_exists($viewPath)) {
+            error_log("!!! VIEW_NOT_FOUND: $viewPath");
             throw new Exception("View not found: {$view}");
         }
         

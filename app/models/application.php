@@ -97,7 +97,7 @@ class Application extends Model
         $sql = "SELECT id FROM {$this->table} 
                 WHERE applicant_id = ? 
                 AND listing_id = ? 
-                AND status NOT IN ('cancelled', 'rejected', 'withdrawn')
+                AND status NOT IN ('cancelled', 'rejected', 'withdrawn', 'completed')
                 LIMIT 1";
         $result = $this->db->fetchOne($sql, [$userId, $listingId]);
         return $result['id'] ?? null;
@@ -123,9 +123,16 @@ class Application extends Model
     /**
      * Update application status
      */
-    public function setStatus(string $id, string $status): bool
+    public function setStatus(string $id, string $status, ?string $requesterId = null): bool
     {
-        return $this->update($id, ['status' => $status]) > 0;
+        $data = ['status' => $status];
+        if ($status === 'cancel_requested' && $requesterId) {
+            $data['cancel_requester_id'] = $requesterId;
+        } elseif ($status === 'cancelled' || $status === 'accepted') {
+            // Clear requester when finalized or rejected
+            $data['cancel_requester_id'] = null;
+        }
+        return $this->update($id, $data) > 0;
     }
 
     /**
@@ -197,19 +204,25 @@ class Application extends Model
     /**
      * Cancel application
      */
-    public function cancelApplication(string $id, string $reason, array $refundDetails): bool
+    public function cancelApplication(string $id, string $reason, array $penaltyDetails): bool
     {
+        // FAIL-SAFE: If this was supposed to be a request, do not allow direct cancellation
+        if (isset($penaltyDetails['allowed']) && $penaltyDetails['allowed'] === false) {
+            error_log("[CRITICAL_BYPASS] Application::cancelApplication blocked direct cancellation because allowed is false. ID: $id");
+            return false;
+        }
+
         // 1. Insert into application_cancellations
         $cancellationId = $this->generateUuid();
         $this->db->insert('application_cancellations', [
             'id' => $cancellationId,
             'application_id' => $id,
             'reason' => $reason,
-            'refund_amount' => $refundDetails['refund'] ?? 'None',
+            'refund_amount' => $penaltyDetails['penalty'] ?? 'None',
             'created_at' => date('Y-m-d H:i:s')
         ]);
 
-        // 2. Update listing_application status
+        // 2. Update listing_application status and clear requester
         return $this->setStatus($id, 'cancelled');
     }
 
@@ -228,6 +241,79 @@ class Application extends Model
             "applicant_id = ? AND id != ? AND status = 'pending'",
             [$applicantId, $excludeId]
         );
+    }
+
+    /**
+     * Record a cancellation request (pending approval)
+     */
+    public function recordCancellationRequest(string $id, string $reason, array $penaltyDetails, ?string $requesterId = null): bool
+    {
+        $cancellationId = $this->generateUuid();
+        return $this->db->insert('application_cancellations', [
+            'id' => $cancellationId,
+            'application_id' => $id,
+            'reason' => ($requesterId ? "[REQUEST] " : "") . $reason,
+            'refund_amount' => $penaltyDetails['penalty'] ?? 'None',
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    /**
+     * Auto-complete exchanges whose end_date has passed
+     * Returns the number of applications updated
+     */
+    public function markExpiredAsCompleted(): int
+    {
+        // 1. Find candidates
+        $sql = "SELECT id FROM {$this->table} 
+                WHERE status = 'accepted' 
+                AND end_date < CURDATE()
+                AND end_date IS NOT NULL";
+        
+        $candidates = $this->db->fetchAll($sql);
+        $count = 0;
+
+        foreach ($candidates as $app) {
+            // 2. Ensure booking record exists (required for reviews)
+            $booking = $this->db->fetchOne("SELECT id FROM booking WHERE application_id = ?", [$app['id']]);
+            
+            if (!$booking) {
+                $this->db->insert('booking', [
+                    'id' => $this->generateUuid(),
+                    'application_id' => $app['id']
+                ]);
+            }
+
+            // 3. Update status
+            $this->db->query(
+                "UPDATE {$this->table} SET status = 'completed', updated_at = NOW() WHERE id = ?", 
+                [$app['id']]
+            );
+            $count++;
+        }
+
+        return $count;
+    }
+
+    /**
+     * Get applications that were just auto-completed (for notifications)
+     * Returns applications completed in the last 24 hours
+     */
+    public function getRecentlyCompleted(): array
+    {
+        $sql = "SELECT la.*, 
+                       l.title as listing_title,
+                       up_guest.account_id as applicant_id,
+                       up_host.account_id as host_id
+                FROM {$this->table} la
+                LEFT JOIN listing l ON la.listing_id = l.id
+                LEFT JOIN user_profile up_guest ON la.applicant_id = up_guest.account_id
+                LEFT JOIN user_profile up_host ON l.host_profile_id = up_host.id
+                WHERE la.status = 'completed' 
+                AND la.updated_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
+                ORDER BY la.updated_at DESC";
+        
+        return $this->db->fetchAll($sql);
     }
 
     private function generateUuid(): string

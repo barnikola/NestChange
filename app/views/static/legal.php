@@ -6,7 +6,7 @@
     <title><?= $title ?? 'Legal' ?> - NestChange</title>
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background: #fff; color: #333; }
-        .container { max-width: 900px; margin: 0 auto; }
+        .container { max-width: 900px; margin: 0 auto; min-height: 80vh; }
         
         /* Navigation Tabs */
         .legal-nav { border-bottom: 2px solid #eee; margin-bottom: 30px; display: flex; gap: 30px; }

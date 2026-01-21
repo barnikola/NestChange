@@ -62,12 +62,12 @@
     <form method="POST" action="">
         <div class="form-group">
             <label for="name">Full Name</label>
-            <input type="text" id="name" name="name" required placeholder="John Doe">
+            <input type="text" id="name" name="name" required placeholder="John Doe" value="<?= isset($user) ? htmlspecialchars($user['name']) : (isset($_POST['name']) ? htmlspecialchars($_POST['name']) : '') ?>">
         </div>
 
         <div class="form-group">
             <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" required placeholder="john@example.com">
+            <input type="email" id="email" name="email" required placeholder="john@example.com" value="<?= isset($user) ? htmlspecialchars($user['email']) : (isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '') ?>">
         </div>
 
         <div class="form-group">
@@ -84,7 +84,7 @@
     </form>
     
     <div style="margin-top: 20px; text-align: center;">
-        <a href="/NestChange/public/" style="color: #666; text-decoration: none;">Cancel</a>
+        <a href="<?= rtrim(BASE_URL, '/') ?>/" style="color: #666; text-decoration: none;">Cancel</a>
     </div>
 </div>
 
