@@ -507,7 +507,7 @@ body.nav-open {
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('../assets/listing.jpg');
+    background-image: url('../assets/airplane-3702676_1920.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -1678,6 +1678,52 @@ body.nav-open {
     right: 12px;
     font-size: 18px;
     pointer-events: none;
+}
+
+/* Password input wrapper with toggle button */
+.password-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-input-wrapper .form-input {
+    width: 100%;
+    padding-right: 48px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    transition: color var(--motion-normal) var(--easing-standard);
+    z-index: 1;
+    border-radius: 4px;
+}
+
+.password-toggle:hover {
+    color: var(--color-text);
+    background-color: var(--color-bg-alt);
+}
+
+.password-toggle:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+}
+
+.password-toggle .svg-icon {
+    display: block;
+    fill: currentColor;
+    width: 18px;
+    height: 18px;
 }
 
 .btn-submit {

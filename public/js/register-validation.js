@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', function () {
         let targetContainer = input.parentNode;
         if (input.type === 'file' && input.parentNode.classList.contains('file-input-wrapper')) {
             targetContainer = input.parentNode.parentNode;
+        } else if (input.parentNode.classList.contains('password-input-wrapper')) {
+            targetContainer = input.parentNode.parentNode;
         }
 
         let old = targetContainer.querySelector('.simple-feedback');
@@ -50,11 +52,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         let error = 'Weak: ';
-        if (!hasLength) error += '8+ chars ';
-        if (!hasUpper) error += 'Upper ';
-        if (!hasLower) error += 'Lower ';
-        if (!hasNumber) error += 'Number ';
-        if (!hasSpecial) error += 'Special ';
+        if (!hasLength) error += '8+ characters ';
+        if (!hasUpper) error += 'uppercase letter ';
+        if (!hasLower) error += 'lowercase letter ';
+        if (!hasNumber) error += 'number ';
+        if (!hasSpecial) error += 'special character ';
 
         showFeedback(password, error, 'red');
         return false;

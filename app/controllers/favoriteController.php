@@ -12,10 +12,6 @@ class FavoriteController extends Controller
 {
     private Favorite $favoriteModel;
 
-    private function debugLog($message) {
-        file_put_contents('/var/www/html/NestChange/public/debug_fav.log', date('[Y-m-d H:i:s] ') . $message . "\n", FILE_APPEND);
-    }
-
     public function __construct()
     {
         parent::__construct();
@@ -28,13 +24,6 @@ class FavoriteController extends Controller
     public function index(): void
     {
         $this->requireAuth();
-        
-        $user = $this->currentUser();
-        if (!$user) {
-            $this->flash('error', 'Please log in to view favorites.');
-            $this->redirect(BASE_URL . '/auth/signin');
-            return;
-        }
         
         $profileId = $this->getUserProfileId();
         
@@ -72,23 +61,17 @@ class FavoriteController extends Controller
      */
     public function favorite(string $id): void
     {
-        // Check if user is logged in
         if (!Session::isLoggedIn()) {
-            $this->debugLog("User not logged in");
             if ($this->isAjax()) {
                 $this->json(['success' => false, 'error' => 'Please log in to save favorites.', 'login_required' => true], 401);
             } else {
                 $this->flash('error', 'Please log in to save favorites.');
-                $this->redirect(BASE_URL . '/login');
+                $this->redirect(BASE_URL . '/auth/signin');
             }
             return;
         }
 
-        $this->debugLog("Request ID: $id. IsAjax: " . ($this->isAjax() ? 'Yes' : 'No') . ". CSRF verify: " . ($this->verifyCsrf() ? 'Pass' : 'Fail'));
-
-        // Verify CSRF for non-AJAX requests
         if (!$this->isAjax() && !$this->verifyCsrf()) {
-            $this->debugLog("CSRF Failed");
             $this->flash('error', 'Invalid request.');
             $this->redirect(BASE_URL . '/listings/' . $id);
             return;
@@ -127,18 +110,16 @@ class FavoriteController extends Controller
      */
     public function unfavorite(string $id): void
     {
-        // Check if user is logged in
         if (!Session::isLoggedIn()) {
             if ($this->isAjax()) {
                 $this->json(['success' => false, 'error' => 'Please log in.', 'login_required' => true], 401);
             } else {
                 $this->flash('error', 'Please log in.');
-                $this->redirect(BASE_URL . '/login');
+                $this->redirect(BASE_URL . '/auth/signin');
             }
             return;
         }
 
-        // Verify CSRF for non-AJAX requests
         if (!$this->isAjax() && !$this->verifyCsrf()) {
             $this->flash('error', 'Invalid request.');
             $this->redirect(BASE_URL . '/listings/' . $id);
@@ -168,6 +149,73 @@ class FavoriteController extends Controller
         } else {
             $this->flash('success', 'Removed from favorites.');
             $this->redirect($_SERVER['HTTP_REFERER'] ?? BASE_URL . '/favorites');
+        }
+    }
+
+    /**
+     * Batch update favorites (add and remove multiple listings)
+     * Used for syncing localStorage favorites with database
+     */
+    public function batch(): void
+    {
+        if (!Session::isLoggedIn()) {
+            $this->json(['success' => false, 'error' => 'Please log in to save favorites.', 'login_required' => true], 401);
+            return;
+        }
+
+        $profileId = $this->getUserProfileId();
+        
+        if (!$profileId) {
+            $this->json(['success' => false, 'error' => 'Profile not found.'], 400);
+            return;
+        }
+
+        $rawInput = file_get_contents('php://input');
+        $input = json_decode($rawInput, true);
+        
+        if (!isset($input['add']) && !isset($input['remove'])) {
+            if ($this->isAjax()) {
+                $this->json(['success' => false, 'error' => 'Invalid request format.'], 400);
+            }
+            return;
+        }
+
+        $added = 0;
+        $removed = 0;
+        $errors = [];
+
+        if (isset($input['add']) && is_array($input['add'])) {
+            foreach ($input['add'] as $listingId) {
+                try {
+                    if ($this->favoriteModel->add($profileId, $listingId) !== false) {
+                        $added++;
+                    }
+                } catch (Exception $e) {
+                    $errors[] = "Failed to add listing $listingId: " . $e->getMessage();
+                }
+            }
+        }
+
+        if (isset($input['remove']) && is_array($input['remove'])) {
+            foreach ($input['remove'] as $listingId) {
+                try {
+                    if ($this->favoriteModel->remove($profileId, $listingId)) {
+                        $removed++;
+                    }
+                } catch (Exception $e) {
+                    $errors[] = "Failed to remove listing $listingId: " . $e->getMessage();
+                }
+            }
+        }
+
+        if ($this->isAjax()) {
+            $this->json([
+                'success' => true,
+                'added' => $added,
+                'removed' => $removed,
+                'errors' => $errors,
+                'message' => "Synced favorites: $added added, $removed removed"
+            ]);
         }
     }
 

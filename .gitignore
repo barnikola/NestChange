@@ -30,8 +30,6 @@ replay_pid*
 temp*
 .env
 
-public/uploads/
-public/assets/documents/
 
 *.jpg
 *.jpeg
