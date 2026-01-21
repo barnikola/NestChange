@@ -1,52 +1,26 @@
 <?php
 
-require_once dirname(__DIR__) . '/core/database.php';
+require_once dirname(__DIR__) . '/core/model.php';
 
-class Notification
+class Notification extends Model
 {
-    private Database $db;
-
-    public function __construct()
-    {
-        $this->db = Database::getInstance();
-    }
+    protected string $table = 'notification';
+    protected string $primaryKey = 'id';
 
     /**
      * Add a notification for a user
      */
     public function add(int $userId, string $message, string $type = 'info'): void
     {
-        $this->db->insert('notification', [
+        $data = [
+            'id' => $this->generateUuid(),
             'user_id' => $userId,
             'message' => $message,
             'type' => $type,
-            'is_read' => 0,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
-    }
-
-    /**
-     * Get unread notification count for a user
-     */
-    public function getUnreadCount(int $userId): int
-    {
-        $result = $this->db->fetchOne(
-            "SELECT COUNT(*) as count FROM notification WHERE user_id = ? AND is_read = 0",
-            [$userId]
-        );
-        return (int)($result['count'] ?? 0);
-    }
-
-    /**
-     * Check if a specific unread notification already exists
-     */
-    public function hasUnreadNotification(int $userId, string $message): bool
-    {
-        $result = $this->db->fetchOne(
-            "SELECT id FROM notification WHERE user_id = ? AND message = ? AND is_read = 0 LIMIT 1",
-            [$userId, $message]
-        );
-        return !empty($result);
+            'is_read' => 0
+        ];
+        
+        $this->create($data);
     }
 
     /**
@@ -54,53 +28,44 @@ class Notification
      */
     public function getByUserId(int $userId): array
     {
-        $sql = "SELECT id, user_id, message, type, is_read as `read`, created_at 
-                FROM notification 
-                WHERE user_id = ? 
-                ORDER BY created_at DESC";
-        
-        $results = $this->db->fetchAll($sql, [$userId]);
-        return $results;
-    }
-
-    /**
-     * Get latest notifications for a user
-     */
-    public function getLatest(int $userId, int $limit = 5): array
-    {
-        $sql = "SELECT id, user_id, message, type, is_read as `read`, created_at 
-                FROM notification 
-                WHERE user_id = ? 
-                ORDER BY created_at DESC 
-                LIMIT " . (int)$limit;
-        
+        $sql = "SELECT * FROM {$this->table} WHERE user_id = ? ORDER BY created_at DESC";
         return $this->db->fetchAll($sql, [$userId]);
     }
 
     /**
-     * Mark a specific notification as read
+     * Mark a notification as read
      */
-    public function markAsRead(string $id, int $userId): bool
+    public function markAsRead(string $notificationId): bool
     {
-        $count = $this->db->update(
-            'notification',
-            ['is_read' => 1],
-            "id = ? AND user_id = ?",
-            [$id, $userId]
-        );
-        return $count > 0;
+        return $this->update($notificationId, ['is_read' => 1]) > 0;
     }
 
     /**
      * Mark all notifications as read for a user
      */
-    public function markAllAsRead(int $userId): void
+    public function markAllAsRead(int $userId): int
     {
-        $this->db->update(
-            'notification',
-            ['is_read' => 1],
-            "user_id = ? AND is_read = 0",
-            [$userId]
-        );
+        $sql = "UPDATE {$this->table} SET is_read = 1 WHERE user_id = ? AND is_read = 0";
+        $stmt = $this->db->query($sql, [$userId]);
+        return $stmt->rowCount();
+    }
+
+    /**
+     * Get unread notification count for a user
+     */
+    public function getUnreadCount(int $userId): int
+    {
+        return $this->count(['user_id' => $userId, 'is_read' => 0]);
+    }
+
+    /**
+     * Generate a UUID v4
+     */
+    private function generateUuid(): string
+    {
+        $data = random_bytes(16);
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 }

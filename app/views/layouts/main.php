@@ -83,7 +83,6 @@ $lastBreadcrumbIndex = count($breadcrumbs) - 1;
                                 </div>
                             </div>
                         </div>
-
                         <div class="user-dropdown" tabindex="0">
                             <div class="user-avatar-btn">
                                 <?php if ($navContext['avatar']): ?>
