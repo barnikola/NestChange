@@ -14,7 +14,7 @@ ob_start();
         <h1 style="font-size: 28px; font-weight: 600; color: #222; margin-bottom: 8px;">
             ❤️ My Favorites
         </h1>
-        <p style="color: #666; font-size: 15px;">
+        <p id="favorites-count" style="color: #666; font-size: 15px;">
             <?php if (!empty($favorites)): ?>
                 You have <?= count($favorites) ?> saved listing<?= count($favorites) !== 1 ? 's' : '' ?>
             <?php else: ?>
@@ -23,8 +23,7 @@ ob_start();
         </p>
     </div>
 
-    <?php if (empty($favorites)): ?>
-        <div class="empty-favorites" style="text-align: center; padding: 80px 20px; background: #f9f9f9; border-radius: 16px;">
+    <div id="empty-favorites" class="empty-favorites" style="text-align: center; padding: 80px 20px; background: #f9f9f9; border-radius: 16px; <?= empty($favorites) ? '' : 'display: none;' ?>">
             <div style="font-size: 64px; margin-bottom: 20px;">💔</div>
             <h2 style="font-size: 22px; color: #333; margin-bottom: 12px;">No favorites yet</h2>
             <p style="color: #666; font-size: 15px; max-width: 400px; margin: 0 auto 24px;">
@@ -35,8 +34,8 @@ ob_start();
                 Browse Listings
             </a>
         </div>
-    <?php else: ?>
-        <div class="favorites-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
+    <div id="favorites-grid" class="favorites-grid" style="display: <?= !empty($favorites) ? 'grid' : 'none' ?>; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
+            <?php if (!empty($favorites)): ?>
             <?php foreach ($favorites as $listing): ?>
                 <article class="favorite-card" style="background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.2s, box-shadow 0.2s;">
                     <div class="favorite-image" style="position: relative; height: 200px; overflow: hidden;">
@@ -86,8 +85,8 @@ ob_start();
                     </a>
                 </article>
             <?php endforeach; ?>
+            <?php endif; ?>
         </div>
-    <?php endif; ?>
 </section>
 
 <style>

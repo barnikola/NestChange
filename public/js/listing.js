@@ -237,6 +237,9 @@
                 dot.classList.toggle('active', idx === index);
             });
             currentIndex = index;
+            
+            // Store current index for lightbox
+            window.currentCarouselIndex = currentIndex;
         };
 
         if (prevBtn) {
@@ -285,7 +288,105 @@
                 resetAutoPlay();
             }
         });
+        
+        // Initialize current index
+        window.currentCarouselIndex = currentIndex;
     }
+    
+    // Lightbox functions
+    let lightboxIndex = 0;
+    
+    window.openLightbox = function() {
+        const modal = document.getElementById('lightbox-modal');
+        if (!modal) return;
+        
+        // Start from current carousel position
+        lightboxIndex = window.currentCarouselIndex || 0;
+        
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        showLightboxSlide(lightboxIndex);
+    };
+    
+    window.closeLightbox = function() {
+        const modal = document.getElementById('lightbox-modal');
+        if (!modal) return;
+        
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    };
+    
+    window.lightboxNavigate = function(direction) {
+        const slides = document.querySelectorAll('.lightbox-slide');
+        lightboxIndex += direction;
+        
+        if (lightboxIndex < 0) {
+            lightboxIndex = slides.length - 1;
+        } else if (lightboxIndex >= slides.length) {
+            lightboxIndex = 0;
+        }
+        
+        showLightboxSlide(lightboxIndex);
+    };
+    
+    function showLightboxSlide(index) {
+        const slides = document.querySelectorAll('.lightbox-slide');
+        const currentEl = document.getElementById('lightbox-current');
+        const totalEl = document.getElementById('lightbox-total');
+        
+        slides.forEach((slide, idx) => {
+            slide.classList.toggle('active', idx === index);
+        });
+        
+        if (currentEl) {
+            currentEl.textContent = index + 1;
+        }
+        if (totalEl) {
+            totalEl.textContent = slides.length;
+        }
+    }
+    
+    // Keyboard navigation for lightbox
+    document.addEventListener('keydown', (e) => {
+        const modal = document.getElementById('lightbox-modal');
+        if (!modal || !modal.classList.contains('active')) return;
+        
+        if (e.key === 'Escape') {
+            closeLightbox();
+        } else if (e.key === 'ArrowLeft') {
+            lightboxNavigate(-1);
+        } else if (e.key === 'ArrowRight') {
+            lightboxNavigate(1);
+        }
+    });
+    
+    // Click outside to close
+    document.addEventListener('click', (e) => {
+        const modal = document.getElementById('lightbox-modal');
+        if (!modal || !modal.classList.contains('active')) return;
+        
+        // Don't close if clicking on controls or close button
+        if (e.target.closest('.lightbox-close') || 
+            e.target.closest('.lightbox-control') ||
+            e.target.closest('.lightbox-counter')) {
+            return;
+        }
+        
+        // Close if clicking on modal background (outside lightbox-content)
+        if (e.target === modal) {
+            closeLightbox();
+            return;
+        }
+        
+        // Close if clicking inside lightbox-content but outside the image
+        const content = modal.querySelector('.lightbox-content');
+        const slide = e.target.closest('.lightbox-slide');
+        
+        if (content && content.contains(e.target) && !slide) {
+            closeLightbox();
+        }
+    });
 
     function formatDateDMY(dateStr) {
         if (!dateStr) return '';

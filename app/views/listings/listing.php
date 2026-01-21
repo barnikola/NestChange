@@ -139,8 +139,8 @@ $canViewStatus = $isOwner || AuthMiddleware::hasAnyRole(['admin', 'moderator']);
 
 <!-- Listing Header with Carousel -->
 <section class="holder">
-    <div class="listing-carousel">
-        <button class="carousel-control prev" type="button" aria-label="Previous photo">‹</button>
+    <div class="listing-carousel" style="position: relative; cursor: pointer;" onclick="openLightbox()">
+        <button class="carousel-control prev" type="button" aria-label="Previous photo" onclick="event.stopPropagation();">‹</button>
         <div class="carousel-track">
             <?php if (!empty($listing['images'])): ?>
                 <?php foreach ($listing['images'] as $index => $img): ?>
@@ -153,13 +153,20 @@ $canViewStatus = $isOwner || AuthMiddleware::hasAnyRole(['admin', 'moderator']);
                 <img src="/assets/listing.jpg" alt="Default listing photo" class="carousel-slide active">
             <?php endif; ?>
         </div>
-        <button class="carousel-control next" type="button" aria-label="Next photo">›</button>
+        <button class="carousel-control next" type="button" aria-label="Next photo" onclick="event.stopPropagation();">›</button>
         <div class="carousel-dots">
             <?php $imageCount = !empty($listing['images']) ? count($listing['images']) : 1; ?>
             <?php for ($i = 0; $i < $imageCount; $i++): ?>
-                <span class="carousel-dot<?php echo $i === 0 ? ' active' : ''; ?>" data-index="<?php echo $i; ?>"></span>
+                <span class="carousel-dot<?php echo $i === 0 ? ' active' : ''; ?>" data-index="<?php echo $i; ?>" onclick="event.stopPropagation();"></span>
             <?php endfor; ?>
         </div>
+        <!-- Favorite Button -->
+        <button class="btn-favorite <?php echo !empty($listing['is_favorited']) ? 'favorited' : ''; ?>" 
+                onclick="event.stopPropagation(); event.preventDefault(); toggleFavorite(this, '<?php echo htmlspecialchars($listing['id']); ?>')"
+                data-listing-id="<?php echo htmlspecialchars($listing['id']); ?>"
+                title="<?php echo !empty($listing['is_favorited']) ? 'Remove from favorites' : 'Add to favorites'; ?>">
+            <?php echo !empty($listing['is_favorited']) ? '❤️' : '♡'; ?>
+        </button>
     </div>
     <div class="text-box">
         <h2><?php echo htmlspecialchars($listing['title']); ?></h2>
@@ -499,6 +506,175 @@ $canViewStatus = $isOwner || AuthMiddleware::hasAnyRole(['admin', 'moderator']);
     <?php endif; ?>
 </section>
 
+<!-- Lightbox Modal -->
+<div id="lightbox-modal" class="lightbox-modal">
+    <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close lightbox">✕</button>
+    <button class="lightbox-control lightbox-prev" onclick="lightboxNavigate(-1)" aria-label="Previous photo">‹</button>
+    <button class="lightbox-control lightbox-next" onclick="lightboxNavigate(1)" aria-label="Next photo">›</button>
+    <div class="lightbox-content">
+        <?php if (!empty($listing['images'])): ?>
+            <?php foreach ($listing['images'] as $index => $img): ?>
+                <img
+                    src="/<?php echo htmlspecialchars(ltrim($img['image'], '/')); ?>"
+                    alt="<?php echo htmlspecialchars($listing['title']); ?> photo <?php echo $index + 1; ?>"
+                    class="lightbox-slide<?php echo $index === 0 ? ' active' : ''; ?>"
+                    data-index="<?php echo $index; ?>">
+            <?php endforeach; ?>
+        <?php else: ?>
+            <img src="/assets/listing.jpg" alt="Default listing photo" class="lightbox-slide active" data-index="0">
+        <?php endif; ?>
+    </div>
+    <div class="lightbox-counter">
+        <span id="lightbox-current">1</span> / <span id="lightbox-total"><?php echo $imageCount; ?></span>
+    </div>
+</div>
+
+<style>
+.lightbox-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+}
+
+.lightbox-modal.active {
+    display: flex;
+}
+
+.lightbox-content {
+    position: relative;
+    width: 75%;
+    height: 75%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.lightbox-slide {
+    display: none;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    user-select: none;
+    pointer-events: none;
+}
+
+.lightbox-slide.active {
+    display: block;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-size: 40px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    z-index: 10001;
+    line-height: 1;
+    padding: 0;
+}
+
+.lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
+}
+
+.lightbox-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-size: 50px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    z-index: 10001;
+}
+
+.lightbox-control:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.lightbox-prev {
+    left: 30px;
+}
+
+.lightbox-next {
+    right: 30px;
+}
+
+.lightbox-counter {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    z-index: 10001;
+}
+
+@media (max-width: 768px) {
+    .lightbox-close {
+        top: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        font-size: 30px;
+    }
+    
+    .lightbox-control {
+        width: 50px;
+        height: 50px;
+        font-size: 40px;
+    }
+    
+    .lightbox-prev {
+        left: 10px;
+    }
+    
+    .lightbox-next {
+        right: 10px;
+    }
+    
+    .lightbox-counter {
+        bottom: 15px;
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}
+</style>
+
 <?php
 $listingConfig = [
     'availability' => $listing['availability'] ?? [],
@@ -513,6 +689,13 @@ $listingConfig = [
 ?>
 <script id="listing-config" type="application/json">
 <?php echo json_encode($listingConfig, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>
+</script>
+<script id="favorites-config" type="application/json">
+<?php
+echo json_encode([
+    'baseUrl' => rtrim(BASE_URL, '/')
+], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+?>
 </script>
 <script src="/js/listing.js?v=<?= time() ?>" defer></script>
 <script src="/js/favorites.js?v=<?= time() ?>" defer></script>
