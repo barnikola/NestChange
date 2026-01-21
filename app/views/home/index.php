@@ -42,7 +42,7 @@ ob_start();
         </div>
         <div class="action-card">
             <div class="action-card-image">
-                <img src="/assets/listing.jpg" alt="Property listing" class="action-card-image">
+                <img src="/assets/action.png" alt="Property listing" class="action-card-image">
 
                 <div class="action-overlay">
                 <a href="/listings">
