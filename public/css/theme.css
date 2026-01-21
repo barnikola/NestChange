@@ -718,6 +718,12 @@ body.nav-open {
     transition: background-color 0.3s;
 }
 
+.action-card:nth-child(2) .action-overlay {
+    background-image: url('../assets/action.png');
+    background-size: cover;
+    background-position: center;
+}
+
 .action-card:hover .action-overlay {
     background-color: rgba(0, 0, 0, 0.4);
 }
